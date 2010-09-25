@@ -11,8 +11,9 @@ package org.ioe.bct.p2pconference.mvc;
  */
 public class MVCConstants {
 
-    public static class login {
+    public static class Login {
         public static final String LOGGED_IN="loggedin";
+        public static final String LOGGED_OUT="loggedout";
     }
 
 }
