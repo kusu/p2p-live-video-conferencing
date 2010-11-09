@@ -3,14 +3,13 @@
  * and open the template in the editor.
  */
 
-package org.ioe.bct.p2pconference.core;
+package org.ioe.bct.p2pconference.prototype.pattern.observer;
 
 /**
  *
  * @author kusu
  */
-public class P2PNetworkCore {
-    
+public interface DisplayElement {
 
-  
+    public void display();
 }

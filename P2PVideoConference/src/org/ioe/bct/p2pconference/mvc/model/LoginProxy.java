@@ -5,7 +5,7 @@
 
 package org.ioe.bct.p2pconference.mvc.model;
 
-import org.ioe.bct.p2pconference.data.UserInfo;
+import org.ioe.bct.p2pconference.dataobject.UserInfo;
 import org.puremvc.java.interfaces.IProxy;
 import org.puremvc.java.patterns.proxy.Proxy;
 
@@ -31,5 +31,6 @@ public class LoginProxy extends Proxy implements IProxy {
     @Override
     public void setData(Object pdata){
        userInfo=pdata;
+      
     }
 }
