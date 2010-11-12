@@ -8,7 +8,9 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -32,7 +34,8 @@ public class LoginDialog extends JDialog {
 
     public LoginDialog init() {
         this.setLayout(new BorderLayout());
-        this.add(base, BorderLayout.CENTER);
+       
+         this.add(base);
         this.setBounds(350, 200, 300, 300);
         addWindowListener(new WindowAdapter() {
 

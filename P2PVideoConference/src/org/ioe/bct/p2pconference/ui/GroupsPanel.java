@@ -11,15 +11,53 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.util.ArrayList;
+import javax.swing.ListSelectionModel;
+import javax.swing.*;
 /**
  *
  * @author kusu
  */
 public class GroupsPanel extends javax.swing.JPanel {
 
+    
+
+    private ArrayList peerGroupsList=new ArrayList();
     /** Creates new form GroupsPanel */
+
+    private void initList() {
+        groupsListUI.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+         JPanel kPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+        kPanel.add(new JLabel("Suraj"));
+        JPanel aPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+        aPanel.add(new JLabel("Suman"));
+        peerGroupsList.add(kPanel);
+        peerGroupsList.add(aPanel);
+        groupsListUI.setCellRenderer(new ListCellRenderer() {
+
+            public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+
+                if(value instanceof JPanel) {
+                    Component component=(Component) value;
+                     component.setForeground (Color.white);
+                     component.setBackground (isSelected ? Color.MAGENTA : Color.white);
+                    return component;
+                }
+             else {
+                     return new JLabel("");
+             }
+            }
+        });
+
+        groupsListUI.setListData(peerGroupsList.toArray());
+    }
+
     public GroupsPanel() {
         initComponents();
+        
     }
 
     /** This method is called from within the constructor to
@@ -32,23 +70,24 @@ public class GroupsPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        groupsListUI = new javax.swing.JList();
 
         setLayout(new java.awt.BorderLayout());
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
+        groupsListUI.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        initList();
+        jScrollPane1.setViewportView(groupsListUI);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList jList1;
+    private javax.swing.JList groupsListUI;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
