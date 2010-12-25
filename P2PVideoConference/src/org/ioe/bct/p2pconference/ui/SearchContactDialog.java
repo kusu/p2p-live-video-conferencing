@@ -13,7 +13,7 @@ package org.ioe.bct.p2pconference.ui;
 
 import javax.swing.JOptionPane;
 import org.ioe.bct.p2pconference.core.ContactRequestManager;
-import org.ioe.bct.p2pconference.dataobject.ContactList;
+import org.ioe.bct.p2pconference.ui.controls.ContactList;
 import org.ioe.bct.p2pconference.dataobject.Request;
 
 /**

@@ -36,6 +36,7 @@
           </Properties>
           <AuxValues>
             <AuxValue name="JavaCodeGenerator_AddingCodePre" type="java.lang.String" value="initList();"/>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="((ContactList)contList).createList();"/>
           </AuxValues>
         </Component>
       </SubComponents>

@@ -46,7 +46,7 @@ public class WelcomePanel extends javax.swing.JPanel {
 
         jPanel2.setOpaque(false);
 
-        jLabel1.setFont(new java.awt.Font("Kristen ITC", 1, 20)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Kristen ITC", 1, 20));
         jLabel1.setForeground(new java.awt.Color(192, 183, 100));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Welcome");
@@ -55,7 +55,7 @@ public class WelcomePanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Kristen ITC", 1, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(152, 152, 109));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Video Conference");
+        jLabel2.setText("P2P Video Conference");
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

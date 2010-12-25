@@ -28,7 +28,7 @@ import org.ioe.bct.p2pconference.prototype.pattern.observer.DisplayElement;
 import org.ioe.bct.p2pconference.prototype.pattern.observer.Observer;
 import org.ioe.bct.p2pconference.prototype.pattern.observer.Subject;
 import org.ioe.bct.p2pconference.utils.Notification;
-
+import org.ioe.bct.p2pconference.ui.controls.ContactList;
 /**
  *
  * @author kusu
@@ -40,6 +40,24 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Di
    
     private ListCellRenderer imageCellRenderer=new ImageCellRenderer();
 
+    private Subject contList;
+
+     public ContactListPanel() {
+         
+         
+
+//       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+//       jList1.setModel(new MyListModel());
+       
+    }
+
+     public ContactListPanel setList(Subject contList){
+         contList.registerObserver(this);
+         this.contList=contList;
+         initComponents();
+         return this;
+
+     }
 
     public void initList(){
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -77,13 +95,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Di
     
 
     /** Creates new form ContactListPanel */
-    public ContactListPanel(Subject contList) {
-        initComponents();
-        
-//       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//       jList1.setModel(new MyListModel());
-       contList.registerObserver(this);
-    }
+   
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -95,7 +107,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Di
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        jList1 = ((ContactList)contList).createList();
 
         setLayout(new java.awt.BorderLayout());
 

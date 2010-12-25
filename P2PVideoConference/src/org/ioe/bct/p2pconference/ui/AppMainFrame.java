@@ -12,7 +12,7 @@
 package org.ioe.bct.p2pconference.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
-import org.ioe.bct.p2pconference.dataobject.ContactList;
+import org.ioe.bct.p2pconference.ui.controls.ContactList;
 import org.ioe.bct.p2pconference.prototype.pattern.observer.Subject;
 
 /**
@@ -94,7 +94,7 @@ public class AppMainFrame extends javax.swing.JFrame {
 
     public void loadContactList() {
          
-        contListPanel=new ContactListPanel(contactList);
+        contListPanel=new ContactListPanel().setList(contactList);
         contGroupPanel=new GroupsPanel();
        contactListTab=new JTabbedPane(JTabbedPane.TOP);
         contactListTab.addTab("Contacts", contListPanel);
@@ -116,12 +116,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         jSplitPane1 = new javax.swing.JSplitPane();
         contactPanel = new JPanel(new BorderLayout());
         ;
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton1 = new javax.swing.JButton();
+        contactDetialsPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -129,56 +124,18 @@ public class AppMainFrame extends javax.swing.JFrame {
         loadContactList();
         jSplitPane1.setLeftComponent(contactPanel);
 
-        jPanel2.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        jButton1.setText("Send Message");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        javax.swing.GroupLayout contactDetialsPanelLayout = new javax.swing.GroupLayout(contactDetialsPanel);
+        contactDetialsPanel.setLayout(contactDetialsPanelLayout);
+        contactDetialsPanelLayout.setHorizontalGroup(
+            contactDetialsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 541, Short.MAX_VALUE)
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        contactDetialsPanelLayout.setVerticalGroup(
+            contactDetialsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 528, Short.MAX_VALUE)
         );
 
-        for(int i=0;i<9;i++) {
-            JPanel p=new JPanel();
-            p.setBackground(Color.black);
-            jPanel2.add(p);
-
-        }
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        jSplitPane1.setRightComponent(jPanel1);
+        jSplitPane1.setRightComponent(contactDetialsPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -213,14 +170,9 @@ public class AppMainFrame extends javax.swing.JFrame {
     private ContactListPanel contListPanel;
     private GroupsPanel contGroupPanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel contactDetialsPanel;
     private javax.swing.JPanel contactPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JTextArea jTextArea1;
     // End of variables declaration//GEN-END:variables
     private JTabbedPane contactListTab;
 }
