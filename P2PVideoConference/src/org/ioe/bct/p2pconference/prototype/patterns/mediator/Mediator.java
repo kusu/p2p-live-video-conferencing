@@ -11,6 +11,7 @@ package org.ioe.bct.p2pconference.prototype.patterns.mediator;
  */
 public interface Mediator {
 
-    public void sendMessage(String message, Colleague )
-
+    public void sendMessage(String message, Colleague coll, Object body );
+    public void addColleague(Colleague coll);
+    public void removeColleague(Colleague coll);
 }

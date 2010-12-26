@@ -22,9 +22,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
-import org.ioe.bct.p2pconference.prototype.pattern.observer.Subject;
+import org.ioe.bct.p2pconference.prototype.patterns.observer.Subject;
 
 /**
  *
@@ -94,8 +95,8 @@ public class AppMainFrame extends javax.swing.JFrame {
 
     public void loadContactList() {
          
-        contListPanel=new ContactListPanel().setList(contactList);
-        contGroupPanel=new GroupsPanel();
+        contListPanel=new ContactListPanel(confMediator).setList(contactList);
+        contGroupPanel=new GroupsPanel(confMediator);
        contactListTab=new JTabbedPane(JTabbedPane.TOP);
         contactListTab.addTab("Contacts", contListPanel);
         contactListTab.addTab("Groups", contGroupPanel);
@@ -159,7 +160,8 @@ public class AppMainFrame extends javax.swing.JFrame {
         return contactList;
     }
 
-   
+
+    private Mediator confMediator=new ConferenceMediator();
     private String username;
     private String password;
     private static LoginDialog loginBox;
