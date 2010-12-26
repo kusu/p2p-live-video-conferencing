@@ -9,10 +9,10 @@ package org.ioe.bct.p2pconference.prototype.patterns.mediator;
  *
  * @author kusum
  */
-public class Colleagues {
-    private Mediator mediator;
+public interface Colleague {
+//    private Mediator mediator;
 
-    
-
+    public void receive(String message, Colleague sender,Object body);
+    public void setMediator(Mediator m);
 
 }

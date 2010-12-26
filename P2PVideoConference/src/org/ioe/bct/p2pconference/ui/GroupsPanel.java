@@ -15,18 +15,26 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.util.ArrayList;
-import javax.swing.ListSelectionModel;
 import javax.swing.*;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+
 /**
  *
  * @author kusu
  */
-public class GroupsPanel extends javax.swing.JPanel {
+public class GroupsPanel extends javax.swing.JPanel implements Colleague{
 
     
 
     private ArrayList peerGroupsList=new ArrayList();
+    private Mediator confMediator;
     /** Creates new form GroupsPanel */
+
+      public GroupsPanel(Mediator m) {
+        initComponents();
+        confMediator=m;
+    }
 
     private void initList() {
         groupsListUI.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -55,10 +63,7 @@ public class GroupsPanel extends javax.swing.JPanel {
         groupsListUI.setListData(peerGroupsList.toArray());
     }
 
-    public GroupsPanel() {
-        initComponents();
-        
-    }
+  
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -91,4 +96,12 @@ public class GroupsPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
+    public void receive(String message, Colleague sender, Object body) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void setMediator(Mediator m) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+    }
+ 
 }

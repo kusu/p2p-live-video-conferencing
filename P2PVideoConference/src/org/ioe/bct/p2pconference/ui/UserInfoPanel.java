@@ -12,12 +12,14 @@
 package org.ioe.bct.p2pconference.ui;
 
 import java.awt.Image;
+import org.ioe.bct.p2pconference.dataobject.PeerResolver;
+
 
 /**
  *
  * @author kusu
  */
-public class UserInfoPanel extends javax.swing.JPanel {
+public class UserInfoPanel extends javax.swing.JPanel  {
 
     /** Creates new form UserInfoPanel */
     public UserInfoPanel() {
@@ -42,8 +44,8 @@ public class UserInfoPanel extends javax.swing.JPanel {
         nameLabel = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        emailLabel = new javax.swing.JLabel();
+        statusLabel = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         uuidLabel = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -80,9 +82,9 @@ public class UserInfoPanel extends javax.swing.JPanel {
 
         jLabel6.setText("Status:");
 
-        jLabel7.setText("N/A");
+        emailLabel.setText("N/A");
 
-        jLabel8.setText("N/A");
+        statusLabel.setText("N/A");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -98,11 +100,11 @@ public class UserInfoPanel extends javax.swing.JPanel {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel7))
+                        .addComponent(emailLabel))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel8)))
+                        .addComponent(statusLabel)))
                 .addContainerGap(55, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -115,11 +117,11 @@ public class UserInfoPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel7))
+                    .addComponent(emailLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jLabel8))
+                    .addComponent(statusLabel))
                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -252,6 +254,7 @@ public class UserInfoPanel extends javax.swing.JPanel {
     private ConferenceManager confManager;
     private Image userThumbnail;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel emailLabel;
     private javax.swing.JLabel ipLabel;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -261,8 +264,6 @@ public class UserInfoPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -270,7 +271,20 @@ public class UserInfoPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel nameLabel;
     private javax.swing.JLabel peerTypeLabel;
+    private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel uuidLabel;
     // End of variables declaration//GEN-END:variables
+
+
+    public void updateInfo(PeerResolver p) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        
+        nameLabel.setText(p.getName());
+        ipLabel.setText(p.getIP());
+        emailLabel.setText(p.getEmail());
+        uuidLabel.setText(p.getUUID());
+        peerTypeLabel.setText(p.getType());
+        statusLabel.setText(p.getStatus());
+    }
 
 }

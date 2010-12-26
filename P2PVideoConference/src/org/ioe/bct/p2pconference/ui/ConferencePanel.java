@@ -11,8 +11,12 @@
 
 package org.ioe.bct.p2pconference.ui;
 
-import org.ioe.bct.p2pconference.prototype.pattern.observer.Observer;
-import org.ioe.bct.p2pconference.utils.Notification;
+import java.awt.BorderLayout;
+import javax.swing.JPanel;
+import org.ioe.bct.p2pconference.dataobject.PeerResolver;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+
 
 
 
@@ -20,13 +24,26 @@ import org.ioe.bct.p2pconference.utils.Notification;
  *
  * @author kusu
  */
-public class ConferencePanel extends javax.swing.JPanel implements  Observer {
+public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
+
+    private Mediator confMediator;
+
+   
 
     /** Creates new form ConferencePanel */
     public ConferencePanel() {
         initComponents();
+        setLayout(new BorderLayout());
+        add(upperPanel,BorderLayout.NORTH);
+
+    }
+    public void setMediator(Mediator m) {
+        this.confMediator=m;
     }
 
+    public Mediator getMediator() {
+        return this.confMediator;
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -49,20 +66,28 @@ public class ConferencePanel extends javax.swing.JPanel implements  Observer {
     }// </editor-fold>//GEN-END:initComponents
 
   
+    public void receive(String message, Colleague sender, Object body) {
+       if(message.equalsIgnoreCase(ConferenceMediator.CONT_SELECTION_CHANGED)) {
+           if(sender instanceof ContactListPanel) {
+               upperPanel.removeAll();
+               UserInfoPanel uinfo=new UserInfoPanel();
+               if(body instanceof PeerResolver) {
+                   uinfo.updateInfo((PeerResolver) body);
+               }
+               upperPanel.add(uinfo);
+               upperPanel.repaint();
+              
 
-   
+           }
+           else if(sender instanceof GroupsPanel ) {
+               
 
-    
- 
-
-   
-
-    public void update(Notification type) {
-        throw new UnsupportedOperationException("Not supported yet.");
+           }
+       }
     }
-
-    private ConferenceManager confManager;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
-
+     private ConferenceManager confManager;
+    
+     private JPanel upperPanel=new JPanel();
 }

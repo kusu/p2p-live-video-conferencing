@@ -24,16 +24,18 @@ import javax.swing.ListSelectionModel;
 import org.ioe.bct.p2pconference.dataobject.Request;
 
 import org.ioe.bct.p2pconference.dataobject.User;
-import org.ioe.bct.p2pconference.prototype.pattern.observer.DisplayElement;
-import org.ioe.bct.p2pconference.prototype.pattern.observer.Observer;
-import org.ioe.bct.p2pconference.prototype.pattern.observer.Subject;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.prototype.patterns.observer.DisplayElement;
+import org.ioe.bct.p2pconference.prototype.patterns.observer.Observer;
+import org.ioe.bct.p2pconference.prototype.patterns.observer.Subject;
 import org.ioe.bct.p2pconference.utils.Notification;
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
 /**
  *
  * @author kusu
  */
-public class ContactListPanel extends javax.swing.JPanel implements Observer, DisplayElement{
+public class ContactListPanel extends javax.swing.JPanel implements Observer, Colleague,DisplayElement{
 
     
     private ArrayList contactArray=new ArrayList();
@@ -41,10 +43,11 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Di
     private ListCellRenderer imageCellRenderer=new ImageCellRenderer();
 
     private Subject contList;
+    private Mediator conferenceMediator;
 
-     public ContactListPanel() {
+     public ContactListPanel(Mediator confMediator) {
          
-         
+         this.conferenceMediator=confMediator;
 
 //       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //       jList1.setModel(new MyListModel());
@@ -71,6 +74,17 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Di
         jList1.setCellRenderer(imageCellRenderer);
 
         jList1.setListData(contactArray.toArray());
+    }
+
+  
+
+    public void setMediator(Mediator m) {
+        this.conferenceMediator=m;
+    }
+
+    public void receive(String message, Colleague sender, Object body) {
+       //do nothing
+        
     }
 
     private class ImageCellRenderer extends DefaultListCellRenderer {
@@ -111,11 +125,22 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Di
 
         setLayout(new java.awt.BorderLayout());
 
+        jList1.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                jList1ValueChanged(evt);
+            }
+        });
         initList();
         jScrollPane1.setViewportView(jList1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
+        // TODO add your handling code here:
+        Object dataItem=jList1.getSelectedValue();
+          conferenceMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED,this,dataItem);
+    }//GEN-LAST:event_jList1ValueChanged
 
    
 
