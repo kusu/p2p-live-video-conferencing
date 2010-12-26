@@ -11,6 +11,7 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
@@ -23,7 +24,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import org.ioe.bct.p2pconference.dataobject.Request;
 
-import org.ioe.bct.p2pconference.dataobject.User;
+
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.prototype.patterns.observer.DisplayElement;
@@ -48,7 +49,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
      public ContactListPanel(Mediator confMediator) {
          
          this.conferenceMediator=confMediator;
-
+       //  conferenceMediator.addColleague(this);
 //       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //       jList1.setModel(new MyListModel());
        
@@ -84,7 +85,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
 
     public void receive(String message, Colleague sender, Object body) {
        //do nothing
-        
+          System.out.println("Loadinggggggg contact info ");
     }
 
     private class ImageCellRenderer extends DefaultListCellRenderer {
@@ -100,8 +101,8 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
               return component;
             }
              else {
-                                return new JLabel("");
-                    }
+                     return new JLabel("");
+                  }
         }
     }
 
