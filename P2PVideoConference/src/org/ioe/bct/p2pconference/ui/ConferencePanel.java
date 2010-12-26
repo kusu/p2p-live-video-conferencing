@@ -11,7 +11,11 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
+import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
@@ -33,12 +37,17 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     /** Creates new form ConferencePanel */
     public ConferencePanel() {
         initComponents();
-        setLayout(new BorderLayout());
-        add(upperPanel,BorderLayout.NORTH);
+        upperPanel.setVisible(false);
 
+        
+
+        
+       
+        
     }
     public void setMediator(Mediator m) {
         this.confMediator=m;
+        confMediator.addColleague(this);
     }
 
     public Mediator getMediator() {
@@ -53,29 +62,29 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        upperPanel = new javax.swing.JPanel();
+
+        setBorder(javax.swing.BorderFactory.createTitledBorder("ConferencePanel"));
+        setLayout(new java.awt.BorderLayout());
+
+        upperPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        upperPanel.setLayout(new java.awt.BorderLayout());
+        add(upperPanel, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
   
     public void receive(String message, Colleague sender, Object body) {
        if(message.equalsIgnoreCase(ConferenceMediator.CONT_SELECTION_CHANGED)) {
+            
            if(sender instanceof ContactListPanel) {
+              System.out.println("Loading contact info "+sender.getClass());
                upperPanel.removeAll();
                UserInfoPanel uinfo=new UserInfoPanel();
                if(body instanceof PeerResolver) {
                    uinfo.updateInfo((PeerResolver) body);
                }
-               upperPanel.add(uinfo);
-               upperPanel.repaint();
+               upperPanel.add(uinfo,BorderLayout.CENTER);
+               upperPanel.validate();
               
 
            }
@@ -83,11 +92,13 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                
 
            }
+           upperPanel.setVisible(true);
        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
      private ConferenceManager confManager;
     
-     private JPanel upperPanel=new JPanel();
+     
 }

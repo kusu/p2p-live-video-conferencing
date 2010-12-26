@@ -93,6 +93,7 @@ public class LoginBasePanel extends javax.swing.JPanel {
         jLabel3.setText("Login Name");
 
         usernameCombo.setEditable(true);
+        usernameCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "admin" }));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -118,6 +119,8 @@ public class LoginBasePanel extends javax.swing.JPanel {
         jPanel3.setBackground(new java.awt.Color(250, 255, 255));
 
         jLabel4.setText("Password");
+
+        passwordfield.setText("admin");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);

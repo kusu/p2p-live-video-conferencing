@@ -11,6 +11,8 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
+import org.ioe.bct.p2pconference.ui.controls.LoginDialog;
 import java.awt.BorderLayout;
 
 import java.awt.event.ActionEvent;
@@ -37,6 +39,7 @@ public class AppMainFrame extends javax.swing.JFrame {
     public AppMainFrame() {
         super("P2P Video Conferencing...");
         initComponents();
+        loadConferencePanel();
     }
 
     public void disposeLoginBox() {
@@ -96,6 +99,7 @@ public class AppMainFrame extends javax.swing.JFrame {
     public void loadContactList() {
          
         contListPanel=new ContactListPanel(confMediator).setList(contactList);
+        contListPanel.setMediator(confMediator);
         contGroupPanel=new GroupsPanel(confMediator);
        contactListTab=new JTabbedPane(JTabbedPane.TOP);
         contactListTab.addTab("Contacts", contListPanel);
@@ -103,6 +107,18 @@ public class AppMainFrame extends javax.swing.JFrame {
         
         contactPanel.add(contactListTab,BorderLayout.CENTER);
         jSplitPane1.setDividerLocation(200);
+       
+        
+    }
+
+    private void loadConferencePanel() {
+         appConfPanel=new ConferencePanel();
+        appConfPanel.setMediator(confMediator);
+       
+        contactDetialsPanel.add(appConfPanel,BorderLayout.CENTER);
+        contactDetialsPanel.revalidate();
+        jSplitPane1.revalidate();
+        validateTree();
     }
 
     /** This method is called from within the constructor to
@@ -125,17 +141,8 @@ public class AppMainFrame extends javax.swing.JFrame {
         loadContactList();
         jSplitPane1.setLeftComponent(contactPanel);
 
-        javax.swing.GroupLayout contactDetialsPanelLayout = new javax.swing.GroupLayout(contactDetialsPanel);
-        contactDetialsPanel.setLayout(contactDetialsPanelLayout);
-        contactDetialsPanelLayout.setHorizontalGroup(
-            contactDetialsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 541, Short.MAX_VALUE)
-        );
-        contactDetialsPanelLayout.setVerticalGroup(
-            contactDetialsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 528, Short.MAX_VALUE)
-        );
-
+        contactDetialsPanel.setBackground(new java.awt.Color(204, 255, 255));
+        contactDetialsPanel.setLayout(new java.awt.BorderLayout());
         jSplitPane1.setRightComponent(contactDetialsPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -161,6 +168,7 @@ public class AppMainFrame extends javax.swing.JFrame {
     }
 
 
+    private ConferencePanel appConfPanel;
     private Mediator confMediator=new ConferenceMediator();
     private String username;
     private String password;
