@@ -5,12 +5,39 @@
 
 package org.ioe.bct.p2pconference.core;
 
+import net.jxta.platform.NetworkManager;
 /**
  *
  * @author kusu
  */
 public class P2PNetworkCore {
-    
+    private NetworkManager NManager=null;
 
+    private String nodeName="";
+
+    public void setNodeName(String name)
+    {
+        nodeName=name;
+    }
+
+    public void startNetwork(NetworkManager.ConfigMode modeConfig)
+    {
+        try{
+            NManager=new NetworkManager(modeConfig, nodeName);
+            NManager.startNetwork();
+        }
+        catch(Exception exception)
+        {
+            exception.printStackTrace();
+        }
+    }
+    public NetworkManager getNetworkManager()
+    {
+        return NManager;
+    }
+    public void stopNetwork()
+    {
+        NManager.stopNetwork();
+    }
   
 }
