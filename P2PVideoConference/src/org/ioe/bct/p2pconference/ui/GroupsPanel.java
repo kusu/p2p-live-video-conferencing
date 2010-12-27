@@ -13,11 +13,14 @@ package org.ioe.bct.p2pconference.ui;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.*;
+import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
+import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
 /**
  *
@@ -27,23 +30,19 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague{
 
     
 
-    private ArrayList peerGroupsList=new ArrayList();
+    private ArrayList<ProtectedPeerGroup> peerGroupsList=new ArrayList<ProtectedPeerGroup>();
     private Mediator confMediator;
     /** Creates new form GroupsPanel */
 
       public GroupsPanel(Mediator m) {
         initComponents();
         confMediator=m;
+       
     }
 
     private void initList() {
         groupsListUI.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-         JPanel kPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        kPanel.add(new JLabel("Suraj"));
-        JPanel aPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        aPanel.add(new JLabel("Suman"));
-        peerGroupsList.add(kPanel);
-        peerGroupsList.add(aPanel);
+        
         groupsListUI.setCellRenderer(new ListCellRenderer() {
 
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -84,11 +83,23 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague{
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        groupsListUI.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                groupsListUIValueChanged(evt);
+            }
+        });
         initList();
         jScrollPane1.setViewportView(groupsListUI);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void groupsListUIValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_groupsListUIValueChanged
+        // TODO add your handling code here:
+        Object dataItem=groupsListUI.getSelectedValue();
+        confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this, dataItem);
+
+    }//GEN-LAST:event_groupsListUIValueChanged
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -98,10 +109,33 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague{
 
     public void receive(String message, Colleague sender, Object body) {
 //        throw new UnsupportedOperationException("Not supported yet.");
+        JDialog senderc=(JDialog)sender;
+        senderc.dispose();
+        if(message.equalsIgnoreCase(ConferenceMediator.GROUP_ADDED)) {
+            PeerGroupOrganizer orgn=(PeerGroupOrganizer)body;
+            peerGroupsList=orgn.getAllPeerGroups();
+            System.out.println(peerGroupsList.size());
+            updateGroupList();
+        }
+    }
+
+    private void updateGroupList() {
+        Iterator it=peerGroupsList.iterator();
+        while (it.hasNext()) {
+        ProtectedPeerGroup current=peerGroupsList.iterator().next();
+        String groupName=current.getGroupName();
+            JLabel label=new JLabel(groupName);
+            JPanel panel=new JPanel();
+            panel.add(label);
+            groupsListUI.add(panel);
+           System.out.println(groupName);
+        }
+         groupsListUI.validate();
     }
 
     public void setMediator(Mediator m) {
 //        throw new UnsupportedOperationException("Not supported yet.");
+         m.addColleague(this);
     }
  
 }

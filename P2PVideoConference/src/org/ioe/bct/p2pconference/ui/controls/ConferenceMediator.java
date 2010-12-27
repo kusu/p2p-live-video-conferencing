@@ -16,6 +16,7 @@ import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 public class ConferenceMediator implements Mediator {
 
     public static final String CONT_SELECTION_CHANGED="contactselectchanged";
+    public static final String GROUP_ADDED="group added";
 
     private ArrayList<Colleague> colleagueList;
     

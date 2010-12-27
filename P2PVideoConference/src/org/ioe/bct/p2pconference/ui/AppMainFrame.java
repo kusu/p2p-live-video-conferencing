@@ -18,12 +18,16 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import javax.swing.JDialog;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import org.ioe.bct.p2pconference.core.JXTAPeerGroupOrganizer;
+import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
@@ -58,7 +62,15 @@ public class AppMainFrame extends javax.swing.JFrame {
                 addContact();
             }
         });
-        
+
+        createGroupMenu.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                createGroupDialogActionHandler();
+            }
+        });
+
+
 
         contactMenu.add(addContactMenu);
         contactMenu.add(createGroupMenu);
@@ -68,6 +80,27 @@ public class AppMainFrame extends javax.swing.JFrame {
         menuHash.put("contacts",contactMenu);
         
     }
+
+    private void createGroupDialogActionHandler() {
+         
+         CreateGroupDialog cgDialog=null;
+                try {
+                    PeerGroupOrganizer groupOrganizer=new JXTAPeerGroupOrganizer();
+
+                   cgDialog=new CreateGroupDialog(this,groupOrganizer,confMediator);
+                    
+                    //cgDialog.setBounds(150, 150, 400, 150);
+                    cgDialog.setVisible(true);
+                    
+                   // cgDialog.dispose();
+                }
+                catch (Exception cge) {
+                    cge.printStackTrace();
+                    cgDialog.dispose();
+                    JOptionPane.showMessageDialog(null, "Cannot create PeerGroup "+cge.getMessage());
+                }
+            }
+
 
     public void addContact() {
        
@@ -101,6 +134,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         contListPanel=new ContactListPanel(confMediator).setList(contactList);
         contListPanel.setMediator(confMediator);
         contGroupPanel=new GroupsPanel(confMediator);
+        contGroupPanel.setMediator(confMediator);
        contactListTab=new JTabbedPane(JTabbedPane.TOP);
         contactListTab.addTab("Contacts", contListPanel);
         contactListTab.addTab("Groups", contGroupPanel);

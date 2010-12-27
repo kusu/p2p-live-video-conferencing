@@ -58,6 +58,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
      public ContactListPanel setList(Subject contList){
          contList.registerObserver(this);
          this.contList=contList;
+
          initComponents();
          return this;
 
