@@ -88,10 +88,15 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
               
 
            }
+           
            else if(sender instanceof GroupsPanel ) {
-               
+                upperPanel.removeAll();
+                GroupInfoPanel gPanel=new GroupInfoPanel();
+                upperPanel.add(gPanel,BorderLayout.CENTER);
+                upperPanel.validate();
 
            }
+           
            upperPanel.setVisible(true);
        }
     }
