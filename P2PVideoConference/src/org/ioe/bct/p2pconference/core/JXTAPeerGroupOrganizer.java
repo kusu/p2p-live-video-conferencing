@@ -17,7 +17,12 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
 
     private ArrayList<ProtectedPeerGroup>  peerGroups =new ArrayList<ProtectedPeerGroup>();
 
-  
+
+    public JXTAPeerGroupOrganizer(){}
+    public JXTAPeerGroupOrganizer(ArrayList<ProtectedPeerGroup> pg){
+        peerGroups=pg;
+    }
+
     public ProtectedPeerGroup createPeerGroup(String name, String password,String loginName) {
         ProtectedPeerGroup newProtectedPG=new ProtectedPeerGroup(name, password,loginName, null);
         peerGroups.add(newProtectedPG);
@@ -25,12 +30,16 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
         return newProtectedPG;
     }
 
-    public ArrayList getAllPeerGroups() {
+    public ArrayList<ProtectedPeerGroup> getAllPeerGroups() {
         return peerGroups;
     }
 
     public void removePeerGroup(ProtectedPeerGroup p) {
         peerGroups.remove(p);
+    }
+
+    public void updateAllPeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
+        peerGroups=updatedPGs;
     }
 
 }

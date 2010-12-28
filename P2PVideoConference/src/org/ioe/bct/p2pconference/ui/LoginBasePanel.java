@@ -43,6 +43,8 @@ public class LoginBasePanel extends javax.swing.JPanel {
         if (user.equals("admin") && pass.equals("admin")) {
             AppLoader.mainFrame.hideLoginBox();
             AppLoader.mainFrame.load(user, pass).setVisible(true);
+            AppLoader.mainFrame.createNetworkCore(user);
+           
             AppLoader.mainFrame.disposeLoginBox();
         } else {
             errorLabel.setText("Login Failed. Invalid username or password.");

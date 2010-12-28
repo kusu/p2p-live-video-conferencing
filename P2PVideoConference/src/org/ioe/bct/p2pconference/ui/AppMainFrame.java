@@ -18,15 +18,15 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import javax.swing.JDialog;
-
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import net.jxta.platform.NetworkManager.ConfigMode;
 import org.ioe.bct.p2pconference.core.JXTAPeerGroupOrganizer;
+import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 
@@ -126,6 +126,8 @@ public class AppMainFrame extends javax.swing.JFrame {
         this.password=pass;
         createMenus();
         setBounds(150, 100, 800, 600);
+        
+
         return this;
     }
 
@@ -135,6 +137,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         contListPanel.setMediator(confMediator);
         contGroupPanel=new GroupsPanel(confMediator);
         contGroupPanel.setMediator(confMediator);
+       
        contactListTab=new JTabbedPane(JTabbedPane.TOP);
         contactListTab.addTab("Contacts", contListPanel);
         contactListTab.addTab("Groups", contGroupPanel);
@@ -144,6 +147,15 @@ public class AppMainFrame extends javax.swing.JFrame {
        
         
     }
+
+    public void createNetworkCore(String name) {
+        netCOre=new P2PNetworkCore(name);
+        netCOre.startNetwork(ConfigMode.ADHOC);
+        System.out.println("crating network core");
+         contGroupPanel.startGroupDiscovery();
+    }
+
+    
 
     private void loadConferencePanel() {
          appConfPanel=new ConferencePanel();
@@ -202,6 +214,7 @@ public class AppMainFrame extends javax.swing.JFrame {
     }
 
 
+    public static P2PNetworkCore netCOre;
     private ConferencePanel appConfPanel;
     private Mediator confMediator=new ConferenceMediator();
     private String username;
