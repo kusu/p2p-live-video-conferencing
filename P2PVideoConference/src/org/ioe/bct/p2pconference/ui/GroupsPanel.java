@@ -123,13 +123,15 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
         if(message.equalsIgnoreCase(ConferenceMediator.GROUP_ADDED)) {
              
             PeerGroupOrganizer orgn=(PeerGroupOrganizer)body;
+            
             peerGroupsList=orgn.getAllPeerGroups();
-            System.out.println(peerGroupsList.size());
+            System.out.println("TOTAL PEER GROUPS"+peerGroupsList.size());
             updateGroupList();
         }
     }
 
     private void updateGroupList() {
+        peerListUIPanelList.removeAll(peerGroupsList);
         Iterator it=peerGroupsList.iterator();
 
         while (it.hasNext()) {

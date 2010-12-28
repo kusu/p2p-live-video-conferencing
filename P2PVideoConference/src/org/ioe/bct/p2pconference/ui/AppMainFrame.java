@@ -84,8 +84,8 @@ public class AppMainFrame extends javax.swing.JFrame {
     private void createGroupDialogActionHandler() {
          
          CreateGroupDialog cgDialog=null;
-                try {
-                    PeerGroupOrganizer groupOrganizer=new JXTAPeerGroupOrganizer();
+               
+                   
 
                    cgDialog=new CreateGroupDialog(this,groupOrganizer,confMediator);
                     
@@ -93,12 +93,8 @@ public class AppMainFrame extends javax.swing.JFrame {
                     cgDialog.setVisible(true);
                     
                    // cgDialog.dispose();
-                }
-                catch (Exception cge) {
-                    cge.printStackTrace();
-                    cgDialog.dispose();
-                    JOptionPane.showMessageDialog(null, "Cannot create PeerGroup "+cge.getMessage());
-                }
+               
+              
             }
 
 
@@ -213,7 +209,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         return contactList;
     }
 
-
+    private PeerGroupOrganizer groupOrganizer=new JXTAPeerGroupOrganizer();
     public static P2PNetworkCore netCOre;
     private ConferencePanel appConfPanel;
     private Mediator confMediator=new ConferenceMediator();

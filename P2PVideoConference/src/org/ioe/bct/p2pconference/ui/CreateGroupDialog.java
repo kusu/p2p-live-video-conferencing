@@ -13,6 +13,7 @@ package org.ioe.bct.p2pconference.ui;
 
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
@@ -137,12 +138,23 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        pgOrganizer.createPeerGroup(getGroupName(),getGroupPassword(),getGroupLoginName());
-        confMediator.sendMessage(ConferenceMediator.GROUP_ADDED, this, pgOrganizer);
-        dispose();
+        try {
+            createGroup();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+             JOptionPane.showMessageDialog(null, "Cannot create PeerGroup "+e.getMessage());
+                 dispose();
+
+        }
+
         
 }//GEN-LAST:event_jButton1ActionPerformed
-
+    private void createGroup() throws Exception{
+          pgOrganizer.createPeerGroup(getGroupName(),getGroupPassword(),getGroupLoginName());
+        confMediator.sendMessage(ConferenceMediator.GROUP_ADDED, this, pgOrganizer);
+        dispose();
+    }
     /**
     * @param args the command line arguments
     */

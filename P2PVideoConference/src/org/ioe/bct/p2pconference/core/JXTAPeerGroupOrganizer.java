@@ -6,8 +6,10 @@
 package org.ioe.bct.p2pconference.core;
 
 import java.util.ArrayList;
+import net.jxta.peergroup.PeerGroup;
 
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
+import org.ioe.bct.p2pconference.ui.AppMainFrame;
 
 /**
  *
@@ -23,8 +25,11 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
         peerGroups=pg;
     }
 
-    public ProtectedPeerGroup createPeerGroup(String name, String password,String loginName) {
-        ProtectedPeerGroup newProtectedPG=new ProtectedPeerGroup(name, password,loginName, null);
+    public ProtectedPeerGroup createPeerGroup(String name, String password,String loginName) throws Exception{
+        
+        PeerGroupService service =new PeerGroupService();
+        PeerGroup newPeerGroup=service.createPeerGroup(AppMainFrame.netCOre.getNetPeerGroup(), name, loginName, password);
+        ProtectedPeerGroup newProtectedPG=new ProtectedPeerGroup(name, password,loginName, newPeerGroup);
         peerGroups.add(newProtectedPG);
         System.out.println("Creating Peer Group...");
         return newProtectedPG;
