@@ -18,6 +18,7 @@ public class ProtectedPeerGroup {
     private String peerGroupPassword;
     private String peerGroupLoginName;
     private ArrayList connectedUsers=new ArrayList();
+    private boolean conferenceStarted=false;
 
     public ProtectedPeerGroup(String name,String password,String loginName, PeerGroup pg) {
         peerGroupName=name;
@@ -27,10 +28,16 @@ public class ProtectedPeerGroup {
 
     }
 
+    public boolean isConferenceStarted() {return conferenceStarted;}
+    public void setConferenceStarted(boolean isStart) {
+        conferenceStarted=isStart;
+    }
+
     public String getPassword() {return peerGroupPassword;}
     public PeerGroup getPeerGroup() {return peerGroup;}
     public String getGroupName() {return peerGroupName;}
     public ArrayList getConnectedUsers() {return connectedUsers;}
+    public void setConnectUsers(ArrayList users) {this.connectedUsers=users;}
     public void addConnectedUser(Object dt){
         connectedUsers.add(dt);
     }

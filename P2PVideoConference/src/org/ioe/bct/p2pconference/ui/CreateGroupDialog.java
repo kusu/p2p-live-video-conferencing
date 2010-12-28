@@ -39,7 +39,7 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
     }
 
     public String getGroupName() {
-        return jTextField1.getName();
+        return jTextField1.getText();
     }
 
     public String getGroupPassword() {
@@ -139,7 +139,7 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
         // TODO add your handling code here:
         pgOrganizer.createPeerGroup(getGroupName(),getGroupPassword(),getGroupLoginName());
         confMediator.sendMessage(ConferenceMediator.GROUP_ADDED, this, pgOrganizer);
-        
+        dispose();
         
 }//GEN-LAST:event_jButton1ActionPerformed
 

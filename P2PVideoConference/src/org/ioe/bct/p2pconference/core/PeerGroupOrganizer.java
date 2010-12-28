@@ -16,5 +16,6 @@ import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
 public interface PeerGroupOrganizer {
     public ProtectedPeerGroup createPeerGroup(String name,String password, String loginName);
     public void removePeerGroup(ProtectedPeerGroup p);
-    public ArrayList getAllPeerGroups();
+    public ArrayList<ProtectedPeerGroup> getAllPeerGroups();
+    public void updateAllPeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs);
 }

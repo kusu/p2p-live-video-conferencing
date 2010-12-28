@@ -5,6 +5,7 @@
 
 package org.ioe.bct.p2pconference.core;
 
+import net.jxta.peergroup.PeerGroup;
 import net.jxta.platform.NetworkManager;
 /**
  *
@@ -14,6 +15,11 @@ public class P2PNetworkCore {
     private NetworkManager NManager=null;
 
     private String nodeName="";
+
+    public P2PNetworkCore(String name) {
+        nodeName=name;
+    }
+    
 
     public void setNodeName(String name)
     {
@@ -25,6 +31,7 @@ public class P2PNetworkCore {
         try{
             NManager=new NetworkManager(modeConfig, nodeName);
             NManager.startNetwork();
+            System.out.println("Starting Network...");
         }
         catch(Exception exception)
         {
@@ -38,6 +45,11 @@ public class P2PNetworkCore {
     public void stopNetwork()
     {
         NManager.stopNetwork();
+    }
+
+
+    public PeerGroup getNetPeerGroup() {
+        return NManager.getNetPeerGroup();
     }
   
 }

@@ -52,7 +52,13 @@ import net.jxta.protocol.PeerGroupAdvertisement;
  */
 public class PeerGroupService {
     
-    
+    private ArrayList<PeerGroup> discoveredGroups=new ArrayList<PeerGroup>();
+
+    public PeerGroupService(){
+
+    }
+
+
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
     {
         // - Create the Peer Group by doing the following:
@@ -298,6 +304,8 @@ public class PeerGroupService {
     }
     public ArrayList<PeerGroup> discoverGroups(PeerGroup netPeerGroup)
     {
+
+        System.out.println("Discovering the Peer Groups");
         ArrayList<PeerGroup> peerGroupArrayList=new ArrayList<PeerGroup>();
         DiscoveryService peerGroupsDiscoveryService=null;
         if(netPeerGroup!=null)
@@ -308,7 +316,7 @@ public class PeerGroupService {
             System.exit(1);
         }
         Enumeration localPeerGroupAdvertisementEnumeration = null;
-        PeerGroupAdvertisement newPeerGroupAdvertisement = null;
+//        PeerGroupAdvertisement newPeerGroupAdvertisement = null;
         try {
                 localPeerGroupAdvertisementEnumeration =
                         peerGroupsDiscoveryService.getLocalAdvertisements(DiscoveryService.GROUP, "GID", null);
@@ -327,6 +335,7 @@ public class PeerGroupService {
                }
                 }
         }
+        System.out.println("Total Groups Discovered" +peerGroupArrayList.size());
         return peerGroupArrayList;
        }
 
@@ -436,31 +445,31 @@ public class PeerGroupService {
     }
 //----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
-    public static void main(String args[]) throws PeerGroupException, MalformedURLException, UnknownServiceException
-    {
-        P2PNetworkCore newNetworkManager=new P2PNetworkCore("Test Shell1");
-        newNetworkManager.startNetwork(ConfigMode.ADHOC);
-      // PeerGroup myNetPeerGroup=PeerGroupFactory.newNetPeerGroup();
-       PeerGroupService pgs=new PeerGroupService();
+//    public static void main(String args[]) throws PeerGroupException, MalformedURLException, UnknownServiceException
+//    {
+//        P2PNetworkCore newNetworkManager=new P2PNetworkCore("Test Shell1");
+//        newNetworkManager.startNetwork(ConfigMode.ADHOC);
+//      // PeerGroup myNetPeerGroup=PeerGroupFactory.newNetPeerGroup();
+//       PeerGroupService pgs=new PeerGroupService();
+//
+////        PeerGroup newPeerGrp=pgs.createPeerGroup(newNetworkManager.getNetPeerGroup(), "Video Group", "admin", "admin");
+////        if(newPeerGrp!=null)
+////            System.out.println("Video Group Peer Group Created...");
+////        PeerGroup nextPeerGrp=pgs.createPeerGroup(newNetworkManager.getNetPeerGroup(), "Audio Group", "admin", "admin");
+////        if(nextPeerGrp!=null)
+////            System.out.println("Audio Group Started.............");
+////     //  while(true);
+//       ArrayList<PeerGroup> listPeerGroups=pgs.discoverGroups(newNetworkManager.getNetPeerGroup());
+//       Iterator elementWise=listPeerGroups.iterator();
+//       while(elementWise.hasNext())
+//       {
+//           PeerGroup peerGrp=(PeerGroup)elementWise.next();
+//           System.out.println(peerGrp.getPeerGroupAdvertisement().getName());
+//
+//       }
+//       newNetworkManager.stopNetwork();
 
-//        PeerGroup newPeerGrp=pgs.createPeerGroup(newNetworkManager.getNetPeerGroup(), "Video Group", "admin", "admin");
-//        if(newPeerGrp!=null)
-//            System.out.println("Video Group Peer Group Created...");
-//        PeerGroup nextPeerGrp=pgs.createPeerGroup(newNetworkManager.getNetPeerGroup(), "Audio Group", "admin", "admin");
-//        if(nextPeerGrp!=null)
-//            System.out.println("Audio Group Started.............");
-//     //  while(true);
-       ArrayList<PeerGroup> listPeerGroups=pgs.discoverGroups(newNetworkManager.getNetPeerGroup());
-       Iterator elementWise=listPeerGroups.iterator();
-       while(elementWise.hasNext())
-       {
-           PeerGroup peerGrp=(PeerGroup)elementWise.next();
-           System.out.println(peerGrp.getPeerGroupAdvertisement().getName());
-          
-       }
-       newNetworkManager.stopNetwork();
-
-    }
+//    }
     
 
     
