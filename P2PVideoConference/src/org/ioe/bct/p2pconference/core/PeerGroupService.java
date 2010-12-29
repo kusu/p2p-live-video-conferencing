@@ -6,6 +6,7 @@
 package org.ioe.bct.p2pconference.core;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -56,13 +57,13 @@ import net.jxta.protocol.PeerGroupAdvertisement;
  */
 public class PeerGroupService{
     
+    
     private ArrayList<PeerGroup> discoveredGroups=new ArrayList<PeerGroup>();
-
+    
     public PeerGroupService(){
 
     }
-
-
+    
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
     {
         // - Create the Peer Group by doing the following:
@@ -311,7 +312,7 @@ public class PeerGroupService{
     public ArrayList<PeerGroup> discoverGroups(PeerGroup netPeerGroup)
     {
 
-        System.out.println("Discovering the Peer Groups");
+        System.out.println("Discovering the Peer Groups   " + netPeerGroup.getPeerGroupID().toString());
         ArrayList<PeerGroup> peerGroupArrayList=new ArrayList<PeerGroup>();
         DiscoveryService peerGroupsDiscoveryService=null;
         if(netPeerGroup!=null)
@@ -325,9 +326,52 @@ public class PeerGroupService{
         Enumeration localPeerGroupAdvertisementEnumeration = null;
 //        PeerGroupAdvertisement newPeerGroupAdvertisement = null;
         try {
-            peerGroupsDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.GROUP, "GID", null, 10);
+
+            class RemoteListener implements DiscoveryListener{
+            ArrayList<PeerGroup> peerGroupList=new ArrayList<PeerGroup>();
+            PeerGroup netPeerGroup=null;
+            public RemoteListener(PeerGroup netPG)
+            {
+                netPeerGroup=netPG;
+            }
+            public ArrayList<PeerGroup> getPeerGroupList()
+                {
+                return peerGroupList;
+            }
+            public void discoveryEvent(DiscoveryEvent de) {
+                    Enumeration enumm;
+                    String str;
+                    DiscoveryResponseMsg response=de.getResponse();
+                    enumm=response.getResponses();
+                    while(enumm.hasMoreElements())
+                    {
+                        try {
+                            str = (String) enumm.nextElement();
+                            PeerGroupAdvertisement remotePeerGroupAdv = (PeerGroupAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, new ByteArrayInputStream(str.getBytes()));
+                            peerGroupList.add(netPeerGroup.newGroup(remotePeerGroupAdv));
+
+                        } catch (IOException ex) {
+                            Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
+                        }catch(PeerGroupException pgEx)
+                        {
+                            pgEx.printStackTrace();
+                        }
+                    }
+        }
+
+            }
+
+            RemoteListener remoteListener=new RemoteListener(netPeerGroup);
+           ArrayList<PeerGroup> tempGroupList=remoteListener.getPeerGroupList();
+           Iterator<PeerGroup> itr=tempGroupList.iterator();
+           while(itr.hasNext())
+           {
+                peerGroupArrayList.add(itr.next());
+           }
+           
+            peerGroupsDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.GROUP, null, null, 10,remoteListener);
             localPeerGroupAdvertisementEnumeration =
-                        peerGroupsDiscoveryService.getLocalAdvertisements(DiscoveryService.GROUP, "GID", null);
+                        peerGroupsDiscoveryService.getLocalAdvertisements(DiscoveryService.GROUP, null, null);
                 
             } catch (java.io.IOException e) {
                 System.out.println("Can't Discover Local Adv");
@@ -339,9 +383,7 @@ public class PeerGroupService{
                     System.out.println(pgAdv.toString());
 
                 try {
-                   // PeerGroup pg=PeerGroup.globalRegistry.lookupInstance(pgAdv.getPeerGroupID());
-                    //System.out.println(pg.getPeerGroupName()+"la la la");
-                 peerGroupArrayList.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID()));
+                   peerGroupArrayList.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID()));
                 } catch (PeerGroupException ex) {
                     System.out.println("I M ALSO HERE" + ex.getClass());
                     ex.printStackTrace();
@@ -448,7 +490,7 @@ public class PeerGroupService{
         DiscoveryService disS=peerGroup.getDiscoveryService();
           Enumeration localAds=null;
             try {
-                 localAds=disS.getLocalAdvertisements(DiscoveryService.PEER, "PID", null);
+                 localAds=disS.getLocalAdvertisements(DiscoveryService.PEER, null, null);
             } catch (IOException ex) {
                 Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
             }
