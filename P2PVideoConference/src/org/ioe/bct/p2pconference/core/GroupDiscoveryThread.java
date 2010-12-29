@@ -28,7 +28,7 @@ public class GroupDiscoveryThread extends Thread {
     @Override
     public void run()  {
           ArrayList<PeerGroup> newPeerGroup= peerGroupDiscoveryService.discoverGroups(AppMainFrame.netCOre.getNetPeerGroup());
-          System.out.println("Total gRouops: "+newPeerGroup.size());
+          System.out.println("Total Groups: "+newPeerGroup.size());
          ArrayList<ProtectedPeerGroup> newprotectedGroups=new ArrayList<ProtectedPeerGroup>();
 
          Iterator<PeerGroup> it=newPeerGroup.iterator();

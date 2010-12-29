@@ -18,4 +18,5 @@ public interface PeerGroupOrganizer {
     public void removePeerGroup(ProtectedPeerGroup p);
     public ArrayList<ProtectedPeerGroup> getAllPeerGroups();
     public void updateAllPeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs);
+    public PeerGroupService getPeerGroupService();
 }
