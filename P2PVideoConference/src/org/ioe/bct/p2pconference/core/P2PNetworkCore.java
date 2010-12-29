@@ -15,8 +15,8 @@ public class P2PNetworkCore {
     private NetworkManager NManager=null;
 
     private String nodeName="";
-
-    public P2PNetworkCore(String name) {
+    public P2PNetworkCore(String name)
+    {
         nodeName=name;
     }
     
