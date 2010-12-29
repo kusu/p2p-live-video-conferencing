@@ -71,6 +71,8 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         upperPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         upperPanel.setLayout(new java.awt.BorderLayout());
         add(upperPanel, java.awt.BorderLayout.PAGE_START);
+
+        lowerpanel.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(204, 204, 204), null));
         add(lowerpanel, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
