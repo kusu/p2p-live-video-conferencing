@@ -11,6 +11,7 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import javax.swing.event.ChangeEvent;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.LoginDialog;
 import java.awt.BorderLayout;
@@ -24,6 +25,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.event.ChangeListener;
 import net.jxta.platform.NetworkManager.ConfigMode;
 import org.ioe.bct.p2pconference.core.JXTAPeerGroupOrganizer;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
@@ -121,7 +123,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         this.username=userName;
         this.password=pass;
         createMenus();
-        setBounds(150, 100, 800, 600);
+        setBounds(150, 100, 900, 600);
         
 
         return this;
@@ -140,7 +142,17 @@ public class AppMainFrame extends javax.swing.JFrame {
         
         contactPanel.add(contactListTab,BorderLayout.CENTER);
         jSplitPane1.setDividerLocation(200);
-       
+       contactListTab.addChangeListener(new ChangeListener() {
+
+            public void stateChanged(ChangeEvent e) {
+                if(contactListTab.getSelectedComponent().equals(contListPanel)) {
+                    contListPanel.sendSelectionChangeMsg();
+                }
+                else if(contactListTab.getSelectedComponent().equals(contGroupPanel)) {
+                    contGroupPanel.sendSelectionChangedMessage();
+                }
+            }
+        });
         
     }
 

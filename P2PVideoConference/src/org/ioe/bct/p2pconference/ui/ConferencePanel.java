@@ -14,12 +14,11 @@ package org.ioe.bct.p2pconference.ui;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
+
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+
 
 
 
@@ -40,8 +39,9 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         upperPanel.setVisible(false);
 
         
-
         
+         
+
        
         
     }
@@ -63,6 +63,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     private void initComponents() {
 
         upperPanel = new javax.swing.JPanel();
+        lowerpanel = new javax.swing.JPanel();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("ConferencePanel"));
         setLayout(new java.awt.BorderLayout());
@@ -70,12 +71,14 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         upperPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         upperPanel.setLayout(new java.awt.BorderLayout());
         add(upperPanel, java.awt.BorderLayout.PAGE_START);
+        add(lowerpanel, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
   
     public void receive(String message, Colleague sender, Object body) {
        if(message.equalsIgnoreCase(ConferenceMediator.CONT_SELECTION_CHANGED)) {
-            
+
+           lowerpanel.removeAll();
            if(sender instanceof ContactListPanel) {
               System.out.println("Loading contact info "+sender.getClass());
                upperPanel.removeAll();
@@ -86,7 +89,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                upperPanel.add(uinfo,BorderLayout.CENTER);
                upperPanel.validate();
               
-
+               upperPanel.setVisible(true);
            }
            
            else if(sender instanceof GroupsPanel ) {
@@ -94,13 +97,19 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                 GroupInfoPanel gPanel=new GroupInfoPanel();
                 upperPanel.add(gPanel,BorderLayout.CENTER);
                 upperPanel.validate();
-
+                upperPanel.setVisible(true);
            }
+             
+           lowerpanel.add(sendTextMsgPanel);
+           lowerpanel.validate();
+          
            
-           upperPanel.setVisible(true);
+          
        }
     }
+    private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel lowerpanel;
     private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
      private ConferenceManager confManager;

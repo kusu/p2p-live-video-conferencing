@@ -106,10 +106,14 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
 
     private void groupsListUIValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_groupsListUIValueChanged
         // TODO add your handling code here:
+        
+        sendSelectionChangedMessage();
+    }//GEN-LAST:event_groupsListUIValueChanged
+
+    public void sendSelectionChangedMessage() {
         Object dataItem=groupsListUI.getSelectedValue();
         confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this, dataItem);
-
-    }//GEN-LAST:event_groupsListUIValueChanged
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -125,13 +129,13 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
             PeerGroupOrganizer orgn=(PeerGroupOrganizer)body;
             
             peerGroupsList=orgn.getAllPeerGroups();
-            System.out.println("TOTAL PEER GROUPS"+peerGroupsList.size());
+            System.out.println("TOTAL PEER GROUPS "+peerGroupsList.size());
             updateGroupList();
         }
     }
 
     private void updateGroupList() {
-        peerListUIPanelList.removeAll(peerGroupsList);
+        peerListUIPanelList=new ArrayList<JPanel>();
         Iterator it=peerGroupsList.iterator();
 
         while (it.hasNext()) {
