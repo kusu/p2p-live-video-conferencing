@@ -59,11 +59,8 @@ public class PeerGroupService{
     
     
     private ArrayList<PeerGroup> discoveredGroups=new ArrayList<PeerGroup>();
-    
-    public PeerGroupService(){
-
-    }
-    
+    private ArrayList<PeerGroupAdvertisement> myCreatedGroups=new ArrayList<PeerGroupAdvertisement>();
+       
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
     {
         // - Create the Peer Group by doing the following:
@@ -86,16 +83,17 @@ public class PeerGroupService{
             rootPeerGroupDiscoveryService.remotePublish(
                     passwdMembershipModuleImplAdv,
                     PeerGroup.DEFAULT_EXPIRATION);
-        } catch (java.io.IOException e) {
+        }
+        catch (java.io.IOException e) {
             System.err.println("Can't Publish passwdMembershipModuleImplAdv");
             System.exit(1);
         }
         // Now, Create the Peer Group Advertisement
         newPeerGroupAdvertisement =
-
-        this.createPeerGroupAdvertisement(passwdMembershipModuleImplAdv,groupName,login,passwd);
+                this.createPeerGroupAdvertisement(passwdMembershipModuleImplAdv,groupName,login,passwd);
         // Publish it in the parent peer group
         System.out.println(newPeerGroupAdvertisement.toString());
+        myCreatedGroups.add(newPeerGroupAdvertisement);
         try {
             rootPeerGroupDiscoveryService.publish(
                         newPeerGroupAdvertisement,
@@ -109,7 +107,7 @@ public class PeerGroupService{
         catch (java.io.IOException e) {
             System.err.println("Can't Publish satellaPeerGroupAdvertisement");
             System.exit(1);
-            }
+        }
         // Finally Create the Peer Group
         if (newPeerGroupAdvertisement == null) {
                 System.err.println("satellaPeerGroupAdvertisement is null");
@@ -126,17 +124,25 @@ public class PeerGroupService{
 
     }
 
+    public void publishAdvertisement(PeerGroup netPeerGroup)
+    {
+        DiscoveryService rootPeerGroupDiscoveryService =
+                netPeerGroup.getDiscoveryService();
+        if(!myCreatedGroups.isEmpty())
+        {
+           Iterator<PeerGroupAdvertisement> itr=myCreatedGroups.iterator();
+           while(itr.hasNext())
+           {
+                rootPeerGroupDiscoveryService.remotePublish(
+                        itr.next(),
+                        PeerGroup.DEFAULT_EXPIRATION);
+           }
+        }
+    }
+
     private PeerGroupAdvertisement createPeerGroupAdvertisement(ModuleImplAdvertisement passwdMembershipModuleImplAdv,String groupName,String login,String passwd)
     {
         PeerGroupAdvertisement newPeerGroupAdvertisement=(PeerGroupAdvertisement)AdvertisementFactory.newAdvertisement(PeerGroupAdvertisement.getAdvertisementType());
-        // Instead of creating a new group ID each time, by using the
-        // line below
-        // satellaPeerGroupAdvertisement.setPeerGroupID
-        // (IDFactory.newPeerGroupID());
-        // I use a fixed ID so that each time I start PrivatePeerGroup,
-        // it creates the same Group
-
-      //  newPeerGroupAdvertisement.setPeerGroupID(satellaPeerGroupID);//dont use fixed value for id//see later
         newPeerGroupAdvertisement.setPeerGroupID(IDFactory.newPeerGroupID());
         newPeerGroupAdvertisement.setModuleSpecID(
         passwdMembershipModuleImplAdv.getModuleSpecID());
@@ -165,17 +171,9 @@ public class PeerGroupService{
         return newPeerGroupAdvertisement;
         
     }
+    
     private ModuleImplAdvertisement createPasswdMembershipPeerGroupModuleImplAdv(PeerGroup rootPeerGroup) throws MalformedURLException, UnknownServiceException
     {
-        // Create a ModuleImpl Advertisement for the Passwd
-        // Membership Service Take a allPurposePeerGroupImplAdv
-        // ModuleImplAdvertisement parameter to
-        // Clone some of its fields. It is easier than to recreate
-        // everything from scratch
-        // Try to locate where the PasswdMembership is within this
-        // ModuleImplAdvertisement.
-        // For a PeerGroup Module Impl, the list of the services
-        // (including Membership) are located in the Param section
         ModuleImplAdvertisement allPurposePeerGroupImplAdv=null;
         try {
             allPurposePeerGroupImplAdv=rootPeerGroup.getAllPurposePeerGroupImplAdvertisement();
@@ -187,16 +185,9 @@ public class PeerGroupService{
         ModuleImplAdvertisement passwdMembershipPeerGroupModuleImplAdv = allPurposePeerGroupImplAdv;
         ModuleImplAdvertisement passwdMembershipServiceModuleImplAdv = null;
         StdPeerGroupParamAdv passwdMembershipPeerGroupParamAdv = null;
-        //try {
             passwdMembershipPeerGroupParamAdv =
                 new StdPeerGroupParamAdv(
                 allPurposePeerGroupImplAdv.getParam());
-       // }
-       // catch (PeerGroupException e) {
-       //         System.err.println("Can't execute: StdPeerGroupParamAdv passwdMembershipPeerGroupParamAdv =" +
-       //         "new StdPeerGroupParamAdv (allPurposePeerGroupImplAdv.getParam());");
-       //         System.exit(1);
-       // }
         HashMap allPurposePeerGroupServicesHashtable = (HashMap) passwdMembershipPeerGroupParamAdv.getServices();
         Iterator allPurposePeerGroupServicesEnumeration = allPurposePeerGroupServicesHashtable.keySet().iterator();
         boolean membershipServiceFound=false;
@@ -229,9 +220,6 @@ public class PeerGroupService{
         passwdMembershipPeerGroupModuleImplAdv.setModuleSpecID(IDFactory.newModuleSpecID(
         passwdMembershipPeerGroupModuleImplAdv.getModuleSpecID().getBaseClass()));
         } else {
-//        ID passwdGrpModSpecID= ID.create( URI.create(
-//        "urn" + "jxta:uuid-"+
-//        "DeadBeefDeafBabaFeedBabe00000001" +"04" +"06"));
            ID  passwdGrpModSpecID = passwdGrpModSpecID =
                 IDFactory.fromURL(new URL("urn","","jxta:uuid-"+
                             "DeadBeefDeafBabaFeedBabe00000001" +"04" +"06"));
@@ -309,6 +297,9 @@ public class PeerGroupService{
         }
         return newPeerGroup;
     }
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
     public ArrayList<PeerGroup> discoverGroups(PeerGroup netPeerGroup)
     {
 
@@ -324,7 +315,7 @@ public class PeerGroupService{
             System.exit(1);
         }
         Enumeration localPeerGroupAdvertisementEnumeration = null;
-//        PeerGroupAdvertisement newPeerGroupAdvertisement = null;
+
         try {
 
             class RemoteListener implements DiscoveryListener{
@@ -384,19 +375,18 @@ public class PeerGroupService{
 
                 try {
                    peerGroupArrayList.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID()));
-                } catch (PeerGroupException ex) {
-                    System.out.println("I M ALSO HERE" + ex.getClass());
+                }
+                catch (PeerGroupException ex) {
                     ex.printStackTrace();
-                    
-                    //Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
-               }
+                }
                 }
         }
         System.out.println("Total Groups Discovered" +peerGroupArrayList.size());
         return peerGroupArrayList;
        }
 
-
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
     public void joinPeerGroup(PeerGroup peerGroup, String login, String passwd)
     {
         // Get the Heavy Weight Paper for the resume
@@ -436,6 +426,9 @@ public class PeerGroupService{
             e.printStackTrace();
         }
     }
+
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
     private void completeAuth(Authenticator auth, String login,
             String passwd) throws Exception {
         Method[] methods = auth.getClass().getMethods();
@@ -484,6 +477,9 @@ public class PeerGroupService{
     }
 }
 
+//----------------------------------------------------------------------------------------------------//
+//----------------------------------------------------------------------------------------------------//
+
     public ArrayList<PeerAdvertisement> discoverPeerInGroup(PeerGroup peerGroup)
     {
         ArrayList<PeerAdvertisement> peerAdvArrayList=new ArrayList<PeerAdvertisement>();
@@ -512,8 +508,6 @@ public class PeerGroupService{
       NNCore.startNetwork(ConfigMode.ADHOC);
       PeerGroupService ps=new PeerGroupService();
       ArrayList<PeerGroup> peerArray=ps.discoverGroups(NNCore.getNetPeerGroup());
-      System.out.println("I am hereFIRST");
-
       Iterator iter=peerArray.iterator();
       while(iter.hasNext())
       {
@@ -521,39 +515,6 @@ public class PeerGroupService{
           System.out.println(pgrp.getPeerGroupName());
       }
 
-//      DiscoveryService ds=NNCore.getNetworkManager().getNetPeerGroup().getDiscoveryService();
-//      ps.start(ds);
-//      ds.getRemoteAdvertisements(null, DiscoveryService.GROUP, null, null, 1,ps);
-//      System.out.println("I am hereSECOND");
-//
-//      while(true)
-//        {
-//            try {
-//                Thread.sleep(6000);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//              System.out.println("I am hereTHIRD");
-//
-//            ds.getRemoteAdvertisements(null, DiscoveryService.GROUP, null, null, 1,ps);
-//        }
     }
-//    public void start(DiscoveryService temp)
-//    {
-//        temp.addDiscoveryListener(this);
-//    }
-//    public void discoveryEvent(DiscoveryEvent event) {
-//        DiscoveryResponseMsg response = event.getResponse();
-//
-//        Enumeration<Advertisement> advs=response.getAdvertisements();
-//        PeerGroupAdvertisement adv=null;
-//        while(advs.hasMoreElements())
-//        {
-//            adv=(PeerGroupAdvertisement)advs.nextElement();
-//            System.out.println(adv.getName());
-//        }
-//        //throw new UnsupportedOperationException("Not supported yet.");
-//    }
-//
     
 }

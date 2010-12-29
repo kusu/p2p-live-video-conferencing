@@ -19,7 +19,7 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
 
     private ArrayList<ProtectedPeerGroup>  peerGroups =new ArrayList<ProtectedPeerGroup>();
 
-
+    private PeerGroupService service=new PeerGroupService();
     public JXTAPeerGroupOrganizer(){}
     public JXTAPeerGroupOrganizer(ArrayList<ProtectedPeerGroup> pg){
         peerGroups=pg;
@@ -27,7 +27,6 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
 
     public ProtectedPeerGroup createPeerGroup(String name, String password,String loginName) throws Exception{
         
-        PeerGroupService service =new PeerGroupService();
         PeerGroup newPeerGroup=service.createPeerGroup(AppMainFrame.netCOre.getNetPeerGroup(), name, loginName, password);
         ProtectedPeerGroup newProtectedPG=new ProtectedPeerGroup(name, password,loginName, newPeerGroup);
         peerGroups.add(newProtectedPG);
@@ -35,6 +34,10 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
         return newProtectedPG;
     }
 
+    public PeerGroupService getPeerGroupService()
+    {
+        return service;
+    }
     public ArrayList<ProtectedPeerGroup> getAllPeerGroups() {
         return peerGroups;
     }
