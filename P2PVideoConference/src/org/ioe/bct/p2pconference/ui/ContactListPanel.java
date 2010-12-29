@@ -140,11 +140,14 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
         // TODO add your handling code here:
-        Object dataItem=jList1.getSelectedValue();
-          conferenceMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED,this,dataItem);
+        sendSelectionChangeMsg();
     }//GEN-LAST:event_jList1ValueChanged
 
-   
+
+    public void sendSelectionChangeMsg() {
+        Object dataItem=jList1.getSelectedValue();
+          conferenceMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED,this,dataItem);
+    }
 
     public void display() {
        //do nothing java listmodel handles this
