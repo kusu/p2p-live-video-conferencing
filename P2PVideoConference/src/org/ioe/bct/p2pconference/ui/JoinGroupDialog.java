@@ -148,19 +148,17 @@ public class JoinGroupDialog extends javax.swing.JDialog implements Colleague{
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         String message="";
+        JOptionPane.showMessageDialog(this, pPeerGroup.getGroupName());
         if(loginTextField.getText().isEmpty() || passwordTextField.getPassword().length==0)
         {
             message=EMPTY_FIELDS;
         }
-//        else if(!(loginTextField.getText().equals(login) && passwordTextField.getText().equals(password)))
-//        {
-//            message=WRONG_AUTHENTICATION;
-//        }
-        else
+       else
         {
             if(pPeerGroup.getPeerGroup()==null)
                 JOptionPane.showMessageDialog(this, "Null value of peerGroup");
             peerGroupService.joinPeerGroup(pPeerGroup.getPeerGroup(), loginTextField.getText(), passwordTextField.getText());
+            message=peerGroupService.getMessage();
         }
         errorMessageLabel.setText(message);
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -202,7 +200,8 @@ public class JoinGroupDialog extends javax.swing.JDialog implements Colleague{
        // throw new UnsupportedOperationException("Not supported yet.");
         if(message.equals(ConferenceMediator.JOIN_GROUP)){
             this.setVisible(true);
-            pPeerGroup=(ProtectedPeerGroup)body;
+            ProtectedPeerGroup pGP=(ProtectedPeerGroup)body;
+            pPeerGroup=new ProtectedPeerGroup(pGP.getGroupName(), pGP.getPassword(), pGP.getGroupLoginName(),pGP.getPeerGroup());
             setAuthenticationParameter(pPeerGroup);
 
         }
@@ -211,7 +210,7 @@ public class JoinGroupDialog extends javax.swing.JDialog implements Colleague{
     {
         login=pPGRP.getGroupLoginName();
         password=pPGRP.getPassword();
-        JOptionPane.showMessageDialog(this, login +" & "+password);
+        
 
     }
     public void setMediator(Mediator m) {
