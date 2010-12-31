@@ -65,6 +65,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
      }
 
     public void initList(){
+        //Read data from database(Contact List)
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JPanel kPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
         kPanel.add(new JLabel("Kusum"));

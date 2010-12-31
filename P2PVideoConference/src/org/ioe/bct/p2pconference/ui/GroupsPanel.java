@@ -75,8 +75,16 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
     }
 
       private void joinSelctedGroup() {
+         
         System.out.println("Joining the peer group...");
-        
+        joinGroupDialog=new JoinGroupDialog(null, true);
+        joinGroupDialog.setMediator(confMediator);
+        int getSelectedDataItem=groupsListUI.getSelectedIndex();
+    //    JOptionPane.showMessageDialog(this, getSelectedDataItem);
+        Iterator<ProtectedPeerGroup> itr=peerGroupsList.iterator();
+        ProtectedPeerGroup selectedPeerGroup=peerGroupsList.get(getSelectedDataItem);
+    //    JOptionPane.showMessageDialog(this,selectedPeerGroup.getGroupName());
+        confMediator.sendMessage(ConferenceMediator.JOIN_GROUP, this, selectedPeerGroup);
       }
 
       private void getGroupInfo() {
@@ -181,7 +189,7 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
     private javax.swing.JList groupsListUI;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
+    private JoinGroupDialog joinGroupDialog;
     public void receive(String message, Colleague sender, Object body) {
 //        throw new UnsupportedOperationException("Not supported yet.");
        
@@ -193,6 +201,8 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
             System.out.println("TOTAL PEER GROUPS "+peerGroupsList.size());
             updateGroupList();
         }
+
+        
     }
 
     private void updateGroupList() {
@@ -236,5 +246,6 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
     public PeerGroupService getPeerGroupService() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
  
 }

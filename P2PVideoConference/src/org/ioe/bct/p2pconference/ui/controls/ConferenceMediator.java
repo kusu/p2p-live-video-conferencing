@@ -17,7 +17,7 @@ public class ConferenceMediator implements Mediator {
 
     public static final String CONT_SELECTION_CHANGED="contactselectchanged";
     public static final String GROUP_ADDED="group added";
-
+    public static final String JOIN_GROUP="join group request";
     private ArrayList<Colleague> colleagueList;
     
     public ConferenceMediator(){
