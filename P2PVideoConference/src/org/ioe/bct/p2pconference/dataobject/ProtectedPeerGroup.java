@@ -24,7 +24,7 @@ public class ProtectedPeerGroup {
         peerGroupName=name;
         peerGroupPassword=password;
         peerGroup=pg;
-        loginName=peerGroupLoginName;
+        peerGroupLoginName=loginName;
 
     }
 
@@ -36,6 +36,7 @@ public class ProtectedPeerGroup {
     public String getPassword() {return peerGroupPassword;}
     public PeerGroup getPeerGroup() {return peerGroup;}
     public String getGroupName() {return peerGroupName;}
+    public String getGroupLoginName(){ return peerGroupLoginName;}
     public ArrayList getConnectedUsers() {return connectedUsers;}
     public void setConnectUsers(ArrayList users) {this.connectedUsers=users;}
     public void addConnectedUser(Object dt){
