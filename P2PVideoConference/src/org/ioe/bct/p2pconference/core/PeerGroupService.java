@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import net.jxta.credential.AuthenticationCredential;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
@@ -60,7 +61,7 @@ public class PeerGroupService{
     
     private ArrayList<PeerGroup> discoveredGroups=new ArrayList<PeerGroup>();
     private ArrayList<PeerGroupAdvertisement> myCreatedGroups=new ArrayList<PeerGroupAdvertisement>();
-       
+    private String message="";
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
     {
         // - Create the Peer Group by doing the following:
@@ -413,6 +414,8 @@ public class PeerGroupService{
         if (!auth.isReadyForJoin()) {
             System.out.println("Failure in authentication.");
             System.out.println("Group was not joined. Does not know how to complete authenticator");
+            //JOptionPane.showMessageDialog(null, "Group was not joined. Login was incorrect.");
+            message="Group was not joined. Login was incorrect";
         }
         // I got the Job, Join the company
         // Alias I the authentication I completed was accepted,
@@ -423,10 +426,14 @@ public class PeerGroupService{
         catch (Exception e) {
             System.out.println("Failure in authentication.");
             System.out.println("Group was not joined. Login was incorrect.");
+            message="Group was not joined. Login was incorrect";
             e.printStackTrace();
         }
     }
-
+public String getMessage()
+    {
+    return message;
+}
 //----------------------------------------------------------------------------------------------------//
 //----------------------------------------------------------------------------------------------------//
     private void completeAuth(Authenticator auth, String login,
