@@ -159,14 +159,14 @@ public class AppMainFrame extends javax.swing.JFrame {
     public void createNetworkCore(String name) {
         netCOre=new P2PNetworkCore(name);
         netCOre.startNetwork(ConfigMode.ADHOC);
-        System.out.println("crating network core");
+        System.out.println("creating network core");
          contGroupPanel.startGroupDiscovery();
     }
 
     
 
     private void loadConferencePanel() {
-         appConfPanel=new ConferencePanel();
+        appConfPanel=new ConferencePanel();
         appConfPanel.setMediator(confMediator);
        
         contactDetialsPanel.add(appConfPanel,BorderLayout.CENTER);
