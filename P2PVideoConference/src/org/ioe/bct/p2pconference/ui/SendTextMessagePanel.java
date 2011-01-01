@@ -12,6 +12,9 @@
 package org.ioe.bct.p2pconference.ui;
 
 import java.awt.event.KeyEvent;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
@@ -77,7 +80,10 @@ public class SendTextMessagePanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jTextArea1.setColumns(20);
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        jTextArea1.setColumns(30);
+        jTextArea1.setLineWrap(true);
         jTextArea1.setRows(2);
         jTextArea1.setDoubleBuffered(true);
         jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -122,11 +128,18 @@ public class SendTextMessagePanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         String msgTextt=jTextArea1.getText();
         jTextArea1.setText("");
+       
         mediator.sendMessage(ConferenceMediator.SEND_TEXT_MSG, null, msgTextt);
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void jTextArea1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyReleased
         // TODO add your handling code here:
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER) {
+             String msgTextt=jTextArea1.getText();
+        
+            mediator.sendMessage(ConferenceMediator.SEND_TEXT_MSG, null, msgTextt);
+        }
+
     }//GEN-LAST:event_jTextArea1KeyReleased
 
 
