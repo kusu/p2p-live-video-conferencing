@@ -238,12 +238,20 @@ public class AppMainFrame extends javax.swing.JFrame {
         return contactList;
     }
 
+    public static String getUserName() {
+        return username;
+    }
+
+    public static String getPassword() {
+        return password;
+    }
+
     private PeerGroupOrganizer groupOrganizer;
     public static P2PNetworkCore netCOre;
     private ConferencePanel appConfPanel;
     private Mediator confMediator=new ConferenceMediator();
-    private String username;
-    private String password;
+    private static String username;
+    private static String password;
     private static LoginDialog loginBox;
     private JMenuBar menubar;
     private HashMap menuHash=new HashMap();
