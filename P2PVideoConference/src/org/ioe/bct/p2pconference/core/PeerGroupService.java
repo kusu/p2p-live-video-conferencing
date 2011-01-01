@@ -494,6 +494,38 @@ public String getMessage()
           Enumeration localAds=null;
             try {
                  localAds=disS.getLocalAdvertisements(DiscoveryService.PEER, null, null);
+
+
+                 class RemoteListener implements DiscoveryListener{
+                 private ArrayList<PeerAdvertisement> peerAdvList=new ArrayList<PeerAdvertisement>();
+
+                    public ArrayList<PeerAdvertisement> getPeerAdvList()
+                     {
+                        return peerAdvList;
+                    }
+
+                    public void discoveryEvent(DiscoveryEvent de) {
+                       // throw new UnsupportedOperationException("Not supported yet.");
+                       DiscoveryResponseMsg response=de.getResponse();
+                       Enumeration enumm=response.getResponses();
+                       String str="";
+                       while(enumm.hasMoreElements())
+                       {
+                        try {
+                            str = (String) enumm.nextElement();
+                            PeerAdvertisement remotePeerAdv = (PeerAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, new ByteArrayInputStream(str.getBytes()));
+                            peerAdvList.add(remotePeerAdv);
+                        } catch (IOException ex) {
+                            Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                       }
+                    }
+
+                 }
+                 
+                 RemoteListener remoteListener=new RemoteListener();
+                 disS.getRemoteAdvertisements(null,DiscoveryService.PEER, null, null, 10,remoteListener);
+                 peerAdvArrayList=remoteListener.getPeerAdvList();
             } catch (IOException ex) {
                 Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
             }
