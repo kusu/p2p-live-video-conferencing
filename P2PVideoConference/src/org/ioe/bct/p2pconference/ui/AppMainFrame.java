@@ -34,6 +34,7 @@ import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
 import org.ioe.bct.p2pconference.prototype.patterns.observer.Subject;
+import org.ioe.bct.p2pconference.ui.controls.GroupListener;
 
 /**
  *
@@ -71,17 +72,30 @@ public class AppMainFrame extends javax.swing.JFrame {
                 createGroupDialogActionHandler();
             }
         });
+        JMenu helpMenu=new JMenu("Help");
+        JMenuItem aboutItem=new JMenuItem("About");
+        helpMenu.add(aboutItem);
+        helpMenu.addActionListener(new ActionListener() {
 
-
+            public void actionPerformed(ActionEvent e) {
+                aboutMenuActionHandler();
+            }
+        });
 
         contactMenu.add(addContactMenu);
         contactMenu.add(createGroupMenu);
 
         setJMenuBar(menubar);
         menubar.add(contactMenu);
+        menubar.add(helpMenu);
         menuHash.put("contacts",contactMenu);
         
     }
+
+    private void aboutMenuActionHandler() {
+
+    }
+
 
     private void createGroupDialogActionHandler() {
          
@@ -154,13 +168,16 @@ public class AppMainFrame extends javax.swing.JFrame {
             }
         });
         
+     
+        
     }
 
     public void createNetworkCore(String name) {
         netCOre=new P2PNetworkCore(name);
         netCOre.startNetwork(ConfigMode.ADHOC);
         System.out.println("creating network core");
-         contGroupPanel.startGroupDiscovery();
+        GroupListener myGroupListener=contGroupPanel;
+        groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();
     }
 
     
@@ -221,7 +238,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         return contactList;
     }
 
-    private PeerGroupOrganizer groupOrganizer=new JXTAPeerGroupOrganizer();
+    private PeerGroupOrganizer groupOrganizer;
     public static P2PNetworkCore netCOre;
     private ConferencePanel appConfPanel;
     private Mediator confMediator=new ConferenceMediator();

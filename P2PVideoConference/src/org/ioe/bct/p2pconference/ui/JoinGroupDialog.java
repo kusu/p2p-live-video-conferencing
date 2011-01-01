@@ -13,23 +13,31 @@ package org.ioe.bct.p2pconference.ui;
 import javax.swing.JOptionPane;
 import org.ioe.bct.p2pconference.core.PeerGroupService;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 /**
  *
  * @author Administrator
  */
-public class JoinGroupDialog extends javax.swing.JDialog implements Colleague{
+public class JoinGroupDialog extends javax.swing.JDialog {
 
     private final String EMPTY_FIELDS="Please fill in all the values.";
     private final String WRONG_AUTHENTICATION="Incorrect Password!";
     private PeerGroupService peerGroupService;
+    private ProtectedPeerGroup pPeerGroup;
+    private Mediator confMediator;
+    private String login;
+    private String password;
     /** Creates new form JoinGroupDialog */
-    public JoinGroupDialog(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+    public JoinGroupDialog(java.awt.Frame owner,ProtectedPeerGroup pg) {
+        super(owner,true);
+        setTitle("Join Group");
         initComponents();
         peerGroupService=new PeerGroupService();
+        pPeerGroup=pg;
+    }
+    public void setMediator(Mediator m) {
+        this.confMediator=m;
     }
 
     /** This method is called from within the constructor to
@@ -155,31 +163,30 @@ public class JoinGroupDialog extends javax.swing.JDialog implements Colleague{
         }
        else
         {
-            if(pPeerGroup.getPeerGroup()==null)
+            if(pPeerGroup.getPeerGroup()==null) {
                 JOptionPane.showMessageDialog(this, "Null value of peerGroup");
+                return;
+            }
             peerGroupService.joinPeerGroup(pPeerGroup.getPeerGroup(), loginTextField.getText(), passwordTextField.getText());
             message=peerGroupService.getMessage();
+            confMediator.sendMessage(ConferenceMediator.JOIN_GROUP,null, null);
+            
         }
         errorMessageLabel.setText(message);
     }//GEN-LAST:event_jButton1ActionPerformed
+    
+    private void setAuthenticationParameter(ProtectedPeerGroup pPGRP)
+    {
+        login=pPGRP.getGroupLoginName();
+        password=pPGRP.getPassword();
 
+
+    }
+   
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                JoinGroupDialog dialog = new JoinGroupDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel authenticationPanel;
     private javax.swing.JLabel errorMessageLabel;
@@ -191,32 +198,8 @@ public class JoinGroupDialog extends javax.swing.JDialog implements Colleague{
     private javax.swing.JPasswordField passwordTextField;
     // End of variables declaration//GEN-END:variables
     //Variables declartion - Modifiable
-    private ProtectedPeerGroup pPeerGroup;
-    private Mediator confMediator;
-    private String login;
-    private String password;
+    
     //End of variable declaration
-    public void receive(String message, Colleague sender, Object body) {
-       // throw new UnsupportedOperationException("Not supported yet.");
-        if(message.equals(ConferenceMediator.JOIN_GROUP)){
-            this.setVisible(true);
-            ProtectedPeerGroup pGP=(ProtectedPeerGroup)body;
-            pPeerGroup=new ProtectedPeerGroup(pGP.getGroupName(), pGP.getPassword(), pGP.getGroupLoginName(),pGP.getPeerGroup());
-            setAuthenticationParameter(pPeerGroup);
-
-        }
-    }
-    private void setAuthenticationParameter(ProtectedPeerGroup pPGRP)
-    {
-        login=pPGRP.getGroupLoginName();
-        password=pPGRP.getPassword();
-        
-
-    }
-    public void setMediator(Mediator m) {
-        m.addColleague(this);
-        confMediator=m;
-       // throw new UnsupportedOperationException("Not supported yet.");
-    }
+    
 
 }

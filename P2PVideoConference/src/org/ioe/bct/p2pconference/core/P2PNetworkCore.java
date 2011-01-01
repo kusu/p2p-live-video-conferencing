@@ -26,6 +26,10 @@ public class P2PNetworkCore {
         nodeName=name;
     }
 
+    public String getNodeName() {
+        return nodeName;
+    }
+
     public void startNetwork(NetworkManager.ConfigMode modeConfig)
     {
         try{

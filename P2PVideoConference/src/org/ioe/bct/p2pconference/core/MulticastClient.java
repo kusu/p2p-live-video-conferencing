@@ -7,7 +7,6 @@ package org.ioe.bct.p2pconference.core;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

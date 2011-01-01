@@ -68,9 +68,9 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
         //Read data from database(Contact List)
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JPanel kPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        kPanel.add(new JLabel("Kusum"));
+        kPanel.add(new JLabel("kusu"));
         JPanel aPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        aPanel.add(new JLabel("Asim"));
+        aPanel.add(new JLabel("admin"));
         contactArray.add(kPanel);
         contactArray.add(aPanel);
         
@@ -146,6 +146,9 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
 
 
     public void sendSelectionChangeMsg() {
+        if(jList1.getSelectedIndex()<0) {
+            return;
+        }
         Object dataItem=jList1.getSelectedValue();
           conferenceMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED,this,dataItem);
     }
