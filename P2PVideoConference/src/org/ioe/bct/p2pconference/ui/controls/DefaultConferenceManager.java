@@ -7,8 +7,8 @@ package org.ioe.bct.p2pconference.ui.controls;
 
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMode;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
-import org.ioe.bct.p2pconference.prototype.patterns.observer.Observer;
-import org.ioe.bct.p2pconference.prototype.patterns.observer.Subject;
+import org.ioe.bct.p2pconference.patterns.observer.Observer;
+import org.ioe.bct.p2pconference.patterns.observer.Subject;
 import org.ioe.bct.p2pconference.utils.Notification;
 
 /**

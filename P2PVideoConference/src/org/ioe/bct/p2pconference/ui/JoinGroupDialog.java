@@ -10,10 +10,13 @@
  */
 
 package org.ioe.bct.p2pconference.ui;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import net.jxta.protocol.PeerAdvertisement;
+import net.jxta.protocol.PeerGroupAdvertisement;
 import org.ioe.bct.p2pconference.core.PeerGroupService;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 /**
  *
@@ -167,10 +170,18 @@ public class JoinGroupDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "Null value of peerGroup");
                 return;
             }
-            peerGroupService.joinPeerGroup(pPeerGroup.getPeerGroup(), loginTextField.getText(), passwordTextField.getText());
-            message=peerGroupService.getMessage();
-            confMediator.sendMessage(ConferenceMediator.JOIN_GROUP,null, null);
+           
+            peerGroupService.joinPeerGroup(pPeerGroup.getPeerGroup(), 
+                    loginTextField.getText(), passwordTextField.getText());
+           
             
+            ArrayList<PeerAdvertisement> advList=peerGroupService.discoverPeerInGroup(pPeerGroup.getPeerGroup());
+            pPeerGroup.setConnectUsers(advList);
+
+            message=peerGroupService.getMessage();
+            setVisible(false);
+            confMediator.sendMessage(ConferenceMediator.JOIN_GROUP,null, pPeerGroup);
+            dispose();
         }
         errorMessageLabel.setText(message);
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -182,7 +193,8 @@ public class JoinGroupDialog extends javax.swing.JDialog {
 
 
     }
-   
+
+    
     /**
     * @param args the command line arguments
     */

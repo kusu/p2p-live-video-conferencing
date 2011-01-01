@@ -32,38 +32,53 @@ public class GroupDiscoveryThread implements Runnable {
        while (true) {
           ArrayList<PeerGroup> newPeerGroup= peerGroupDiscoveryService.discoverGroups(AppMainFrame.netCOre.getNetPeerGroup());
           System.out.println("Total Groups: "+newPeerGroup.size());
-         ArrayList<ProtectedPeerGroup> newprotectedGroups=new ArrayList<ProtectedPeerGroup>();
+         ArrayList<ProtectedPeerGroup> newprotectedGroups=organizer.getAllPeerGroups();
 
          Iterator<PeerGroup> it=newPeerGroup.iterator();
          while(it.hasNext()) {
              PeerGroup current=it.next();
+             if(checkForExistence(current, organizer.getAllPeerGroups())) {
+                 continue;
+             }
+            else {
              String peerGroupName=current.getPeerGroupName();
              ProtectedPeerGroup currentProtectedPeerGrp=new ProtectedPeerGroup(peerGroupName,"","",current);
              ArrayList<PeerAdvertisement> pperList=peerGroupDiscoveryService.discoverPeerInGroup(current);
-             Iterator<PeerAdvertisement> peerListIterator=pperList.iterator();
-
-             ArrayList nameList=new ArrayList();
-             while(peerListIterator.hasNext()){
-                 PeerAdvertisement adv=peerListIterator.next();
-                 nameList.add(adv.getName());
-             }
-            currentProtectedPeerGrp.setConnectUsers(nameList);
-            newprotectedGroups.add(currentProtectedPeerGrp);
-
-            organizer.updateAllPeerGroups(newprotectedGroups);
+             currentProtectedPeerGrp.setConnectUsers(pperList);
+             newprotectedGroups.add(currentProtectedPeerGrp);
+             organizer.updateAllPeerGroups(newprotectedGroups);
+            
          }
-         try {
+           }
+         sleep();
+        }
+         
+    }
+
+    private void sleep() {
+        try {
              Thread.sleep(10000);
          }
          catch (InterruptedException e){
              e.printStackTrace();
          }
         }
-    }
+    
 
     public void start() {
         currentThread=new Thread(this);
         currentThread.start();
+    }
+
+    public boolean checkForExistence(PeerGroup pg, ArrayList<ProtectedPeerGroup> pgList) {
+        Iterator<ProtectedPeerGroup> it=pgList.iterator();
+        while (it.hasNext()) {
+            PeerGroup current=it.next().getPeerGroup();
+            if(pg.getPeerGroupID().equals(current.getPeerGroupID())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

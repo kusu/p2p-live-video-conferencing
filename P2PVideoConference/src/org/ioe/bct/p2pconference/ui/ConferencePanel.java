@@ -17,8 +17,9 @@ import java.awt.BorderLayout;
 import javax.swing.BorderFactory;
 
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
+import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 
 
 
@@ -89,7 +90,9 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
            
            else if(sender instanceof GroupsPanel ) {
                 upperPanel.removeAll();
-                GroupInfoPanel gPanel=new GroupInfoPanel();
+
+                ProtectedPeerGroup selectedGroup=(ProtectedPeerGroup)body;
+                gPanel=new GroupInfoPanel(selectedGroup);
                 upperPanel.add(gPanel,BorderLayout.CENTER);
                 upperPanel.validate();
                 upperPanel.setVisible(true);
@@ -103,8 +106,16 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
            
           
        }
+
+        else if (message.equalsIgnoreCase(ConferenceMediator.JOIN_GROUP)) {
+            System.out.println("Group Joined successfully....");
+            gPanel.updateComponents();
+
+        }
+
     }
-    private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();;
+    private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();
+    private GroupInfoPanel gPanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel lowerpanel;
     private javax.swing.JPanel upperPanel;

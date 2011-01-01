@@ -7,9 +7,9 @@ package org.ioe.bct.p2pconference.core;
 
 
 import org.ioe.bct.p2pconference.dataobject.Request;
-import org.ioe.bct.p2pconference.prototype.patterns.observer.DisplayElement;
-import org.ioe.bct.p2pconference.prototype.patterns.observer.Observer;
-import org.ioe.bct.p2pconference.prototype.patterns.observer.Subject;
+import org.ioe.bct.p2pconference.patterns.observer.DisplayElement;
+import org.ioe.bct.p2pconference.patterns.observer.Observer;
+import org.ioe.bct.p2pconference.patterns.observer.Subject;
 import org.ioe.bct.p2pconference.utils.Notification;
 
 /**
