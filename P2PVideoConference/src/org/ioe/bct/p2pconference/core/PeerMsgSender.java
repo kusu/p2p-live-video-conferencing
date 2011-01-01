@@ -19,11 +19,11 @@ import net.jxta.protocol.PipeAdvertisement;
 public class PeerMsgSender {
 
     private P2PNetworkCore networkCore;
-   private DiscoveryService myDiscoveryService = null;
+    private DiscoveryService myDiscoveryService = null;
     private PipeService myPipeService = null;
     private ModuleClassID myService1ID = null;
     private InputPipe myPipe = null;
-
+    private PipeAdvertisement pipeAdv;
 
     public PeerMsgSender(P2PNetworkCore netcore) {
         networkCore=netcore;
@@ -39,8 +39,8 @@ public class PeerMsgSender {
     public void buildModuleAdvertisement() {
 	 ModuleClassAdvertisement myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
 
-	 myService1ModuleAdvertisement.setName("JXTAMOD:JXTA-CH15EX2");
-	 myService1ModuleAdvertisement.setDescription("Service 1 of Chapter 15 example 2");
+	 myService1ModuleAdvertisement.setName("PeerMsgSenderAdv");
+	 myService1ModuleAdvertisement.setDescription("Sending msg to a peer");
 
        myService1ID = IDFactory.newModuleClassID();
 	 myService1ModuleAdvertisement.setModuleClassID(myService1ID);
@@ -55,6 +55,11 @@ public class PeerMsgSender {
        }
     }
 
+    public PipeAdvertisement createPipeAdvertisement() {
+        pipeAdv=(PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
+        return pipeAdv;
+    }
+
     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
 
 //	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
@@ -62,11 +67,11 @@ public class PeerMsgSender {
 
 	ModuleSpecAdvertisement myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
 
-	myModuleSpecAdvertisement.setName("JXTASPEC:JXTA-CH15EX2");
+	myModuleSpecAdvertisement.setName("Module Specification Advertisement");
 	myModuleSpecAdvertisement.setVersion("Version 1.0");
-	myModuleSpecAdvertisement.setCreator("gradecki.com");
+	myModuleSpecAdvertisement.setCreator("p2pconferencegroup");
 	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
-	myModuleSpecAdvertisement.setSpecURI("<http://www.jxta.org/CH15EX2>");
+	myModuleSpecAdvertisement.setSpecURI("http://www.ioe.edu.np");
 //      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
       myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
 

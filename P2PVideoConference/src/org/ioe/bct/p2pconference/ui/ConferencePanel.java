@@ -60,6 +60,9 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
         upperPanel = new javax.swing.JPanel();
         lowerpanel = new javax.swing.JPanel();
+        midpanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        textMsgTextArea = new javax.swing.JTextArea();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("ConferencePanel"));
         setLayout(new java.awt.BorderLayout());
@@ -67,6 +70,30 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         upperPanel.setLayout(new java.awt.BorderLayout());
         add(upperPanel, java.awt.BorderLayout.PAGE_START);
         add(lowerpanel, java.awt.BorderLayout.PAGE_END);
+
+        midpanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        jScrollPane1.setBorder(null);
+
+        textMsgTextArea.setColumns(20);
+        textMsgTextArea.setEditable(false);
+        textMsgTextArea.setRows(5);
+        jScrollPane1.setViewportView(textMsgTextArea);
+
+        javax.swing.GroupLayout midpanelLayout = new javax.swing.GroupLayout(midpanel);
+        midpanel.setLayout(midpanelLayout);
+        midpanelLayout.setHorizontalGroup(
+            midpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(midpanelLayout.createSequentialGroup()
+                .addGap(182, 182, 182)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE))
+        );
+        midpanelLayout.setVerticalGroup(
+            midpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
+        );
+
+        add(midpanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
   
@@ -100,9 +127,10 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
            upperPanel.setBorder(BorderFactory.createEtchedBorder());
            lowerpanel.setBorder(BorderFactory.createEtchedBorder());
+           sendTextMsgPanel.setMediator(confMediator);
            lowerpanel.add(sendTextMsgPanel);
            lowerpanel.validate();
-          
+           lowerpanel.setVisible(true);
            
           
        }
@@ -112,12 +140,22 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
             gPanel.updateComponents();
 
         }
+        else if(message.equalsIgnoreCase(ConferenceMediator.SEND_TEXT_MSG))
+            sendTextMesssage(body.toString());
+            
+         }
 
+    public void sendTextMesssage(String message) {
+        textMsgTextArea.append("\t"+message+"\n");
     }
+
     private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();
     private GroupInfoPanel gPanel;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel lowerpanel;
+    private javax.swing.JPanel midpanel;
+    private javax.swing.JTextArea textMsgTextArea;
     private javax.swing.JPanel upperPanel;
     // End of variables declaration//GEN-END:variables
      private ConferenceManager confManager;
