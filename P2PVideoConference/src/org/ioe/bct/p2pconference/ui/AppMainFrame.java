@@ -30,10 +30,10 @@ import net.jxta.platform.NetworkManager.ConfigMode;
 import org.ioe.bct.p2pconference.core.JXTAPeerGroupOrganizer;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
-import org.ioe.bct.p2pconference.prototype.patterns.observer.Subject;
+import org.ioe.bct.p2pconference.patterns.observer.Subject;
 import org.ioe.bct.p2pconference.ui.controls.GroupListener;
 
 /**

@@ -22,8 +22,8 @@ import java.util.Iterator;
 import javax.swing.*;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.GroupListener;
 
@@ -50,6 +50,52 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
         confMediator=m;
         initPopupMenu();
     }
+
+      public void receive(String message, Colleague sender, Object body) {
+//        throw new UnsupportedOperationException("Not supported yet.");
+
+        if(message.equalsIgnoreCase(ConferenceMediator.GROUP_ADDED)) {
+
+            PeerGroupOrganizer orgn=(PeerGroupOrganizer)body;
+
+            peerGroupsList=orgn.getAllPeerGroups();
+            System.out.println("TOTAL PEER GROUPS "+peerGroupsList.size());
+            updateGroupList();
+        }
+       
+
+
+    }
+
+    private void updateGroupList() {
+        peerListUIPanelList=new ArrayList<JPanel>();
+        Iterator it=peerGroupsList.iterator();
+
+        while (it.hasNext()) {
+        ProtectedPeerGroup current=(ProtectedPeerGroup) it.next();
+        String groupName=current.getGroupName();
+            JLabel label=new JLabel(groupName);
+            JPanel panel=new JPanel(new  FlowLayout(FlowLayout.LEFT));
+            panel.add(label);
+           peerListUIPanelList.add(panel);
+           System.out.println(groupName);
+        }
+         groupsListUI.setListData(peerListUIPanelList.toArray());
+    }
+
+    public void setMediator(Mediator m) {
+
+         m.addColleague(this);
+    }
+
+
+
+    public void updatePeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
+        peerGroupsList=updatedPGs;
+        updateGroupList();
+    }
+
+
 
       private void initPopupMenu() {
            popupMenu=new JPopupMenu();
@@ -82,10 +128,7 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
         joinGroupDialog=new JoinGroupDialog(null,selectedPeerGroup);
         joinGroupDialog.setMediator(confMediator);
         joinGroupDialog.setVisible(true);
-    //    JOptionPane.showMessageDialog(this, getSelectedDataItem);
-       
-    //    JOptionPane.showMessageDialog(this,selectedPeerGroup.getGroupName());
-        //confMediator.sendMessage(ConferenceMediator.JOIN_GROUP, this, selectedPeerGroup);
+   
       }
 
       private void getGroupInfo() {
@@ -181,8 +224,9 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
         if(groupsListUI.getSelectedIndex()<0){
             return;
         }
-        Object dataItem=groupsListUI.getSelectedValue();
-        confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this, dataItem);
+        int selIndex=groupsListUI.getSelectedIndex();
+        ProtectedPeerGroup selectedPG=peerGroupsList.get(selIndex);
+        confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this,selectedPG);
     }
 
 
@@ -191,53 +235,7 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
     private JoinGroupDialog joinGroupDialog;
-    public void receive(String message, Colleague sender, Object body) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-       
-        if(message.equalsIgnoreCase(ConferenceMediator.GROUP_ADDED)) {
-             
-            PeerGroupOrganizer orgn=(PeerGroupOrganizer)body;
-            
-            peerGroupsList=orgn.getAllPeerGroups();
-            System.out.println("TOTAL PEER GROUPS "+peerGroupsList.size());
-            updateGroupList();
-        }
-        else if (message.equalsIgnoreCase(ConferenceMediator.JOIN_GROUP)) {
-            System.out.println("Group Joined successfully....");
-            joinGroupDialog.dispose();
-        }
-
-        
-    }
-
-    private void updateGroupList() {
-        peerListUIPanelList=new ArrayList<JPanel>();
-        Iterator it=peerGroupsList.iterator();
-
-        while (it.hasNext()) {
-        ProtectedPeerGroup current=(ProtectedPeerGroup) it.next();
-        String groupName=current.getGroupName();
-            JLabel label=new JLabel(groupName);
-            JPanel panel=new JPanel(new  FlowLayout(FlowLayout.LEFT));
-            panel.add(label);
-           peerListUIPanelList.add(panel);
-           System.out.println(groupName);
-        }
-         groupsListUI.setListData(peerListUIPanelList.toArray());
-    }
-
-    public void setMediator(Mediator m) {
-//        throw new UnsupportedOperationException("Not supported yet.");
-         m.addColleague(this);
-    }
-
-     
-
-    public void updatePeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
-        peerGroupsList=updatedPGs;
-        updateGroupList();
-    }
-
+    
    
 
  

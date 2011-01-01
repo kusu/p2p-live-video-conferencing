@@ -7,6 +7,7 @@ package org.ioe.bct.p2pconference.dataobject;
 
 import java.util.ArrayList;
 import net.jxta.peergroup.PeerGroup;
+import net.jxta.protocol.PeerAdvertisement;
 
 /**
  *
@@ -17,7 +18,7 @@ public class ProtectedPeerGroup {
     private String peerGroupName;
     private String peerGroupPassword;
     private String peerGroupLoginName;
-    private ArrayList connectedUsers=new ArrayList();
+    private ArrayList<PeerAdvertisement> connectedUsers=new ArrayList<PeerAdvertisement>();
     private boolean conferenceStarted=false;
 
     public ProtectedPeerGroup(String name,String password,String loginName, PeerGroup pg) {
@@ -37,10 +38,10 @@ public class ProtectedPeerGroup {
     public PeerGroup getPeerGroup() {return peerGroup;}
     public String getGroupName() {return peerGroupName;}
     public String getGroupLoginName(){ return peerGroupLoginName;}
-    public ArrayList getConnectedUsers() {return connectedUsers;}
+    public ArrayList<PeerAdvertisement> getConnectedUsers() {return connectedUsers;}
     
-    public void setConnectUsers(ArrayList users) {this.connectedUsers=users;}
-    public void addConnectedUser(Object dt){
+    public void setConnectUsers(ArrayList<PeerAdvertisement> users) {this.connectedUsers=users;}
+    public void addConnectedUser(PeerAdvertisement dt){
         connectedUsers.add(dt);
     }
 

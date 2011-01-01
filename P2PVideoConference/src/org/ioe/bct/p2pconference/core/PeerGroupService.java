@@ -36,6 +36,7 @@ import net.jxta.document.StructuredDocumentFactory;
 import net.jxta.document.StructuredTextDocument;
 import net.jxta.document.TextElement;
 import net.jxta.exception.PeerGroupException;
+import net.jxta.exception.ProtocolNotSupportedException;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
 import net.jxta.impl.membership.PasswdMembershipService;
@@ -423,11 +424,25 @@ public class PeerGroupService{
         membershipService.join(auth);
 
         }
-        catch (Exception e) {
+        catch (PeerGroupException e) {
             System.out.println("Failure in authentication.");
             System.out.println("Group was not joined. Login was incorrect.");
             message="Group was not joined. Login was incorrect";
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error Joining Group. "+
+                        e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        catch (ProtocolNotSupportedException pe){
+             JOptionPane.showMessageDialog(null, "Error Joining Group. "+
+                        pe.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+             return;
+        }
+        catch (ClassNotFoundException cnf) {
+            cnf.printStackTrace();
+        }
+        catch (Exception ge){
+             JOptionPane.showMessageDialog(null, "Error Joining Group. "+
+                        ge.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
         }
     }
 public String getMessage()

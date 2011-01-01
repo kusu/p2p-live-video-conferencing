@@ -6,8 +6,8 @@
 package org.ioe.bct.p2pconference.ui.controls;
 
 import java.util.ArrayList;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 
 /**
  *

@@ -15,8 +15,8 @@ package org.ioe.bct.p2pconference.ui;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
-import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
 /**
