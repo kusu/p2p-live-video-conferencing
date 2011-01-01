@@ -17,33 +17,32 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import javax.swing.*;
-import org.ioe.bct.p2pconference.core.GroupDiscoveryThread;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
-import org.ioe.bct.p2pconference.core.PeerGroupService;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
+import org.ioe.bct.p2pconference.ui.controls.GroupListener;
 
 /**
  *
  * @author kusu
  */
-public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGroupOrganizer{
+public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupListener{
 
     
 
     private ArrayList<ProtectedPeerGroup> peerGroupsList=new ArrayList<ProtectedPeerGroup>();
     private ArrayList<JPanel>  peerListUIPanelList=new ArrayList<JPanel>();
     private Mediator confMediator;
-    private GroupDiscoveryThread groupDiscoveryThread;
+   
     private JPopupMenu popupMenu;
     private JMenuItem popupMenuJoinItem;
     private JMenuItem popupMenuGetInfoItem;
+     
     /** Creates new form GroupsPanel */
 
       public GroupsPanel(Mediator m) {
@@ -77,14 +76,16 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
       private void joinSelctedGroup() {
          
         System.out.println("Joining the peer group...");
-        joinGroupDialog=new JoinGroupDialog(null, true);
-        joinGroupDialog.setMediator(confMediator);
-        int getSelectedDataItem=groupsListUI.getSelectedIndex();
-    //    JOptionPane.showMessageDialog(this, getSelectedDataItem);
-        Iterator<ProtectedPeerGroup> itr=peerGroupsList.iterator();
+         int getSelectedDataItem=groupsListUI.getSelectedIndex();
+        
         ProtectedPeerGroup selectedPeerGroup=peerGroupsList.get(getSelectedDataItem);
+        joinGroupDialog=new JoinGroupDialog(null,selectedPeerGroup);
+        joinGroupDialog.setMediator(confMediator);
+        joinGroupDialog.setVisible(true);
+    //    JOptionPane.showMessageDialog(this, getSelectedDataItem);
+       
     //    JOptionPane.showMessageDialog(this,selectedPeerGroup.getGroupName());
-        confMediator.sendMessage(ConferenceMediator.JOIN_GROUP, this, selectedPeerGroup);
+        //confMediator.sendMessage(ConferenceMediator.JOIN_GROUP, this, selectedPeerGroup);
       }
 
       private void getGroupInfo() {
@@ -111,14 +112,11 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
         });
 
         groupsListUI.setListData(peerListUIPanelList.toArray());
-        groupDiscoveryThread=new GroupDiscoveryThread(this);
+       
       
     }
 
-    public void startGroupDiscovery() {
-       
-        groupDiscoveryThread.start();
-    }
+   
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -180,6 +178,9 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
     }//GEN-LAST:event_groupsListUIMouseReleased
 
     public void sendSelectionChangedMessage() {
+        if(groupsListUI.getSelectedIndex()<0){
+            return;
+        }
         Object dataItem=groupsListUI.getSelectedValue();
         confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this, dataItem);
     }
@@ -200,6 +201,10 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
             peerGroupsList=orgn.getAllPeerGroups();
             System.out.println("TOTAL PEER GROUPS "+peerGroupsList.size());
             updateGroupList();
+        }
+        else if (message.equalsIgnoreCase(ConferenceMediator.JOIN_GROUP)) {
+            System.out.println("Group Joined successfully....");
+            joinGroupDialog.dispose();
         }
 
         
@@ -226,26 +231,14 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, PeerGr
          m.addColleague(this);
     }
 
-    public ProtectedPeerGroup createPeerGroup(String name, String password, String loginName) {
-       return null;
-    }
+     
 
-    public void removePeerGroup(ProtectedPeerGroup p) {
-       peerGroupsList.remove(p);
-    }
-
-    public ArrayList<ProtectedPeerGroup> getAllPeerGroups() {
-        return peerGroupsList;
-    }
-
-    public void updateAllPeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
+    public void updatePeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
         peerGroupsList=updatedPGs;
         updateGroupList();
     }
 
-    public PeerGroupService getPeerGroupService() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+   
 
  
 }

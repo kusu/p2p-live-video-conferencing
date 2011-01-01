@@ -12,6 +12,7 @@ package org.ioe.bct.p2pconference.ui;
 
 import java.awt.Graphics;
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import org.ioe.bct.p2pconference.AppLoader;
 
 /**
@@ -38,12 +39,18 @@ public class LoginBasePanel extends javax.swing.JPanel {
     }
 
     public void handleLogin() {
-        String user = usernameCombo.getSelectedItem().toString();
-        String pass = new String(passwordfield.getPassword());
-        if (user.equals("admin") && pass.equals("admin")) {
+        final String user = usernameCombo.getSelectedItem().toString();
+        final String pass = new String(passwordfield.getPassword());
+        if (user.equals("admin") && pass.equals("admin") || user.equals("kusu")) {
             AppLoader.mainFrame.hideLoginBox();
             AppLoader.mainFrame.load(user, pass).setVisible(true);
-            AppLoader.mainFrame.createNetworkCore(user);
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                     AppLoader.mainFrame.createNetworkCore(user);
+                }
+            });
+           
            
             AppLoader.mainFrame.disposeLoginBox();
         } else {

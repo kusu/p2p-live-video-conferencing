@@ -38,9 +38,11 @@ public class ProtectedPeerGroup {
     public String getGroupName() {return peerGroupName;}
     public String getGroupLoginName(){ return peerGroupLoginName;}
     public ArrayList getConnectedUsers() {return connectedUsers;}
+    
     public void setConnectUsers(ArrayList users) {this.connectedUsers=users;}
     public void addConnectedUser(Object dt){
         connectedUsers.add(dt);
     }
+
 
 }

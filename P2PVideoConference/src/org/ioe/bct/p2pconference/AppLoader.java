@@ -5,8 +5,6 @@
 
 package org.ioe.bct.p2pconference;
 
-import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import org.ioe.bct.p2pconference.ui.AppMainFrame;
 
 
@@ -17,7 +15,7 @@ import org.ioe.bct.p2pconference.ui.AppMainFrame;
  * @author kusu
  */
 
-public class AppLoader {
+public final class AppLoader {
    
     public static AppMainFrame mainFrame;
 

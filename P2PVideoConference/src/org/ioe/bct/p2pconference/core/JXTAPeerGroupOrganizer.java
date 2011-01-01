@@ -10,6 +10,7 @@ import net.jxta.peergroup.PeerGroup;
 
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
 import org.ioe.bct.p2pconference.ui.AppMainFrame;
+import org.ioe.bct.p2pconference.ui.controls.GroupListener;
 
 /**
  *
@@ -18,15 +19,20 @@ import org.ioe.bct.p2pconference.ui.AppMainFrame;
 public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
 
     private ArrayList<ProtectedPeerGroup>  peerGroups =new ArrayList<ProtectedPeerGroup>();
-
+    private GroupDiscoveryThread discoverer;
+    private GroupPublishThread publisher;
+   
+    private GroupListener listener;
     private PeerGroupService service=new PeerGroupService();
-    public JXTAPeerGroupOrganizer(){}
-    public JXTAPeerGroupOrganizer(ArrayList<ProtectedPeerGroup> pg){
-        peerGroups=pg;
+    
+    public JXTAPeerGroupOrganizer(GroupListener listner){
+//        peerGroups=pg;
+       this.listener=listner;
+      
     }
 
     public ProtectedPeerGroup createPeerGroup(String name, String password,String loginName) throws Exception{
-        
+      
         PeerGroup newPeerGroup=service.createPeerGroup(AppMainFrame.netCOre.getNetPeerGroup(), name, loginName, password);
         ProtectedPeerGroup newProtectedPG=new ProtectedPeerGroup(name, password,loginName, newPeerGroup);
         peerGroups.add(newProtectedPG);
@@ -44,10 +50,23 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
 
     public void removePeerGroup(ProtectedPeerGroup p) {
         peerGroups.remove(p);
+        listener.updatePeerGroups(peerGroups);
     }
 
     public void updateAllPeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
         peerGroups=updatedPGs;
+        listener.updatePeerGroups(updatedPGs);
     }
+
+    public final JXTAPeerGroupOrganizer startThread() {
+         discoverer=new GroupDiscoveryThread(this);
+       publisher=new GroupPublishThread(this);
+     
+        publisher.start();
+        discoverer.start();
+        return this;
+    }
+
+
 
 }

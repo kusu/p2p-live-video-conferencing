@@ -16,17 +16,20 @@ import org.ioe.bct.p2pconference.ui.AppMainFrame;
  *
  * @author kusum
  */
-public class GroupDiscoveryThread extends Thread {
+public class GroupDiscoveryThread implements Runnable {
     PeerGroupOrganizer organizer;
     PeerGroupService peerGroupDiscoveryService;
+    Thread currentThread;
 
     public GroupDiscoveryThread(PeerGroupOrganizer org){
         organizer=org;
-        peerGroupDiscoveryService=new PeerGroupService();
+        peerGroupDiscoveryService=org.getPeerGroupService();
     }
 
     @Override
     public void run()  {
+
+       while (true) {
           ArrayList<PeerGroup> newPeerGroup= peerGroupDiscoveryService.discoverGroups(AppMainFrame.netCOre.getNetPeerGroup());
           System.out.println("Total Groups: "+newPeerGroup.size());
          ArrayList<ProtectedPeerGroup> newprotectedGroups=new ArrayList<ProtectedPeerGroup>();
@@ -50,12 +53,17 @@ public class GroupDiscoveryThread extends Thread {
             organizer.updateAllPeerGroups(newprotectedGroups);
          }
          try {
-             Thread.sleep(30000);
+             Thread.sleep(10000);
          }
          catch (InterruptedException e){
              e.printStackTrace();
          }
+        }
+    }
 
+    public void start() {
+        currentThread=new Thread(this);
+        currentThread.start();
     }
 
 }

@@ -14,6 +14,7 @@ package org.ioe.bct.p2pconference.ui;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
+import javax.swing.BorderFactory;
 
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
 import org.ioe.bct.p2pconference.prototype.patterns.mediator.Colleague;
@@ -38,12 +39,6 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         initComponents();
         upperPanel.setVisible(false);
 
-        
-        
-         
-
-       
-        
     }
     public void setMediator(Mediator m) {
         this.confMediator=m;
@@ -68,11 +63,8 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         setBorder(javax.swing.BorderFactory.createTitledBorder("ConferencePanel"));
         setLayout(new java.awt.BorderLayout());
 
-        upperPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         upperPanel.setLayout(new java.awt.BorderLayout());
         add(upperPanel, java.awt.BorderLayout.PAGE_START);
-
-        lowerpanel.setBorder(javax.swing.BorderFactory.createEtchedBorder(new java.awt.Color(204, 204, 204), null));
         add(lowerpanel, java.awt.BorderLayout.PAGE_END);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -88,9 +80,10 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                if(body instanceof PeerResolver) {
                    uinfo.updateInfo((PeerResolver) body);
                }
+
                upperPanel.add(uinfo,BorderLayout.CENTER);
                upperPanel.validate();
-              
+
                upperPanel.setVisible(true);
            }
            
@@ -101,7 +94,9 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                 upperPanel.validate();
                 upperPanel.setVisible(true);
            }
-             
+
+           upperPanel.setBorder(BorderFactory.createEtchedBorder());
+           lowerpanel.setBorder(BorderFactory.createEtchedBorder());
            lowerpanel.add(sendTextMsgPanel);
            lowerpanel.validate();
           
