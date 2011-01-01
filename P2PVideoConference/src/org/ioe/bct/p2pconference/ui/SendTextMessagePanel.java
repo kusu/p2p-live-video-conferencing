@@ -11,15 +11,32 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import java.awt.event.KeyEvent;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
+
+
+
 /**
  *
  * @author kusum
  */
 public class SendTextMessagePanel extends javax.swing.JPanel {
 
+    private Mediator mediator;
     /** Creates new form SendTextMessagePanel */
-    public SendTextMessagePanel() {
+
+    public SendTextMessagePanel()
+    {
         initComponents();
+    }
+    public SendTextMessagePanel(Mediator med) {
+        this.mediator=med;
+        initComponents();
+    }
+
+    public void setMediator(Mediator m) {
+        this.mediator=m;
     }
 
     /** This method is called from within the constructor to
@@ -38,6 +55,11 @@ public class SendTextMessagePanel extends javax.swing.JPanel {
         jTextArea1 = new javax.swing.JTextArea();
 
         sendButton.setText("Send");
+        sendButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sendButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -58,6 +80,11 @@ public class SendTextMessagePanel extends javax.swing.JPanel {
         jTextArea1.setColumns(20);
         jTextArea1.setRows(2);
         jTextArea1.setDoubleBuffered(true);
+        jTextArea1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextArea1KeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -90,6 +117,17 @@ public class SendTextMessagePanel extends javax.swing.JPanel {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        // TODO add your handling code here:
+        String msgTextt=jTextArea1.getText();
+        jTextArea1.setText("");
+        mediator.sendMessage(ConferenceMediator.SEND_TEXT_MSG, null, msgTextt);
+    }//GEN-LAST:event_sendButtonActionPerformed
+
+    private void jTextArea1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextArea1KeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextArea1KeyReleased
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
