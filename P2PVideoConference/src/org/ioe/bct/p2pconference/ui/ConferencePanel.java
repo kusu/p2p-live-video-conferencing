@@ -91,7 +91,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
-        jTextArea1.setTabSize(5);
+        jTextArea1.setTabSize(3);
         jTextArea1.setEnabled(false);
         jScrollPane1.setViewportView(jTextArea1);
 
@@ -127,8 +127,8 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                    currentSelectedPeer=jPanel.getName();
                   //Have to apply threading for this operation otherwise pipe is not resolved
 
-                 //  privateMsgManager.addReceiver(currentSelectedPeer);
-                //   privateMsgManager.addSender(currentSelectedPeer);
+                   privateMsgManager.addReceiver(currentSelectedPeer);
+                   privateMsgManager.addSender(currentSelectedPeer);
                    
                   
                }
@@ -173,31 +173,64 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
          } 
 
     public void sendTextMesssage(String message) {
+        printMessage(message); //print msg first
+       //send to receiver
+        privateMsgManager.sendDataToReceiver(message, currentSelectedPeer);
+       
+    }
+
+    public void printMessage(String message) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
         Date currentDate=Calendar.getInstance().getTime();
         String dateString=sdf.format(currentDate);
         TextMessage msg=new TextMessage(AppMainFrame.getUserName(), message, dateString);
         textData.put(currentSelectedPeer,msg);
         message=message.replaceAll("\n","");
-        if(message.length()>30) {
-            message+="\n";
+        String[] invWords=message.split(" ");
+        String formattedStr="";
+
+        int c=1;
+
+        for(int k=0;k<invWords.length;k++){
+            StringBuilder currentStr=new StringBuilder(invWords[k]);
+            if(currentStr.length()>100) {
+                currentStr.insert(50, "\n");
+                currentStr.insert(100, "\n");
+            }
+            else if(currentStr.length() > 40) {
+                currentStr.insert(50, "\n");
+            }
+            formattedStr+=currentStr.toString()+" ";
+            if(formattedStr.length()>50*(c)) {
+                formattedStr+="\n\t\t\t\t";
+                c++;
+            }
+
         }
-        int nochars=message.length()%30;
-        nochars=35-nochars;
-        String str="";
-        for(int i=0;i<nochars;i++) {
-            str+=" ";
+        int q=1+message.length()/50;
+        int rem=6*(q-1)+65-formattedStr.length()%50;
+
+        for(int i=0;i<rem;i++) {
+            formattedStr+="  ";
         }
-        jTextArea1.append(AppMainFrame.getUserName()+"\t"+message+str+dateString);
-        privateMsgManager.sendDataToReceiver(message, currentSelectedPeer);
-       
+
+        String userName=AppMainFrame.getUserName();
+        int ulen=userName.length();
+
+        if(ulen<15){
+           int nrem=15-ulen;
+           for(int j=0;j<nrem;j++) {
+               userName+=" ";
+           }
+        }
+
+        jTextArea1.append("\t"+userName+"\t\t"+formattedStr+dateString+"\n");
     }
 
+
     public void receiveTextMessage(String message) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
-        Date currentDate=Calendar.getInstance().getTime();
-        String dateString=sdf.format(currentDate);
-        
+       //to be called once the message is received. just print the received msg in the textarea
+        printMessage(message);
     }
 
     
