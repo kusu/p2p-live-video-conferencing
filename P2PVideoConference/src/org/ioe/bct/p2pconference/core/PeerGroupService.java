@@ -558,15 +558,23 @@ public String getMessage()
 //----------------------------------------------------------------------------------------------------//
   public static void main(String args[]) throws PeerGroupException, MalformedURLException, UnknownServiceException
     {
-      P2PNetworkCore NNCore=new P2PNetworkCore("test shell");
+      P2PNetworkCore NNCore=new P2PNetworkCore("Test Shell");
       NNCore.startNetwork(ConfigMode.ADHOC);
       PeerGroupService ps=new PeerGroupService();
       ArrayList<PeerGroup> peerArray=ps.discoverGroups(NNCore.getNetPeerGroup());
+      ArrayList<PeerAdvertisement> peerAdvList=new ArrayList<PeerAdvertisement>();
+
       Iterator iter=peerArray.iterator();
       while(iter.hasNext())
       {
           PeerGroup pgrp=(PeerGroup)iter.next();
           System.out.println(pgrp.getPeerGroupName());
+          peerAdvList=ps.discoverPeerInGroup(pgrp);
+          Iterator<PeerAdvertisement> itr=peerAdvList.iterator();
+          while(itr.hasNext())
+          {
+              System.out.println(itr.next().getName());
+          }
       }
 
     }

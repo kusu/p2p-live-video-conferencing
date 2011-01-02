@@ -22,10 +22,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import org.ioe.bct.p2pconference.core.P2PNetworkCore;
+import org.ioe.bct.p2pconference.core.PrivateMsgManager;
 
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
@@ -43,7 +47,7 @@ import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     private Mediator confMediator;
-
+    private PrivateMsgManager privateMsgManager;
    
 
     /** Creates new form ConferencePanel */
@@ -51,6 +55,11 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         initComponents();
         upperPanel.setVisible(false);
         jScrollPane1.setVisible(false);
+    }
+
+    public void initiateChatting(P2PNetworkCore netCore)
+    {
+        privateMsgManager=new PrivateMsgManager(AppMainFrame.getUserName(),netCore , confMediator);
     }
     public void setMediator(Mediator m) {
         this.confMediator=m;
@@ -123,7 +132,15 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                if(body instanceof PeerResolver) {
                    uinfo.updateInfo((PeerResolver) body);
                }
-
+               else
+               {
+                   JPanel jPanel=(JPanel)body;
+                   currentSelectedPeer=jPanel.getName();
+                  //Have to apply threading for this operation otherwise pipe is not resolved
+                   privateMsgManager.addReceiver(currentSelectedPeer);
+                   privateMsgManager.addSender(currentSelectedPeer);
+                    //JOptionPane.showMessageDialog(null, currentSelectedPeer);
+               }
                upperPanel.add(uinfo,BorderLayout.CENTER);
                upperPanel.validate();
 
@@ -159,8 +176,10 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         }
         else if(message.equalsIgnoreCase(ConferenceMediator.SEND_TEXT_MSG))
             sendTextMesssage(body.toString());
-            
-         }
+
+       else if(message.equalsIgnoreCase(ConferenceMediator.RECEIVE_TEXT_MSG))
+           receiveTextMessage(body.toString());
+         } 
 
     public void sendTextMesssage(String message) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
@@ -169,10 +188,18 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         Message msg=new Message(AppMainFrame.getUserName(), message, dateString);
         tableData.add(msg);
         tm.fireTableDataChanged();
+        JOptionPane.showMessageDialog(null, message);
+        privateMsgManager.sendDataToReceiver(message, currentSelectedPeer);
+       
     }
 
     public void receiveTextMessage(String message) {
-        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
+        Date currentDate=Calendar.getInstance().getTime();
+        String dateString=sdf.format(currentDate);
+        Message msg=new Message("From Outside", message, dateString);//to be implemented here
+        tableData.add(msg);
+        tm.fireTableDataChanged();
     }
 
     private class Message{
@@ -277,6 +304,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     private JTable msgtable;
     private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();
     private GroupInfoPanel gPanel;
+    private String currentSelectedPeer="";
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

@@ -2,56 +2,116 @@ package org.ioe.bct.p2pconference.core;
 
 import java.io.ByteArrayInputStream;
 import java.util.Enumeration;
+import javax.swing.JOptionPane;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
-import net.jxta.discovery.DiscoveryService;
 import net.jxta.document.AdvertisementFactory;
-import net.jxta.document.MimeMediaType;
-import net.jxta.endpoint.Message;
-import net.jxta.peergroup.PeerGroup;
+import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeService;
-import net.jxta.protocol.PipeAdvertisement;
 
-import net.jxta.pipe.OutputPipe;
+import net.jxta.discovery.DiscoveryService;
+import net.jxta.document.MimeMediaType;
+import net.jxta.document.StructuredTextDocument;
+import net.jxta.endpoint.Message;
+import net.jxta.endpoint.MessageElement;
+import net.jxta.peergroup.PeerGroup;
+import net.jxta.platform.ModuleClassID;
+import net.jxta.pipe.InputPipe;
+import net.jxta.pipe.PipeMsgEvent;
+import net.jxta.pipe.PipeMsgListener;
 import net.jxta.protocol.DiscoveryResponseMsg;
+import net.jxta.protocol.ModuleClassAdvertisement;
 import net.jxta.protocol.ModuleSpecAdvertisement;
+import net.jxta.protocol.PipeAdvertisement;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
-
-/**
- * This tutorial illustrates the use of JXTA Pipes to exchange messages.
- * <p/>
- * This peer is the pipe "server". It opens the pipe for input and waits for
- * messages to be sent. Whenever a Message is received from a "client" the
- * contents are printed.
- */
 public class PeerMsgReceiver {
-    private  PeerGroup 		netPeerGroup = null;
-    private DiscoveryService 	myDiscoveryService = null;
-    private PipeService 	myPipeService = null;
-    private PipeAdvertisement myPipeAdvertisement = null;
-    private OutputPipe 		myOutputPipe;
-   
-    private String valueString = "JXTA-CH15EX2";
 
-     private void getServices() {
-      
-      myDiscoveryService = netPeerGroup.getDiscoveryService();
-      myPipeService = netPeerGroup.getPipeService();
+    private PeerGroup netPeerGroup;
+    private DiscoveryService myDiscoveryService = null;
+    private PipeService myPipeService = null;
+    private ModuleClassID myService1ID = null;
+    private InputPipe myPipe = null;
+    private Mediator confMediator;
+
+    public PeerMsgReceiver(P2PNetworkCore netcore,Mediator m) {
+        netPeerGroup=netcore.getNetPeerGroup();
+        getServices();
+        confMediator=m;
     }
 
-     private void findAdvertisement(String searchKey, String searchValue) {
-      Enumeration myLocalEnum = null;
+     private  void getServices() {
+         
+      myDiscoveryService =netPeerGroup.getDiscoveryService();
+      myPipeService = netPeerGroup.getPipeService();
+    }
      
+//    public void buildModuleAdvertisement() {
+//	 ModuleClassAdvertisement myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
+//
+//	 myService1ModuleAdvertisement.setName("PeerMsgSenderAdv");
+//	 myService1ModuleAdvertisement.setDescription("Sending msg to a peer");
+//
+//       myService1ID = IDFactory.newModuleClassID();
+//	 myService1ModuleAdvertisement.setModuleClassID(myService1ID);
+//
+//
+//       try {
+//  	   myDiscoveryService.publish(myService1ModuleAdvertisement);
+//	   myDiscoveryService.remotePublish(myService1ModuleAdvertisement);
+//       } catch (Exception e) {
+//         System.out.println("Error during publish of Module Advertisement");
+//         System.exit(-1);
+//       }
+//    }
+//
+//
+//
+//    public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
+//
+////	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
+////	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
+//
+//	ModuleSpecAdvertisement myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
+//
+//	myModuleSpecAdvertisement.setName("Module Specification Advertisement");
+//	myModuleSpecAdvertisement.setVersion("Version 1.0");
+//	myModuleSpecAdvertisement.setCreator("p2pconferencegroup");
+//	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
+//	myModuleSpecAdvertisement.setSpecURI("http://www.ioe.edu.np");
+////      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
+//      myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
+//
+//        try {
+//          StructuredTextDocument doc = (StructuredTextDocument)myModuleSpecAdvertisement.getDocument(new MimeMediaType("text/xml"));
+//          doc.sendToStream(System.out);
+//        } catch(Exception e) {}
+//
+//
+//      try {
+//        myDiscoveryService.publish(myModuleSpecAdvertisement);
+//        myDiscoveryService.remotePublish(myModuleSpecAdvertisement);
+//      } catch (Exception e) {
+//         System.out.println("Error during publish of Module Specification Advertisement");
+//         e.printStackTrace();
+//         System.exit(-1);
+//      }
+//
+//      createInputPipe(myPipeAdvertisement);
+//    }
+ public void findAdvertisement(String Peer,String searchKey, String searchValue) {
+      Enumeration myLocalEnum = null;
+
 
       try {
         myLocalEnum = myDiscoveryService.getLocalAdvertisements(DiscoveryService.ADV, searchKey, searchValue);
 
         if ((myLocalEnum != null) && myLocalEnum.hasMoreElements()) {
-          
-          ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)myLocalEnum.nextElement();
 
-	    myPipeAdvertisement = myModuleSpecAdv.getPipeAdvertisement();
-          createOutputPipe(myPipeAdvertisement);
+          PipeAdvertisement myModuleSpecAdv = (PipeAdvertisement)myLocalEnum.nextElement();
+          createInputPipe(myModuleSpecAdv);
+	  
         }
         else {
           DiscoveryListener myDiscoveryListener = new DiscoveryListener() {
@@ -60,16 +120,16 @@ public class PeerMsgReceiver {
               PipeAdvertisement pipeAdv = null;
               String str;
 
-           
+
               DiscoveryResponseMsg myMessage = e.getResponse();
               enumm = myMessage.getResponses();
               str = (String)enumm.nextElement();
 
               try {
-                ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
-                myPipeAdvertisement = myModSpecAdv.getPipeAdvertisement();
+                PipeAdvertisement myModSpecAdv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
+                createInputPipe(myModSpecAdv);
 
-                createOutputPipe(myPipeAdvertisement);
+                
               } catch(Exception ee) {
                   ee.printStackTrace();
                   System.exit(-1);
@@ -77,8 +137,8 @@ public class PeerMsgReceiver {
            }
           };
 
-         
-          myDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, searchKey, searchValue, 1, myDiscoveryListener);
+
+          myDiscoveryService.getRemoteAdvertisements(Peer, DiscoveryService.ADV, searchKey, searchValue, 1, myDiscoveryListener);
         }
       } catch (Exception e) {
           System.out.println("Error during advertisement search");
@@ -87,41 +147,29 @@ public class PeerMsgReceiver {
     }
 
 
-    private void createOutputPipe(PipeAdvertisement myPipeAdvertisement) {
-      boolean noPipe = true;
-      int count = 0;
+    private void createInputPipe(PipeAdvertisement myPipeAdvertisement) {
+      
 
-      myOutputPipe = null;
-      while (noPipe && count < 10) {
-        count++;
-        try {
-          myOutputPipe = myPipeService.createOutputPipe(myPipeAdvertisement, 100000);
-         
-          noPipe = false;
-        } catch (Exception e) {
-            System.out.println("Unable to create output pipe");
-            System.exit(-1);
-        }
+      class ServiceListener implements PipeMsgListener{
+
+            public void pipeMsgEvent(PipeMsgEvent pme) {
+                Message msg;
+                msg=pme.getMessage();
+                MessageElement msgElement=msg.getMessageElement("DataMsg", null);
+                JOptionPane.showMessageDialog(null, msgElement.toString());
+                confMediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msgElement.toString());
+            }
+
       }
-
-      if (count >= 10) {
-        System.out.println("no Pipe");
-        System.exit(-1);
-      }
-    }
-
-
-     private void sendData() {
-      String data = "Hello my friend!";
-
-//	Message msg = myPipeService.createMessage();
-     
+      ServiceListener myService1Listener=new ServiceListener();
       try {
-        myOutputPipe.send (msg);
-      } catch (Exception e) {
-          System.out.println("Unable to print output pipe");
+        myPipe = myPipeService.createInputPipe(myPipeAdvertisement, myService1Listener);
+      }
+      catch (Exception e) {
+          System.out.println("Error creating Input Pipe");
           e.printStackTrace();
           System.exit(-1);
       }
     }
+    
 }

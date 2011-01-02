@@ -68,9 +68,11 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
         //Read data from database(Contact List)
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JPanel kPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        kPanel.add(new JLabel("kusu"));
+        kPanel.add(new JLabel("test shell"));
+        kPanel.setName("test shell");
         JPanel aPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
         aPanel.add(new JLabel("admin"));
+        aPanel.setName("admin");
         contactArray.add(kPanel);
         contactArray.add(aPanel);
         
