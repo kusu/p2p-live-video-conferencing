@@ -12,8 +12,10 @@ package org.ioe.bct.p2pconference.ui;
 
 import java.awt.Graphics;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import org.ioe.bct.p2pconference.AppLoader;
+import org.ioe.bct.p2pconference.core.db.DBHandler;
 
 /**
  *
@@ -41,8 +43,11 @@ public class LoginBasePanel extends javax.swing.JPanel {
     public void handleLogin() {
         final String user = usernameCombo.getSelectedItem().toString();
         final String pass = new String(passwordfield.getPassword());
-        if (user.equals("admin") && pass.equals("admin") || user.equals("kusu")) {
-            AppLoader.mainFrame.hideLoginBox();
+        try {
+            DBHandler hand=new DBHandler();
+            hand.initConnection();
+            if(hand.checkLogin(user, pass)) {
+             AppLoader.mainFrame.hideLoginBox();
             AppLoader.mainFrame.load(user, pass).setVisible(true);
             SwingUtilities.invokeLater(new Runnable() {
 
@@ -50,12 +55,25 @@ public class LoginBasePanel extends javax.swing.JPanel {
                      AppLoader.mainFrame.createNetworkCore(user);
                 }
             });
-           
-           
+
+
             AppLoader.mainFrame.disposeLoginBox();
-        } else {
-            errorLabel.setText("Login Failed. Invalid username or password.");
+            }
+             else {
+                System.out.println("erorrr error");
+                JOptionPane.showMessageDialog(null,"Login Failed. Invalid username or password.");
+            }
         }
+        catch (Exception e) {
+            System.out.println("error "+e.getMessage());
+            JOptionPane.showMessageDialog(null,"Login Failed. Problem in login. "+e.getMessage());
+            return;
+        }
+        
+           
+       
+            
+       
     }
 
     /** This method is called from within the constructor to
@@ -96,6 +114,11 @@ public class LoginBasePanel extends javax.swing.JPanel {
         jLabel5.setText("<html><u>Not Registered? Register Now</u></html>");
         jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         jLabel5.setDoubleBuffered(true);
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
 
         jPanel2.setBackground(new java.awt.Color(250, 255, 255));
 
@@ -226,6 +249,12 @@ public class LoginBasePanel extends javax.swing.JPanel {
         // TODO add your handling code here:
         handleLogin();
     }//GEN-LAST:event_signInButtonActionPerformed
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+        // TODO add your handling code here:
+        new CreateUserDialog(null, true).setVisible(true);
+    }//GEN-LAST:event_jLabel5MouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel errorLabel;
     private javax.swing.JLabel jLabel3;

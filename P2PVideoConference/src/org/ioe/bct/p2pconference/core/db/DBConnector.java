@@ -6,8 +6,9 @@
 package org.ioe.bct.p2pconference.core.db;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+
 
 /**
  *
@@ -16,7 +17,7 @@ import java.sql.Statement;
 public abstract class DBConnector {
 
  
-    protected  Statement  stm;
+    protected  PreparedStatement  stm;
     protected  Connection conn;
     protected String URI;
     protected String username;
@@ -28,9 +29,10 @@ public abstract class DBConnector {
         
     }
 
-    public final void initialize() {
+    public final void initialize() throws  SQLException,ClassNotFoundException{
         inituser();
         initDriver();
+        connect();
     }
 
     public abstract void initDriver();
@@ -40,9 +42,9 @@ public abstract class DBConnector {
         return conn;
     }
 
-    public Statement getStatement() {
-        return stm;
-    }
+    public abstract PreparedStatement getStatement(String cred) throws SQLException;
+       
+    
 
     public void commit() throws SQLException {
         conn.commit();
