@@ -28,6 +28,13 @@ public class ProtectedPeerGroup {
         peerGroupLoginName=loginName;
 
     }
+    public void setParameters(String name,String password,String loginName, PeerGroup pg)
+    {
+        peerGroupName=name;
+        peerGroupPassword=password;
+        peerGroup=pg;
+        peerGroupLoginName=loginName;
+    }
 
     public boolean isConferenceStarted() {return conferenceStarted;}
     public void setConferenceStarted(boolean isStart) {
