@@ -140,6 +140,7 @@ public class PeerMsgReceiver {
 
           myDiscoveryService.getRemoteAdvertisements(Peer, DiscoveryService.ADV, searchKey, searchValue, 1, myDiscoveryListener);
         }
+        Thread.sleep(1000);
       } catch (Exception e) {
           System.out.println("Error during advertisement search");
           System.exit(-1);
