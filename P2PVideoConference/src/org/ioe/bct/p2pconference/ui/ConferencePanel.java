@@ -15,14 +15,11 @@ import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.PrivateMsgManager;
 
@@ -130,8 +127,8 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                    currentSelectedPeer=jPanel.getName();
                   //Have to apply threading for this operation otherwise pipe is not resolved
 
-                   privateMsgManager.addReceiver(currentSelectedPeer);
-                   privateMsgManager.addSender(currentSelectedPeer);
+                 //  privateMsgManager.addReceiver(currentSelectedPeer);
+                //   privateMsgManager.addSender(currentSelectedPeer);
                    
                   
                }
@@ -185,7 +182,13 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         if(message.length()>30) {
             message+="\n";
         }
-        jTextArea1.append(AppMainFrame.getUserName()+"\t"+message+"\t"+"\t"+dateString);
+        int nochars=message.length()%30;
+        nochars=35-nochars;
+        String str="";
+        for(int i=0;i<nochars;i++) {
+            str+=" ";
+        }
+        jTextArea1.append(AppMainFrame.getUserName()+"\t"+message+str+dateString);
         privateMsgManager.sendDataToReceiver(message, currentSelectedPeer);
        
     }

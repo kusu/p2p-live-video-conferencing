@@ -11,10 +11,17 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.swing.AbstractListModel;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 import org.ioe.bct.p2pconference.core.ContactRequestManager;
+import org.ioe.bct.p2pconference.core.db.DBHandler;
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
 import org.ioe.bct.p2pconference.dataobject.Request;
+import org.ioe.bct.p2pconference.dataobject.User;
 
 /**
  *
@@ -28,6 +35,9 @@ public class SearchContactDialog extends javax.swing.JDialog {
         setTitle("Add Contact");
         setBounds(parent.getX()+100,parent.getY()+50,40,30);
         initComponents();
+        
+        listData=new ArrayList<User>();
+       
     }
 
     /** This method is called from within the constructor to
@@ -42,12 +52,12 @@ public class SearchContactDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        searchField = new javax.swing.JTextField();
+        searchButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         resultList = new javax.swing.JList();
-        jButton2 = new javax.swing.JButton();
+        addButtton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -57,7 +67,12 @@ public class SearchContactDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Enter name or email:");
 
-        jButton1.setText("Search");
+        searchButton.setText("Search");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -69,9 +84,9 @@ public class SearchContactDialog extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE))
+                        .addComponent(searchButton, javax.swing.GroupLayout.DEFAULT_SIZE, 82, Short.MAX_VALUE))
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
@@ -83,26 +98,21 @@ public class SearchContactDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1)))
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchButton)))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Results"));
         jPanel2.setLayout(new java.awt.BorderLayout());
 
-        resultList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane1.setViewportView(resultList);
 
         jPanel2.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jButton2.setText("Add");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        addButtton.setText("Add");
+        addButtton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                addButttonActionPerformed(evt);
             }
         });
 
@@ -115,7 +125,7 @@ public class SearchContactDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                .addComponent(addButtton, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -128,14 +138,14 @@ public class SearchContactDialog extends javax.swing.JDialog {
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(35, 35, 35)
-                        .addComponent(jButton2)))
+                        .addComponent(addButtton)))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void addButttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButttonActionPerformed
         // TODO add your handling code here:
         String selectedContact=resultList.getSelectedValue().toString();
         Request req=new Request(selectedContact, "Hello!");
@@ -155,23 +165,53 @@ public class SearchContactDialog extends javax.swing.JDialog {
             this.dispose();
         }
         
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_addButttonActionPerformed
+
+   
+
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        // TODO add your handling code here:
+        try {
+            if(searchField.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Please enter search criteria.","Missing Field",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            dbHandler.initConnection();
+
+           listData=dbHandler.searchContact(searchField.getText());
+           Iterator<User> it=listData.iterator();
+           ArrayList uiList=new ArrayList();
+           while(it.hasNext()) {
+              uiList.add(it.next().getName());
+           }
+           resultList.setListData(uiList.toArray());
+        }
+       
+        catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+         catch (Exception cnf) {
+            JOptionPane.showMessageDialog(null, cnf.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_searchButtonActionPerformed
 
     /**
     * @param args the command line arguments
     */
-   
 
+    
+    private DBHandler dbHandler=new DBHandler();
+     private ArrayList<User> listData;
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton addButtton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JList resultList;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JTextField searchField;
     // End of variables declaration//GEN-END:variables
 
 }

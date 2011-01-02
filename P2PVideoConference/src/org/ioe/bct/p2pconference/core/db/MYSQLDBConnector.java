@@ -6,7 +6,9 @@
 package org.ioe.bct.p2pconference.core.db;
 
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -15,22 +17,36 @@ import java.sql.SQLException;
  */
 public final class MYSQLDBConnector extends DBConnector {
     
-    private static MYSQLDBConnector connector=new MYSQLDBConnector();
+    private static MYSQLDBConnector connector;
 
   
-    private MYSQLDBConnector() {
-        initialize();
+    private MYSQLDBConnector(){
+       
+     
+    
     }
 
     //default connector for username 'root' and password ''
-    public static MYSQLDBConnector getInstance(String dbName) {
-        connector.dbName=dbName;
+    synchronized  public static MYSQLDBConnector getInstance(String dbName){
+        if(connector==null) {
+            connector=new MYSQLDBConnector();
+            connector.dbName=dbName;
+        }
+        
+         
         return connector;
     }
 
     //for specific username and password for database connection
-    public static MYSQLDBConnector getInstance(String dbName,String username, String password) {
-        connector.dbName=dbName;
+   synchronized  public static MYSQLDBConnector getInstance(String dbName,String username, String password) {
+       
+        if(connector==null) {
+            
+            connector=new MYSQLDBConnector();
+           
+        }
+       
+       
         connector.username=username;
         connector.password=password;
         return connector;
@@ -39,19 +55,25 @@ public final class MYSQLDBConnector extends DBConnector {
     @Override
     public void connect() throws SQLException, ClassNotFoundException{
         Class.forName(driverName);
-        conn=DriverManager.getConnection(URI);
+        conn=DriverManager.getConnection(URI,connector.username,connector.password);
         conn.setAutoCommit(false);
-        stm=conn.createStatement();
+       
         
+    }
+
+    public PreparedStatement getStatement(String sql) throws SQLException{
+        stm=conn.prepareStatement(sql);
+        return stm;
     }
 
    
 
     @Override
     public void initDriver() {
-       driverName="com.mysql.jdbc.driver";
+       driverName="com.mysql.jdbc.Driver";
        URI="jdbc:mysql://localhost:3306/"+dbName;
     }
-    
+
+
     
 }
