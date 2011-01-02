@@ -47,108 +47,60 @@ public class PeerMsgReceiver {
       myPipeService = netPeerGroup.getPipeService();
     }
      
-//    public void buildModuleAdvertisement() {
-//	 ModuleClassAdvertisement myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
-//
-//	 myService1ModuleAdvertisement.setName("PeerMsgSenderAdv");
-//	 myService1ModuleAdvertisement.setDescription("Sending msg to a peer");
-//
-//       myService1ID = IDFactory.newModuleClassID();
-//	 myService1ModuleAdvertisement.setModuleClassID(myService1ID);
-//
-//
-//       try {
-//  	   myDiscoveryService.publish(myService1ModuleAdvertisement);
-//	   myDiscoveryService.remotePublish(myService1ModuleAdvertisement);
-//       } catch (Exception e) {
-//         System.out.println("Error during publish of Module Advertisement");
-//         System.exit(-1);
-//       }
-//    }
-//
-//
-//
-//    public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
-//
-////	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
-////	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
-//
-//	ModuleSpecAdvertisement myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
-//
-//	myModuleSpecAdvertisement.setName("Module Specification Advertisement");
-//	myModuleSpecAdvertisement.setVersion("Version 1.0");
-//	myModuleSpecAdvertisement.setCreator("p2pconferencegroup");
-//	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
-//	myModuleSpecAdvertisement.setSpecURI("http://www.ioe.edu.np");
-////      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
-//      myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
-//
-//        try {
-//          StructuredTextDocument doc = (StructuredTextDocument)myModuleSpecAdvertisement.getDocument(new MimeMediaType("text/xml"));
-//          doc.sendToStream(System.out);
-//        } catch(Exception e) {}
-//
-//
-//      try {
-//        myDiscoveryService.publish(myModuleSpecAdvertisement);
-//        myDiscoveryService.remotePublish(myModuleSpecAdvertisement);
-//      } catch (Exception e) {
-//         System.out.println("Error during publish of Module Specification Advertisement");
-//         e.printStackTrace();
-//         System.exit(-1);
-//      }
-//
-//      createInputPipe(myPipeAdvertisement);
-//    }
- public void findAdvertisement(String Peer,String searchKey, String searchValue) {
-      Enumeration myLocalEnum = null;
+ public void buildModuleAdvertisement() {
+	 ModuleClassAdvertisement myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
+
+	 myService1ModuleAdvertisement.setName("P2P");
+	 myService1ModuleAdvertisement.setDescription("receiveing data on");
+
+       myService1ID = IDFactory.newModuleClassID();
+	 myService1ModuleAdvertisement.setModuleClassID(myService1ID);
+
+
+       try {
+  	   myDiscoveryService.publish(myService1ModuleAdvertisement);
+	   myDiscoveryService.remotePublish(myService1ModuleAdvertisement);
+       } catch (Exception e) {
+         System.out.println("Error during publish of Module Advertisement");
+         System.exit(-1);
+       }
+    }
+      public PipeAdvertisement createPipeAdvertisement(String sender,String receiver) {
+        PipeAdvertisement pipeAdv=(PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
+        pipeAdv.setName(sender+receiver+"pipe");
+        pipeAdv.setPipeID(IDFactory.newPipeID(netPeerGroup.getPeerGroupID()));
+        pipeAdv.setType(PipeService.UnicastType);
+           return pipeAdv;
+    }
+
+       public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
+
+//	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
+//	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
+
+	ModuleSpecAdvertisement myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
+
+	myModuleSpecAdvertisement.setName("modulespecadd");
+	myModuleSpecAdvertisement.setVersion("Version 1.0");
+	myModuleSpecAdvertisement.setCreator("p2pvideoconference");
+	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
+	myModuleSpecAdvertisement.setSpecURI("www.ioe.edu.np");
+//      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
+      myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
 
 
       try {
-        myLocalEnum = myDiscoveryService.getLocalAdvertisements(DiscoveryService.ADV, searchKey, searchValue);
-
-        if ((myLocalEnum != null) && myLocalEnum.hasMoreElements()) {
-
-          PipeAdvertisement myModuleSpecAdv = (PipeAdvertisement)myLocalEnum.nextElement();
-          createInputPipe(myModuleSpecAdv);
-	  
-        }
-        else {
-          DiscoveryListener myDiscoveryListener = new DiscoveryListener() {
-            public void discoveryEvent(DiscoveryEvent e) {
-              Enumeration enumm;
-              PipeAdvertisement pipeAdv = null;
-              String str;
-
-
-              DiscoveryResponseMsg myMessage = e.getResponse();
-              enumm = myMessage.getResponses();
-              str = (String)enumm.nextElement();
-
-              try {
-                PipeAdvertisement myModSpecAdv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
-                createInputPipe(myModSpecAdv);
-
-                
-              } catch(Exception ee) {
-                  ee.printStackTrace();
-                  System.exit(-1);
-              }
-           }
-          };
-
-
-          myDiscoveryService.getRemoteAdvertisements(Peer, DiscoveryService.ADV, searchKey, searchValue, 1, myDiscoveryListener);
-        }
-        Thread.sleep(1000);
+        myDiscoveryService.publish(myModuleSpecAdvertisement);
+        myDiscoveryService.remotePublish(myModuleSpecAdvertisement);
       } catch (Exception e) {
-          System.out.println("Error during advertisement search");
-          System.exit(-1);
+         System.out.println("Error during publish of Module Specification Advertisement");
+         e.printStackTrace();
+         System.exit(-1);
       }
+
+      createInputPipe(myPipeAdvertisement);
     }
-
-
-    private void createInputPipe(PipeAdvertisement myPipeAdvertisement) {
+    public void createInputPipe(PipeAdvertisement myPipeAdvertisement) {
       
 
       class ServiceListener implements PipeMsgListener{
@@ -156,9 +108,12 @@ public class PeerMsgReceiver {
             public void pipeMsgEvent(PipeMsgEvent pme) {
                 Message msg;
                 msg=pme.getMessage();
-                MessageElement msgElement=msg.getMessageElement("DataMsg", null);
-                JOptionPane.showMessageDialog(null, msgElement.toString());
+//                JOptionPane.showMessageDialog(null, msg.toString());
+               MessageElement msgElement=msg.getMessageElement(null,"DataMsg");
+
+//                JOptionPane.showMessageDialog(null, msgElement.toString());
                 confMediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msgElement.toString());
+                
             }
 
       }

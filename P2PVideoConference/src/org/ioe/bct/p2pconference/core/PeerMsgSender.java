@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
@@ -50,23 +51,66 @@ public class PeerMsgSender {
       myDiscoveryService = netPeerGroup.getDiscoveryService();
       myPipeService = netPeerGroup.getPipeService();
     }
-    private PipeAdvertisement createPipeAdvertisement(String sender,String receiver) {
-        pipeAdv=(PipeAdvertisement) AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
-        pipeAdv.setName(sender+receiver+"pipe");
-        pipeAdv.setPipeID(IDFactory.newPipeID(netPeerGroup.getPeerGroupID()));
-        pipeAdv.setType(PipeService.UnicastType);
-//        try {
-//            //createOutputPipe(pipeAdv);
-//            myDiscoveryService.publish(pipeAdv);
-//        } catch (IOException ex) {
-//            Logger.getLogger(PeerMsgSender.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        myDiscoveryService.remotePublish(pipeAdv);
-        return pipeAdv;
+      public OutputPipe findAdvertisement(String Peer,String searchKey, String searchValue) {
+      Enumeration myLocalEnum = null;
+      OutputPipe outputPipe=null;
+
+      try {
+        myLocalEnum = myDiscoveryService.getLocalAdvertisements(DiscoveryService.ADV, "Name", "modulespecadd");
+        
+        if ((myLocalEnum != null) && myLocalEnum.hasMoreElements()) {
+
+          ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)myLocalEnum.nextElement();
+          outputPipe=createOutputPipe(myModuleSpecAdv.getPipeAdvertisement());
+          JOptionPane.showMessageDialog(null,"FROM LOCAL" + myModuleSpecAdv.getPipeAdvertisement().toString());
+
+        }
+        else {
+          class ServiceDiscoveryListener implements DiscoveryListener{
+            private OutputPipe outputPipe;
+              public ServiceDiscoveryListener()
+              {
+                
+            }
+            public OutputPipe getOutputPipe()
+              {
+                return outputPipe;
+            }
+              public void discoveryEvent(DiscoveryEvent e) {
+              Enumeration enumm;
+              PipeAdvertisement pipeAdv = null;
+              String str;
+
+
+              DiscoveryResponseMsg myMessage = e.getResponse();
+              enumm = myMessage.getResponses();
+              str = (String)enumm.nextElement();
+
+              try {
+                ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
+                outputPipe=createOutputPipe(myModSpecAdv.getPipeAdvertisement());
+                JOptionPane.showMessageDialog(null, "FROM REMOTE\n"+myModSpecAdv.getPipeAdvertisement().toString());
+
+              } catch(Exception ee) {
+                  ee.printStackTrace();
+                  System.exit(-1);
+              }
+           }
+          }
+          ServiceDiscoveryListener myDiscoveryListener=new ServiceDiscoveryListener();
+          outputPipe=myDiscoveryListener.getOutputPipe();
+          myDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", "modulespecadd", 1, myDiscoveryListener);
+        }
+        Thread.sleep(1000);
+      } catch (Exception e) {
+          System.out.println("Error during advertisement search");
+          System.exit(-1);
+      }
+      if(outputPipe==null) JOptionPane.showMessageDialog(null, "Why am i null");
+      return outputPipe;
     }
-    
-    public OutputPipe createOutputPipe(String sender,String receiver) {
-      myPipeAdvertisement=createPipeAdvertisement(sender, receiver);
+    public OutputPipe createOutputPipe(PipeAdvertisement myPipeAdvertisement) {
+     // myPipeAdvertisement=createPipeAdvertisement(sender, receiver);
       boolean noPipe = true;
       int count = 0;
       System.out.println(myPipeAdvertisement);
