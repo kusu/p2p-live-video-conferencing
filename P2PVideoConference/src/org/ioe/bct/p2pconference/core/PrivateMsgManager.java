@@ -6,6 +6,7 @@
 package org.ioe.bct.p2pconference.core;
 
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 import net.jxta.pipe.OutputPipe;
 import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 
@@ -36,7 +37,8 @@ public class PrivateMsgManager {
 
             public void run() {
                peerMsgReceiver=new PeerMsgReceiver(netCore, mediator);
-               peerMsgReceiver.findAdvertisement(sender, "Name", sender+me+"pipe");
+              peerMsgReceiver.buildModuleAdvertisement();
+              peerMsgReceiver.buildModuleSpecificationAdvertisement(peerMsgReceiver.createPipeAdvertisement(me, sender));
                hashingMapInputPipe.put(sender, peerMsgReceiver);
             }
         };
@@ -48,7 +50,9 @@ public class PrivateMsgManager {
         Runnable runing=new Runnable() {
 
             public void run() {
-                hashingMapOutputPipe.put(receiver, peerMsgSender.createOutputPipe(me, receiver));
+                OutputPipe oppipe= peerMsgSender.findAdvertisement(receiver, "Name", receiver+me+"pipe");
+                hashingMapOutputPipe.put(receiver,oppipe);
+                JOptionPane.showMessageDialog(null, "Successfully added an entry to hashMap\nThe size now is"+hashingMapOutputPipe.size()+"\n"+hashingMapOutputPipe.toString());
             }
         };
         new Thread(runing).start();
@@ -56,7 +60,8 @@ public class PrivateMsgManager {
     }
     public void sendDataToReceiver(String data,String receiver)
     {
-        peerMsgSender.sendData(data, hashingMapOutputPipe.get(receiver));
+        OutputPipe oppipe=hashingMapOutputPipe.get(receiver);
+        peerMsgSender.sendData(data, oppipe);
     }
 
     public void setContactList(String peers[])
