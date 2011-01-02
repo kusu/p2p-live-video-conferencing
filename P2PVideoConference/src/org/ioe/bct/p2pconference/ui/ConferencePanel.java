@@ -11,28 +11,24 @@
 
 package org.ioe.bct.p2pconference.ui;
 
-import javax.swing.event.TableModelListener;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
+import javax.swing.SwingUtilities;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.PrivateMsgManager;
 
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
+import org.ioe.bct.p2pconference.dataobject.TextMessage;
 import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
 import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 
@@ -82,7 +78,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         lowerpanel = new javax.swing.JPanel();
         midpanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTextArea1 = new javax.swing.JTextArea();
 
         setBorder(javax.swing.BorderFactory.createTitledBorder("ConferencePanel"));
         setLayout(new java.awt.BorderLayout());
@@ -96,15 +92,11 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-        jTable1.setModel(tm);
-        jTable1.setDoubleBuffered(true);
-        jTable1.setEnabled(false);
-        jTable1.setFocusable(false);
-        jTable1.setIntercellSpacing(new java.awt.Dimension(5, 5));
-        jTable1.setRowSelectionAllowed(false);
-        jTable1.setSelectionBackground(new java.awt.Color(255, 255, 255));
-        jTable1.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(jTable1);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jTextArea1.setTabSize(5);
+        jTextArea1.setEnabled(false);
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout midpanelLayout = new javax.swing.GroupLayout(midpanel);
         midpanel.setLayout(midpanelLayout);
@@ -137,9 +129,11 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                    JPanel jPanel=(JPanel)body;
                    currentSelectedPeer=jPanel.getName();
                   //Have to apply threading for this operation otherwise pipe is not resolved
+
                    privateMsgManager.addReceiver(currentSelectedPeer);
                    privateMsgManager.addSender(currentSelectedPeer);
-                    //JOptionPane.showMessageDialog(null, currentSelectedPeer);
+                   
+                  
                }
                upperPanel.add(uinfo,BorderLayout.CENTER);
                upperPanel.validate();
@@ -163,7 +157,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
            lowerpanel.add(sendTextMsgPanel);
            lowerpanel.validate();
            lowerpanel.setVisible(true);
-           jTable1.setGridColor(Color.white);
+         
            jScrollPane1.setVisible(true);
            
           
@@ -185,10 +179,13 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
         Date currentDate=Calendar.getInstance().getTime();
         String dateString=sdf.format(currentDate);
-        Message msg=new Message(AppMainFrame.getUserName(), message, dateString);
-        tableData.add(msg);
-        tm.fireTableDataChanged();
-        JOptionPane.showMessageDialog(null, message);
+        TextMessage msg=new TextMessage(AppMainFrame.getUserName(), message, dateString);
+        textData.put(currentSelectedPeer,msg);
+        message=message.replaceAll("\n","");
+        if(message.length()>30) {
+            message+="\n";
+        }
+        jTextArea1.append(AppMainFrame.getUserName()+"\t"+message+"\t"+"\t"+dateString);
         privateMsgManager.sendDataToReceiver(message, currentSelectedPeer);
        
     }
@@ -197,117 +194,19 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
         Date currentDate=Calendar.getInstance().getTime();
         String dateString=sdf.format(currentDate);
-        Message msg=new Message("From Outside", message, dateString);//to be implemented here
-        tableData.add(msg);
-        tm.fireTableDataChanged();
-    }
-
-    private class Message{
-        private String mess;
-        private String from;
-        private String date;
-        public Message(){}
-
-        public Message(String frm,String msg,String date) {
-            this.mess=msg;
-            this.from=frm;
-            this.date=date;
-        }
-
-        public String getMessage() {return mess;}
-        public String getFrom() {return from;}
-        public String getDate() {return date;}
-
-    }
-
-    private class MyTableModel extends AbstractTableModel {
-        
-
-            @Override
-            public int getRowCount() {
-                return tableData.size();
-            }
-
-            @Override
-            public int getColumnCount() {
-               return 3;
-            }
-
-            @Override
-            public String getColumnName(int columnIndex) {
-                switch (columnIndex) {
-                    case 0:
-                        return "From";
-
-                    case 1:
-                        return "Message";
-                    case 2:
-                        return "Time";
-                }
-                return "";
-            }
-
-            @Override
-            public Class<?> getColumnClass(int columnIndex) {
-                return String.class;
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return false;
-            }
-
-            @Override
-            public Object getValueAt(int rowIndex, int columnIndex) {
-                Message tablemsg=tableData.get(rowIndex);
-                if(tablemsg==null) {return null;}
-                switch (columnIndex) {
-                    case 0:
-                        return tablemsg.getFrom();
-                    case 1:
-                        return tablemsg.getMessage();
-                    case 2:
-                        return tablemsg.getDate();
-                }
-                return "";
-            }
-
-            @Override
-            public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-                 Message tablemsg=new Message();
-                switch (columnIndex) {
-                    case 0:
-                        tablemsg.from=aValue.toString();
-                    case 1:
-                        tablemsg.mess=aValue.toString();
-                    case 2:
-                        tablemsg.date=aValue.toString();
-                }
-                tableData.add(tablemsg);
-            }
-
-
-
-    }
-
-    public void initTable() {
-//        tm=new MyTableModel();
-//
-//        msgtable=new JTable(tm);
-//        jScrollPane1.add(msgtable);
-//        jScrollPane1.validate();
         
     }
 
-    private AbstractTableModel tm=new MyTableModel();
-    private ArrayList<Message> tableData=new ArrayList<Message>();
-    private JTable msgtable;
+    
+    
+    private HashMap<String,TextMessage> textData=new HashMap<String,TextMessage>();
+    
     private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();
     private GroupInfoPanel gPanel;
     private String currentSelectedPeer="";
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel lowerpanel;
     private javax.swing.JPanel midpanel;
     private javax.swing.JPanel upperPanel;
