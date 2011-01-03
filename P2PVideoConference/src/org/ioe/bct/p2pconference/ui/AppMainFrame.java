@@ -177,7 +177,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         netCOre.startNetwork(ConfigMode.ADHOC);
         System.out.println("creating network core");
         GroupListener myGroupListener=contGroupPanel;
-     //   groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();
+        groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();
         appConfPanel.initiateChatting(netCOre);
     }
 

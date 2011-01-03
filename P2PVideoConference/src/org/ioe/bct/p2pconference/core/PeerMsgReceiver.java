@@ -73,14 +73,14 @@ public class PeerMsgReceiver {
            return pipeAdv;
     }
 
-       public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
+       public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement,String name) {
 
 //	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
 //	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
 
 	ModuleSpecAdvertisement myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
 
-	myModuleSpecAdvertisement.setName("modulespecadd");
+	myModuleSpecAdvertisement.setName(name);
 	myModuleSpecAdvertisement.setVersion("Version 1.0");
 	myModuleSpecAdvertisement.setCreator("p2pvideoconference");
 	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
