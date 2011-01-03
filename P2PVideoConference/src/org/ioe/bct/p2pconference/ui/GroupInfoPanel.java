@@ -52,6 +52,7 @@ public class GroupInfoPanel extends javax.swing.JPanel {
 
             PeerAdvertisement adv = peerGroup.getConnectedUsers().get(i);
             String peerName = adv.getName();
+
             JPanel newPanel = new JPanel();
             newPanel.setPreferredSize(new Dimension(125, 25));
             newPanel.setBorder(BorderFactory.createLineBorder(Color.cyan));

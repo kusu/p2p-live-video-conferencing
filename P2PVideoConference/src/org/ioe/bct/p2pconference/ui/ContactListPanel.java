@@ -8,7 +8,6 @@
  *
  * Created on Nov 5, 2010, 11:45:37 AM
  */
-
 package org.ioe.bct.p2pconference.ui;
 
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
@@ -36,82 +35,69 @@ import org.ioe.bct.p2pconference.patterns.observer.Observer;
 import org.ioe.bct.p2pconference.patterns.observer.Subject;
 import org.ioe.bct.p2pconference.utils.Notification;
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
-import org.ioe.bct.p2pconference.ui.controls.PeerList;
+
 /**
  *
  * @author kusu
  */
-public class ContactListPanel extends javax.swing.JPanel implements Observer, Colleague,DisplayElement{
+public class ContactListPanel extends javax.swing.JPanel implements Observer, Colleague, DisplayElement {
 
-    
-    private ArrayList contactArray=new ArrayList();
-   
-    private ListCellRenderer imageCellRenderer=new ImageCellRenderer();
-
-    private Subject contList=new ContactList();
+    private ArrayList contactArray = new ArrayList();
+    private ListCellRenderer imageCellRenderer = new ImageCellRenderer();
+    private Subject contList = new ContactList();
     private Mediator conferenceMediator;
 
-     public ContactListPanel(Mediator confMediator) {
-         
-         this.conferenceMediator=confMediator;
-       //  conferenceMediator.addColleague(this);
+    public ContactListPanel(Mediator confMediator) {
+
+        this.conferenceMediator = confMediator;
+        //  conferenceMediator.addColleague(this);
 //       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //       jList1.setModel(new MyListModel());
-      
-       
+
+
     }
 
-     public ContactListPanel setList(Subject contList){
-         contList.registerObserver(this);
-         this.contList=contList;
+    public ContactListPanel setList(Subject contList) {
+        contList.registerObserver(this);
+        this.contList = contList;
 
-         initComponents();
-         jList1.setCellRenderer(imageCellRenderer);
+        initComponents();
+        jList1.setCellRenderer(imageCellRenderer);
         jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-         return this;
+        return this;
 
-     }
+    }
 
-    public void initList(String userName){
+    public void initList(String userName) {
         //Read data from database(Contact List)
-        
-       
-        DBHandler handler=new DBHandler();
+
+
+        DBHandler handler = new DBHandler();
         try {
             handler.initConnection();
-            ArrayList<String> myList=handler.getContacts(userName);
-            System.err.println("CR list "+myList);
-            Notification ntf=new Notification(Notification.CONTACT_LOADED);
+            ArrayList<String> myList = handler.getContacts(userName);
+            System.err.println("CR list " + myList);
+            Notification ntf = new Notification(Notification.CONTACT_LOADED);
             ntf.setBody(myList);
             contList.notifyObservers(ntf);
-            
-        }
-        catch (ClassNotFoundException cnf) {
-            JOptionPane.showMessageDialog(null, "Eroor Class not found. "+cnf.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-        }
-        catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-        }
-        catch (Exception ge){
-                JOptionPane.showMessageDialog(null, ge.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
-        }
-        
 
-       
-        
+        } catch (ClassNotFoundException cnf) {
+            JOptionPane.showMessageDialog(null, "Eroor Class not found. " + cnf.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (Exception ge) {
+            JOptionPane.showMessageDialog(null, ge.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
 
-       
     }
 
-  
-
     public void setMediator(Mediator m) {
-        this.conferenceMediator=m;
+        this.conferenceMediator = m;
     }
 
     public void receive(String message, Colleague sender, Object body) {
-       //do nothing
-          System.out.println("Loadinggggggg contact info ");
+        //do nothing
+        System.out.println("Loadinggggggg contact info ");
     }
 
     private class ImageCellRenderer extends DefaultListCellRenderer {
@@ -119,25 +105,19 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
         @Override
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-                if(value instanceof JPanel ) {
+            if (value instanceof JPanel) {
 
-                Component component=(Component) value;
-                 component.setForeground (Color.white);
-              component.setBackground (isSelected ? Color.MAGENTA : Color.white);
-              return component;
+                Component component = (Component) value;
+                component.setForeground(Color.white);
+                component.setBackground(isSelected ? Color.MAGENTA : Color.white);
+                return component;
+            } else {
+                return new JLabel("");
             }
-             else {
-                     return new JLabel("");
-                  }
         }
     }
 
-
-    
-
     /** Creates new form ContactListPanel */
-   
-
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -167,70 +147,64 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
         sendSelectionChangeMsg();
     }//GEN-LAST:event_jList1ValueChanged
 
-
     public void sendSelectionChangeMsg() {
-        if(jList1.getSelectedIndex()<0) {
+        if (jList1.getSelectedIndex() < 0) {
             return;
         }
-        Object dataItem=jList1.getSelectedValue();
-          conferenceMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED,this,dataItem);
+        Object dataItem = jList1.getSelectedValue();
+        conferenceMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this, dataItem);
     }
 
     public void display() {
-       //do nothing java listmodel handles this
-       
+        //do nothing java listmodel handles this
     }
 
     public void update(Notification type) {
-       switch(type.getName()){
+        switch (type.getName()) {
 
-           case Notification.CONTACT_ADDED:
+            case Notification.CONTACT_ADDED:
                 addnewContact(type.getBody());
                 break;
-           case Notification.CONTACT_DELETED:
-               deleteNewContact(type.getBody());
-               break;
+            case Notification.CONTACT_DELETED:
+                deleteNewContact(type.getBody());
+                break;
 
-           case Notification.CONTACT_LOADED:
-               loadContacts(type.getBody());
-       }
+            case Notification.CONTACT_LOADED:
+                loadContacts(type.getBody());
+        }
     }
 
     public void loadContacts(Object body) {
-        ArrayList<String> strlist=(ArrayList<String>)body;
-        Iterator<String> it=strlist.iterator();
-        while(it.hasNext()) {
-            String contName=it.next();
-            JPanel  panel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+        ArrayList<String> strlist = (ArrayList<String>) body;
+        Iterator<String> it = strlist.iterator();
+        while (it.hasNext()) {
+            String contName = it.next();
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             panel.add(new JLabel(contName));
             contactArray.add(panel);
         }
         jList1.setListData(contactArray.toArray());
     }
 
-    public void deleteNewContact(Object body ){
+    public void deleteNewContact(Object body) {
 //        User u=(User)body;
 //        JLabel newLabel=new JLabel(u.getName());
 //       contactArray.add(newLabel);
-       
     }
 
     public void addnewContact(Object body) {
-        Request u=(Request)body;
-        JLabel newLabel=new JLabel(u.getTo());
+        Request u = (Request) body;
+        JLabel newLabel = new JLabel(u.getTo());
 //        String newLabel=u.getTo();
-        JPanel newPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel newPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         newPanel.add(newLabel);
         contactArray.add(newPanel);
         jList1.setListData(contactArray.toArray());
         System.out.println("CONTACT ADDED");
-       
+
     }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-
 }

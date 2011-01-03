@@ -45,6 +45,12 @@ public class GroupDiscoveryThread implements Runnable {
              ProtectedPeerGroup currentProtectedPeerGrp=new ProtectedPeerGroup(peerGroupName,"","",current);
              ArrayList<PeerAdvertisement> pperList=peerGroupDiscoveryService.discoverPeerInGroup(current);
              currentProtectedPeerGrp.setConnectUsers(pperList);
+             Iterator<PeerAdvertisement> itr=pperList.iterator();
+             System.out.println("luck these peers");
+             while(itr.hasNext())
+             {
+                 System.out.println(itr.next().getName());
+             }
              newprotectedGroups.add(currentProtectedPeerGrp);
              organizer.updateAllPeerGroups(newprotectedGroups);
             
