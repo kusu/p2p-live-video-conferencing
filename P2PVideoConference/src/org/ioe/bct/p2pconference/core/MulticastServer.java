@@ -31,7 +31,10 @@ public class MulticastServer {
             multicastSS=new MulticastSocketService(peerGroup);
 
         }
-
+        public PeerGroup getPeerGroup()
+        {
+            return peerGroup;
+        }
         public void getAllMulticastSocketFromPipeAdvertisements()
         {
 

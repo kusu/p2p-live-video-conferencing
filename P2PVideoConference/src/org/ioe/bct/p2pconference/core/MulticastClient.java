@@ -35,9 +35,10 @@ public class MulticastClient {
         }
     }
 
-    public void sendMesssage(byte msg[])
+    public void sendMesssage(String message)
     {
         //SocketAddress add=multicast.getRemoteSocketAddress();
+        byte[] msg=message.getBytes();
         try {
             DatagramPacket packet = new DatagramPacket(msg, msg.length);
             multicast.send(packet);

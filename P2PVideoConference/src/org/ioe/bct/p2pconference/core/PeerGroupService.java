@@ -373,7 +373,7 @@ public class PeerGroupService{
                 while (localPeerGroupAdvertisementEnumeration.hasMoreElements()) {
                     PeerGroupAdvertisement pgAdv = null;
                     pgAdv = (PeerGroupAdvertisement) localPeerGroupAdvertisementEnumeration.nextElement();
-                    System.out.println(pgAdv.toString());
+                 
 
                 try {
                    peerGroupArrayList.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID()));
@@ -549,6 +549,7 @@ public String getMessage()
                 PeerAdvertisement pAdv=null;
                 pAdv=(PeerAdvertisement)localAds.nextElement();
                 peerAdvArrayList.add(pAdv);
+                System.out.println("At Peer Group Service :" +pAdv.getName());
             }
           return peerAdvArrayList;
     }

@@ -15,11 +15,18 @@ import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import net.jxta.peergroup.PeerGroup;
+import net.jxta.protocol.PeerAdvertisement;
+import org.ioe.bct.p2pconference.core.MulticastClient;
+import org.ioe.bct.p2pconference.core.MulticastServer;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.PrivateMsgManager;
 
@@ -41,13 +48,37 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     private Mediator confMediator;
     private PrivateMsgManager privateMsgManager;
-   
+    private HashMap<PeerGroup,MulticastClient> multicastClients;
+    private ArrayList<MulticastToPeerGroupMapper> mapperArrayList= new ArrayList<MulticastToPeerGroupMapper>();
+    
+    private class MulticastToPeerGroupMapper
+    {
+        private ProtectedPeerGroup pPeerGroup;
+        private MulticastServer multicastServer;
+        public MulticastToPeerGroupMapper(ProtectedPeerGroup pg,MulticastServer multiS)
+        {
+            pPeerGroup=pg;
+            multicastServer=multiS;
+        }
+
+        public MulticastServer getMulticastServer()
+        {
+            return multicastServer;
+        }
+        public ProtectedPeerGroup getProtectedPeerGroup()
+        {
+            return pPeerGroup;
+        }
+    }
+
 
     /** Creates new form ConferencePanel */
     public ConferencePanel() {
         initComponents();
         upperPanel.setVisible(false);
         jScrollPane1.setVisible(false);
+        multicastClients=new HashMap<PeerGroup, MulticastClient>();
+       
     }
 
     public void initiateChatting(P2PNetworkCore netCore)
@@ -58,6 +89,64 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         this.confMediator=m;
         confMediator.addColleague(this);
     }
+    private class MulticastServerThread implements Runnable{
+
+        private MulticastServer server;
+        private String peer;
+        private String message;
+        public MulticastServerThread(MulticastServer multicastServer,String selectedPeer)
+        {
+            this.server=multicastServer;
+            this.peer=selectedPeer;
+        }
+        public void run() {
+            byte[] buffer=new byte[50];
+            server.getAllMulticastSocketFromPipeAdvertisements();
+            server.receive(peer, buffer);
+            message=new String(buffer);
+            printMessage(peer, message);
+        }
+
+        
+    }
+    public void startAllMulticastServerThread()
+    {
+        Iterator<MulticastToPeerGroupMapper> itr=mapperArrayList.iterator();
+        Thread[] serverThreads=new Thread[mapperArrayList.size()];
+        int i=0;
+        while(itr.hasNext())
+        {
+            MulticastToPeerGroupMapper current=itr.next();
+            ProtectedPeerGroup peerGroup=current.getProtectedPeerGroup();
+            ArrayList<PeerAdvertisement> peerAdvList=peerGroup.getConnectedUsers();
+            Iterator<PeerAdvertisement> it=peerAdvList.iterator();
+            while(it.hasNext())
+            {
+                String peerName=it.next().getName();
+                System.out.println("hahahahah" + peerName);
+                serverThreads[i]=new Thread(new MulticastServerThread(current.getMulticastServer(),peerName));
+            }
+            i++;
+        }
+        while(true)
+        {
+            for(Thread currentThread:serverThreads)
+            {
+                currentThread.start();
+
+            }
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+
+        }
+        
+    }
+
+
 
     public Mediator getMediator() {
         return this.confMediator;
@@ -124,7 +213,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                else
                {
                    JPanel jPanel=(JPanel)body;
-                   currentSelectedPeer=jPanel.getName();
+                   currentSelectedPeer=((JLabel)jPanel.getComponent(0)).getText();
                   //Have to apply threading for this operation otherwise pipe is not resolved
 
                    privateMsgManager.addReceiver(currentSelectedPeer);
@@ -163,6 +252,12 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         else if (message.equalsIgnoreCase(ConferenceMediator.JOIN_GROUP)) {
             System.out.println("Group Joined successfully....");
             gPanel.updateComponents();
+            ProtectedPeerGroup peerGroup=(ProtectedPeerGroup)body;
+            multicastClients.put(peerGroup.getPeerGroup(),
+                    new MulticastClient(peerGroup.getPeerGroup(), AppMainFrame.getUserName()));
+            mapperArrayList.add(new MulticastToPeerGroupMapper(peerGroup,
+                    new MulticastServer(peerGroup.getPeerGroup())));
+            startAllMulticastServerThread();
 
         }
         else if(message.equalsIgnoreCase(ConferenceMediator.SEND_TEXT_MSG))
@@ -173,17 +268,25 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
          } 
 
     public void sendTextMesssage(String message) {
-        printMessage(message); //print msg first
+        printMessage(AppMainFrame.getUserName(),message); //print msg first
        //send to receiver
         privateMsgManager.sendDataToReceiver(message, currentSelectedPeer);
+
        
     }
+    public void sendTextMessage(String message,PeerGroup peerGroup)
+    {
+        printMessage(AppMainFrame.getUserName(),message);
+        MulticastClient currentClient=multicastClients.get(peerGroup);
+        currentClient.sendMesssage(message);
+        
+    }
 
-    public void printMessage(String message) {
+    public void printMessage(String userName,String message) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm a");
         Date currentDate=Calendar.getInstance().getTime();
         String dateString=sdf.format(currentDate);
-        TextMessage msg=new TextMessage(AppMainFrame.getUserName(), message, dateString);
+        TextMessage msg=new TextMessage(userName, message, dateString);
         textData.put(currentSelectedPeer,msg);
         message=message.replaceAll("\n","");
         String[] invWords=message.split(" ");
@@ -214,7 +317,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
             formattedStr+="  ";
         }
 
-        String userName=AppMainFrame.getUserName();
+        //String userName=AppMainFrame.getUserName();
         int ulen=userName.length();
 
         if(ulen<15){
@@ -230,7 +333,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     public void receiveTextMessage(String message) {
        //to be called once the message is received. just print the received msg in the textarea
-        printMessage(message);
+        printMessage(message,currentSelectedPeer);
     }
 
     

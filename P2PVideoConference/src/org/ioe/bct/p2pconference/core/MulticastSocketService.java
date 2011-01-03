@@ -86,7 +86,7 @@ public class MulticastSocketService {
                             str = (String)enumm.nextElement();
                         try {
                             PipeAdvertisement pipeAdv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
-                            localAds.add(pipeAdv);;
+                            localAds.add(pipeAdv);
                       } catch(Exception ee) {
                           ee.printStackTrace();
              //             System.exit(-1);
