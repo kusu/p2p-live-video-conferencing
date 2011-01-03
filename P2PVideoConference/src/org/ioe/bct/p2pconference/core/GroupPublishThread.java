@@ -26,7 +26,7 @@ public class GroupPublishThread implements Runnable {
         peerGroupService.publishAdvertisement(AppMainFrame.netCOre.getNetPeerGroup());
        
         try {
-            Thread.sleep(20000);
+            Thread.sleep(40000);
         } catch (InterruptedException ex) {
             ex.printStackTrace();
         }

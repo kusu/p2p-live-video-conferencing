@@ -38,7 +38,7 @@ public class PrivateMsgManager {
             public void run() {
                peerMsgReceiver=new PeerMsgReceiver(netCore, mediator);
               peerMsgReceiver.buildModuleAdvertisement();
-              peerMsgReceiver.buildModuleSpecificationAdvertisement(peerMsgReceiver.createPipeAdvertisement(me, sender));
+              peerMsgReceiver.buildModuleSpecificationAdvertisement(peerMsgReceiver.createPipeAdvertisement(me, sender),me+sender+"modulespecadd");
                hashingMapInputPipe.put(sender, peerMsgReceiver);
             }
         };
@@ -50,7 +50,7 @@ public class PrivateMsgManager {
         Runnable runing=new Runnable() {
 
             public void run() {
-                OutputPipe oppipe= peerMsgSender.findAdvertisement(receiver, "Name", receiver+me+"pipe");
+                OutputPipe oppipe= peerMsgSender.findAdvertisement(receiver, "Name", receiver+me+"modulespecadd");
                 hashingMapOutputPipe.put(receiver,oppipe);
                 JOptionPane.showMessageDialog(null, "Successfully added an entry to hashMap\nThe size now is"+hashingMapOutputPipe.size()+"\n"+hashingMapOutputPipe.toString());
             }

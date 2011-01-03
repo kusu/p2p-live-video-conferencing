@@ -40,7 +40,7 @@ public class PeerMsgSender {
     private OutputPipe 		myOutputPipe;
    private PipeAdvertisement pipeAdv;
     private String valueString = "JXTA-CH15EX2";
-    private final Object lock=new String("lock");
+    
     public PeerMsgSender(P2PNetworkCore netCore)
     {
         netPeerGroup=netCore.getNetPeerGroup();
@@ -56,7 +56,7 @@ public class PeerMsgSender {
       OutputPipe outputPipe=null;
 
       try {
-        myLocalEnum = myDiscoveryService.getLocalAdvertisements(DiscoveryService.ADV, "Name", "modulespecadd");
+        myLocalEnum = myDiscoveryService.getLocalAdvertisements(DiscoveryService.ADV, "Name", searchValue);
         
         if ((myLocalEnum != null) && myLocalEnum.hasMoreElements()) {
 
@@ -99,7 +99,7 @@ public class PeerMsgSender {
           }
           ServiceDiscoveryListener myDiscoveryListener=new ServiceDiscoveryListener();
           outputPipe=myDiscoveryListener.getOutputPipe();
-          myDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", "modulespecadd", 1, myDiscoveryListener);
+          myDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", searchValue, 1, myDiscoveryListener);
         }
         Thread.sleep(1000);
       } catch (Exception e) {
