@@ -151,9 +151,12 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
         
 }//GEN-LAST:event_jButton1ActionPerformed
     private void createGroup() throws Exception{
+        if(pgOrganizer==null){
+            System.out.println("FUCk cR");
+        }
           pgOrganizer.createPeerGroup(getGroupName(),getGroupPassword(),getGroupLoginName());
         confMediator.sendMessage(ConferenceMediator.GROUP_ADDED, this, pgOrganizer);
-        dispose();
+       setVisible(false);
     }
     /**
     * @param args the command line arguments

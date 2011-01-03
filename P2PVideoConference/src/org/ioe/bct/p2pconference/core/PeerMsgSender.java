@@ -121,7 +121,7 @@ public class PeerMsgSender {
           myOutputPipe = myPipeService.createOutputPipe(myPipeAdvertisement, 60000);
           noPipe = false;
           System.out.println("Output Pipe successfully created");
-          Thread.sleep(10000);
+          Thread.sleep(20000);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Unable to create output pipe");
@@ -144,7 +144,8 @@ public class PeerMsgSender {
     StringMessageElement sme=new StringMessageElement("DataMsg", data, null);
     msg.addMessageElement(null, sme);
       try {
-        outputPipe.send (msg);
+          if(outputPipe!=null)
+             outputPipe.send (msg);
       } catch (Exception e) {
           System.out.println("Unable to print output pipe");
           e.printStackTrace();

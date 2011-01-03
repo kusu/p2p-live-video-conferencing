@@ -8,9 +8,7 @@
  *
  * Created on Nov 5, 2010, 12:29:08 PM
  */
-
 package org.ioe.bct.p2pconference.ui;
-
 
 import java.awt.Color;
 import java.awt.Component;
@@ -31,85 +29,79 @@ import org.ioe.bct.p2pconference.ui.controls.GroupListener;
  *
  * @author kusu
  */
-public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupListener{
+public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupListener {
 
-    
-
-    private ArrayList<ProtectedPeerGroup> peerGroupsList=new ArrayList<ProtectedPeerGroup>();
-    private ArrayList<JPanel>  peerListUIPanelList=new ArrayList<JPanel>();
+    private ArrayList<ProtectedPeerGroup> peerGroupsList = new ArrayList<ProtectedPeerGroup>();
+    private ArrayList<JPanel> peerListUIPanelList = new ArrayList<JPanel>();
     private Mediator confMediator;
-   
     private JPopupMenu popupMenu;
     private JMenuItem popupMenuJoinItem;
     private JMenuItem popupMenuGetInfoItem;
-     
-    /** Creates new form GroupsPanel */
 
-      public GroupsPanel(Mediator m) {
+    /** Creates new form GroupsPanel */
+    public GroupsPanel(Mediator m) {
         initComponents();
-        confMediator=m;
+        confMediator = m;
         initPopupMenu();
     }
 
-      public void receive(String message, Colleague sender, Object body) {
+    public void receive(String message, Colleague sender, Object body) {
 //        throw new UnsupportedOperationException("Not supported yet.");
 
-        if(message.equalsIgnoreCase(ConferenceMediator.GROUP_ADDED)) {
+        if (message.equalsIgnoreCase(ConferenceMediator.GROUP_ADDED)) {
 
-            PeerGroupOrganizer orgn=(PeerGroupOrganizer)body;
+            PeerGroupOrganizer orgn = (PeerGroupOrganizer) body;
+            CreateGroupDialog rsender = (CreateGroupDialog) sender;
 
-            peerGroupsList=orgn.getAllPeerGroups();
-            System.out.println("TOTAL PEER GROUPS "+peerGroupsList.size());
+            peerGroupsList = orgn.getAllPeerGroups();
+            System.out.println("TOTAL PEER GROUPS " + peerGroupsList.size());
             updateGroupList();
+            rsender.dispose();
         }
-       
+
 
 
     }
 
     private void updateGroupList() {
-        peerListUIPanelList=new ArrayList<JPanel>();
-        Iterator it=peerGroupsList.iterator();
+        peerListUIPanelList = new ArrayList<JPanel>();
+        Iterator it = peerGroupsList.iterator();
 
         while (it.hasNext()) {
-        ProtectedPeerGroup current=(ProtectedPeerGroup) it.next();
-        String groupName=current.getGroupName();
-            JLabel label=new JLabel(groupName);
-            JPanel panel=new JPanel(new  FlowLayout(FlowLayout.LEFT));
+            ProtectedPeerGroup current = (ProtectedPeerGroup) it.next();
+            String groupName = current.getGroupName();
+            JLabel label = new JLabel(groupName);
+            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
             panel.add(label);
-           peerListUIPanelList.add(panel);
-           System.out.println(groupName);
+            peerListUIPanelList.add(panel);
+            System.out.println(groupName);
         }
-         groupsListUI.setListData(peerListUIPanelList.toArray());
+        groupsListUI.setListData(peerListUIPanelList.toArray());
     }
 
     public void setMediator(Mediator m) {
 
-         m.addColleague(this);
+        m.addColleague(this);
     }
 
-
-
     public void updatePeerGroups(ArrayList<ProtectedPeerGroup> updatedPGs) {
-        peerGroupsList=updatedPGs;
+        peerGroupsList = updatedPGs;
         updateGroupList();
     }
 
-
-
-      private void initPopupMenu() {
-           popupMenu=new JPopupMenu();
-       popupMenuJoinItem=new JMenuItem("Join This Group");
-       popupMenuGetInfoItem=new JMenuItem("Get Group Info");
-       popupMenu.add(popupMenuJoinItem);
-       popupMenu.add(popupMenuGetInfoItem);
-       popupMenuJoinItem.addActionListener(new ActionListener() {
+    private void initPopupMenu() {
+        popupMenu = new JPopupMenu();
+        popupMenuJoinItem = new JMenuItem("Join This Group");
+        popupMenuGetInfoItem = new JMenuItem("Get Group Info");
+        popupMenu.add(popupMenuJoinItem);
+        popupMenu.add(popupMenuGetInfoItem);
+        popupMenuJoinItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 joinSelctedGroup();
             }
         });
-        
+
         popupMenuGetInfoItem.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
@@ -119,47 +111,44 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
 
     }
 
-      private void joinSelctedGroup() {
-         
+    private void joinSelctedGroup() {
+
         System.out.println("Joining the peer group...");
-         int getSelectedDataItem=groupsListUI.getSelectedIndex();
-        
-        ProtectedPeerGroup selectedPeerGroup=peerGroupsList.get(getSelectedDataItem);
-        joinGroupDialog=new JoinGroupDialog(null,selectedPeerGroup);
+        int getSelectedDataItem = groupsListUI.getSelectedIndex();
+
+        ProtectedPeerGroup selectedPeerGroup = peerGroupsList.get(getSelectedDataItem);
+        joinGroupDialog = new JoinGroupDialog(null, selectedPeerGroup);
         joinGroupDialog.setMediator(confMediator);
         joinGroupDialog.setVisible(true);
-   
-      }
 
-      private void getGroupInfo() {
-          System.out.println("Getting the group Info...");
-      }
+    }
+
+    private void getGroupInfo() {
+        System.out.println("Getting the group Info...");
+    }
 
     private void initList() {
         groupsListUI.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        
+
         groupsListUI.setCellRenderer(new ListCellRenderer() {
 
             public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-                if(value instanceof JPanel) {
-                    Component component=(Component) value;
-                     component.setForeground (Color.white);
-                     component.setBackground (isSelected ? Color.MAGENTA : Color.white);
+                if (value instanceof JPanel) {
+                    Component component = (Component) value;
+                    component.setForeground(Color.white);
+                    component.setBackground(isSelected ? Color.MAGENTA : Color.white);
                     return component;
+                } else {
+                    return new JLabel("");
                 }
-             else {
-                     return new JLabel("");
-             }
             }
         });
 
         groupsListUI.setListData(peerListUIPanelList.toArray());
-       
-      
-    }
 
-   
+
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -201,42 +190,35 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
 
     private void groupsListUIValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_groupsListUIValueChanged
         // TODO add your handling code here:
-        
+
         sendSelectionChangedMessage();
     }//GEN-LAST:event_groupsListUIValueChanged
 
     private void groupsListUIMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupsListUIMouseClicked
         // TODO add your handling code here:
-        
     }//GEN-LAST:event_groupsListUIMouseClicked
 
     private void groupsListUIMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupsListUIMouseReleased
         // TODO add your handling code here:
-        if(groupsListUI.getSelectedIndex()<0) {
+        if (groupsListUI.getSelectedIndex() < 0) {
             return;
         }
-        if(evt.isPopupTrigger()) {
-            popupMenu.show(evt.getComponent(),evt.getX(),evt.getY());
+        if (evt.isPopupTrigger()) {
+            popupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_groupsListUIMouseReleased
 
     public void sendSelectionChangedMessage() {
-        if(groupsListUI.getSelectedIndex()<0){
+        if (groupsListUI.getSelectedIndex() < 0) {
             return;
         }
-        int selIndex=groupsListUI.getSelectedIndex();
-        ProtectedPeerGroup selectedPG=peerGroupsList.get(selIndex);
-        confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this,selectedPG);
+        int selIndex = groupsListUI.getSelectedIndex();
+        ProtectedPeerGroup selectedPG = peerGroupsList.get(selIndex);
+        confMediator.sendMessage(ConferenceMediator.CONT_SELECTION_CHANGED, this, selectedPG);
     }
-
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList groupsListUI;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
     private JoinGroupDialog joinGroupDialog;
-    
-   
-
- 
 }

@@ -14,6 +14,7 @@ public class Notification {
     private int name;
     public static final int CONTACT_ADDED=0;
     public static final int CONTACT_DELETED=1;
+    public static final int CONTACT_LOADED=4;
 
     public Notification(){}
     public Notification (int name) {
