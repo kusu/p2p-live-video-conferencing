@@ -23,11 +23,11 @@ public class MulticastClient {
     private PipeAdvertisement pipeAdvertisement=null;
     private MulticastSocketService multicastSS=null;
 
-    public MulticastClient(PeerGroup peerGroup)
+    public MulticastClient(PeerGroup peerGroup,String creator)
     {
         multicastSS=new MulticastSocketService(peerGroup);
         this.peerGroup=peerGroup;
-        pipeAdvertisement=multicastSS.getSocketAdvertisement();
+        pipeAdvertisement=multicastSS.getSocketAdvertisement(creator);
         try {
             multicast = new JxtaMulticastSocket(peerGroup, pipeAdvertisement);
         } catch (IOException ex) {
