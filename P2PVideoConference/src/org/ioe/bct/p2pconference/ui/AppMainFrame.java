@@ -134,11 +134,12 @@ public class AppMainFrame extends javax.swing.JFrame {
     }
 
     public AppMainFrame load(String userName,String pass) {
-        this.username=userName;
-        this.password=pass;
+       username=userName;
+       password=pass;
         createMenus();
-        setBounds(150, 100, 900, 600);
         
+        setBounds(150, 100, 900, 600);
+        contListPanel.initList(userName);
 
         return this;
     }
@@ -179,6 +180,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         GroupListener myGroupListener=contGroupPanel;
         groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();
         appConfPanel.initiateChatting(netCOre);
+        
     }
 
     

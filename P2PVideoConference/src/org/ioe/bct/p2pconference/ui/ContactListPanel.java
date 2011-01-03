@@ -15,13 +15,17 @@ import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
+import org.ioe.bct.p2pconference.core.db.DBHandler;
 import org.ioe.bct.p2pconference.dataobject.Request;
 
 
@@ -32,6 +36,7 @@ import org.ioe.bct.p2pconference.patterns.observer.Observer;
 import org.ioe.bct.p2pconference.patterns.observer.Subject;
 import org.ioe.bct.p2pconference.utils.Notification;
 import org.ioe.bct.p2pconference.ui.controls.ContactList;
+import org.ioe.bct.p2pconference.ui.controls.PeerList;
 /**
  *
  * @author kusu
@@ -43,7 +48,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
    
     private ListCellRenderer imageCellRenderer=new ImageCellRenderer();
 
-    private Subject contList;
+    private Subject contList=new ContactList();
     private Mediator conferenceMediator;
 
      public ContactListPanel(Mediator confMediator) {
@@ -52,6 +57,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
        //  conferenceMediator.addColleague(this);
 //       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //       jList1.setModel(new MyListModel());
+      
        
     }
 
@@ -60,25 +66,41 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
          this.contList=contList;
 
          initComponents();
+         jList1.setCellRenderer(imageCellRenderer);
+        jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
          return this;
 
      }
 
-    public void initList(){
+    public void initList(String userName){
         //Read data from database(Contact List)
-        jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        JPanel kPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        kPanel.add(new JLabel("test shell"));
-        kPanel.setName("test shell");
-        JPanel aPanel=new JPanel(new FlowLayout(FlowLayout.LEFT));
-        aPanel.add(new JLabel("admin"));
-        aPanel.setName("admin");
-        contactArray.add(kPanel);
-        contactArray.add(aPanel);
         
-        jList1.setCellRenderer(imageCellRenderer);
+       
+        DBHandler handler=new DBHandler();
+        try {
+            handler.initConnection();
+            ArrayList<String> myList=handler.getContacts(userName);
+            System.err.println("CR list "+myList);
+            Notification ntf=new Notification(Notification.CONTACT_LOADED);
+            ntf.setBody(myList);
+            contList.notifyObservers(ntf);
+            
+        }
+        catch (ClassNotFoundException cnf) {
+            JOptionPane.showMessageDialog(null, "Eroor Class not found. "+cnf.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        catch (Exception ge){
+                JOptionPane.showMessageDialog(null, ge.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
+        
 
-        jList1.setListData(contactArray.toArray());
+       
+        
+
+       
     }
 
   
@@ -135,7 +157,6 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
                 jList1ValueChanged(evt);
             }
         });
-        initList();
         jScrollPane1.setViewportView(jList1);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -170,7 +191,21 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
                deleteNewContact(type.getBody());
                break;
 
+           case Notification.CONTACT_LOADED:
+               loadContacts(type.getBody());
        }
+    }
+
+    public void loadContacts(Object body) {
+        ArrayList<String> strlist=(ArrayList<String>)body;
+        Iterator<String> it=strlist.iterator();
+        while(it.hasNext()) {
+            String contName=it.next();
+            JPanel  panel=new JPanel(new FlowLayout(FlowLayout.LEFT));
+            panel.add(new JLabel(contName));
+            contactArray.add(panel);
+        }
+        jList1.setListData(contactArray.toArray());
     }
 
     public void deleteNewContact(Object body ){

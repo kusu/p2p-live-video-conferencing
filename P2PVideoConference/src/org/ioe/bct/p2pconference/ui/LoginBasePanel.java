@@ -49,6 +49,7 @@ public class LoginBasePanel extends javax.swing.JPanel {
             if(hand.checkLogin(user, pass)) {
              AppLoader.mainFrame.hideLoginBox();
             AppLoader.mainFrame.load(user, pass).setVisible(true);
+            
             SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {

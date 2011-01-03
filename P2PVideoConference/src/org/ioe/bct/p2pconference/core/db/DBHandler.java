@@ -105,4 +105,18 @@ public class DBHandler {
     public void close() throws Exception {
         myDBConnector.close();
     }
+    public ArrayList<String> getContacts(String userName) throws SQLException,ClassNotFoundException {
+        ArrayList<String> userList=new  ArrayList<String>();
+        myDBConnector.connect();
+        String sql="select contacts from usercontact where username=?";
+        PreparedStatement stm=myDBConnector.getStatement(sql);
+        stm.setString(1,userName);
+        System.out.println(userName);
+        ResultSet result=stm.executeQuery();
+        while(result.next()) {
+            String contact=result.getString("Contacts");
+            userList.add(contact);
+        }
+        return userList;
+    }
 }
