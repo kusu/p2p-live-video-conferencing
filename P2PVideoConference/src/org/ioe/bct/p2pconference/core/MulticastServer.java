@@ -29,6 +29,7 @@ public class MulticastServer {
         {
             this.peerGroup=peerGroup;
             multicastSS=new MulticastSocketService(peerGroup);
+            pipeAdvertisements=multicastSS.getAllLocalPipeAdvertisement();
 
         }
         public PeerGroup getPeerGroup()
@@ -44,7 +45,8 @@ public class MulticastServer {
             {
                 try {
                     JxtaMulticastSocket temp = new JxtaMulticastSocket(peerGroup, pipeAdvertisements.get(i));
-                    multicasts.put(pipeAdvertisements.get(i).getName()+"SocketAdvertisement",temp);
+                    multicasts.put(pipeAdvertisements.get(i).getName(),temp);
+                    System.out.println(pipeAdvertisements.get(i));
                 }
                 catch (IOException ex) {
                     Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,12 +57,15 @@ public class MulticastServer {
 
         public void receive(String senderAtOtherEnd,byte buffer[])
         {
+            if(pipeAdvertisements.size()!=0)
+            {
             DatagramPacket packet=new DatagramPacket(buffer, buffer.length);
             try {
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
             }
             catch (IOException ex) {
                 Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
         }
 
