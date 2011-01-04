@@ -141,6 +141,7 @@ public class PeerMsgSender {
       
 
     Message msg=new Message();
+   
     StringMessageElement sme=new StringMessageElement("DataMsg", data, null);
     msg.addMessageElement(null, sme);
       try {

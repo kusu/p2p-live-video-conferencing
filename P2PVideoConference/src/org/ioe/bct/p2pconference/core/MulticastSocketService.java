@@ -56,16 +56,13 @@ public class MulticastSocketService {
         ArrayList<PipeAdvertisement> localAdvs=new ArrayList<PipeAdvertisement>();
 
         try {
-            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, null, null);
+            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Type", "JxtaPropagate");
                 while(advertisements.hasMoreElements())
                 {
                     Advertisement adv=advertisements.nextElement();
-                    if(adv.getAdvType().equals("JxtaPropagate"))
-                    {
-                        if(adv instanceof PipeAdvertisement){
-                            localAdvs.add((PipeAdvertisement)adv);
-                        }
-                    }
+                    localAdvs.add((PipeAdvertisement)adv);
+                        
+                    
                 }
             
             
@@ -76,8 +73,9 @@ public class MulticastSocketService {
                         return localAds;
                     }
                     public void discoveryEvent(DiscoveryEvent event) {
+                        System.out.println("Am i ever here");
                         Enumeration enumm;
-                        PipeAdvertisement peerAdv = null;
+                        PipeAdvertisement pipeAdv = null;
                         String str;
                         DiscoveryResponseMsg myMessage = event.getResponse();
                         enumm = myMessage.getResponses();
@@ -85,8 +83,10 @@ public class MulticastSocketService {
                         {
                             str = (String)enumm.nextElement();
                         try {
-                            PipeAdvertisement pipeAdv = (PipeAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
+                            Advertisement adv=AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
+                            pipeAdv = (PipeAdvertisement)adv;
                             localAds.add(pipeAdv);
+                            
                       } catch(Exception ee) {
                           ee.printStackTrace();
              //             System.exit(-1);
@@ -97,12 +97,12 @@ public class MulticastSocketService {
                 }
                 ServiceListener myDiscoveryListener=new ServiceListener();
                 localAdvs.addAll(myDiscoveryListener.getAdvertisements());
-                ds.getRemoteAdvertisements(null, DiscoveryService.ADV, null, null, 10,myDiscoveryListener);
+                ds.getRemoteAdvertisements(null, DiscoveryService.ADV, "Type", "JxtaPropagate", 10,myDiscoveryListener);
             
         } catch (IOException ex) {
             Logger.getLogger(MulticastSocketService.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        System.out.println("Total collected SocketPipeAdvertisement " + localAdvs.size());
         return localAdvs;
 
     }

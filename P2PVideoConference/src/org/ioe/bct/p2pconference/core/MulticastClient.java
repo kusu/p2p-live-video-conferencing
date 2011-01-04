@@ -10,6 +10,7 @@ import java.net.DatagramPacket;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.jxta.discovery.DiscoveryService;
 import net.jxta.socket.JxtaMulticastSocket;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
@@ -17,17 +18,19 @@ import net.jxta.protocol.PipeAdvertisement;
  *
  * @author kusu
  */
-public class MulticastClient {
+public class MulticastClient implements Runnable{
     private JxtaMulticastSocket multicast=null;
     private PeerGroup peerGroup=null;
     private PipeAdvertisement pipeAdvertisement=null;
     private MulticastSocketService multicastSS=null;
-
+    private DiscoveryService discoveryService=null;
     public MulticastClient(PeerGroup peerGroup,String creator)
     {
         multicastSS=new MulticastSocketService(peerGroup);
         this.peerGroup=peerGroup;
         pipeAdvertisement=multicastSS.getSocketAdvertisement(creator);
+      //  System.out.println(pipeAdvertisement);
+        discoveryService=peerGroup.getDiscoveryService();
         try {
             multicast = new JxtaMulticastSocket(peerGroup, pipeAdvertisement);
         } catch (IOException ex) {
@@ -35,6 +38,17 @@ public class MulticastClient {
         }
     }
 
+    public void publishPipeAdvertisement()
+    {
+        System.out.println("Starting publishing");
+        try {
+            discoveryService.publish(pipeAdvertisement);
+            discoveryService.remotePublish(pipeAdvertisement);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        System.out.println("Publishing ended");
+    }
     public void sendMesssage(String message)
     {
         //SocketAddress add=multicast.getRemoteSocketAddress();
@@ -51,6 +65,18 @@ public class MulticastClient {
                 Logger.getLogger(MulticastClient.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+    }
+
+    public void run() {
+       // try {
+        
+        publishPipeAdvertisement();
+        
+        
+//            Thread.sleep(20000);
+//        } catch (InterruptedException ex) {
+//            System.out.println(ex.getMessage());
+//        }
     }
 
 }
