@@ -22,7 +22,10 @@ import net.jxta.peergroup.PeerGroup;
 import net.jxta.peergroup.PeerGroupID;
 import net.jxta.pipe.PipeID;
 import net.jxta.pipe.PipeService;
+import net.jxta.platform.ModuleClassID;
 import net.jxta.protocol.DiscoveryResponseMsg;
+import net.jxta.protocol.ModuleClassAdvertisement;
+import net.jxta.protocol.ModuleSpecAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaMulticastSocket;
 
@@ -34,6 +37,9 @@ public class MulticastSocketService {
     private JxtaMulticastSocket multicastSocket=null;
     private PeerGroup peerGroup=null;
     private DiscoveryService ds=null;
+    private ModuleClassID myService1ID = null;
+    private ModuleClassAdvertisement myService1ModuleAdvertisement;
+    private ModuleSpecAdvertisement myModuleSpecAdvertisement;
     public MulticastSocketService(PeerGroup pg)
     {
         peerGroup=pg;
@@ -47,20 +53,85 @@ public class MulticastSocketService {
         advertisement.setPipeID(socketID);
         advertisement.setName(creator+"SocketAdvertisement");
         advertisement.setType(PipeService.PropagateType);
-        ds.remotePublish(advertisement);
         return advertisement;
     }
+     public void buildModuleAdvertisement() {
+	 myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
 
+	 myService1ModuleAdvertisement.setName("Multicasting");
+	 myService1ModuleAdvertisement.setDescription("receiveing data on");
+
+       myService1ID = IDFactory.newModuleClassID();
+	 myService1ModuleAdvertisement.setModuleClassID(myService1ID);
+
+
+       try {
+  	   ds.publish(myService1ModuleAdvertisement);
+	   ds.remotePublish(myService1ModuleAdvertisement);
+       } catch (Exception e) {
+         System.out.println("Error during publish of Module Advertisement");
+         System.exit(-1);
+       }
+    }
+     public void publishModuleAdvertisement()
+    {
+         try {
+  	   ds.publish(myService1ModuleAdvertisement);
+	   ds.remotePublish(myService1ModuleAdvertisement);
+       } catch (Exception e) {
+         System.out.println("Error during publish of Module Advertisement");
+         System.exit(-1);
+       }
+     }
+     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
+
+//	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
+//	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
+
+
+         myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
+
+	myModuleSpecAdvertisement.setName(peerGroup.getPeerGroupName()+"modulespec");
+	myModuleSpecAdvertisement.setVersion("Version 1.0");
+	myModuleSpecAdvertisement.setCreator("p2pvideoconference");
+	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
+	myModuleSpecAdvertisement.setSpecURI("www.ioe.edu.np");
+//      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
+      myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
+
+
+      try {
+        ds.publish(myModuleSpecAdvertisement);
+        ds.remotePublish(myModuleSpecAdvertisement);
+      } catch (Exception e) {
+         System.out.println("Error during publish of Module Specification Advertisement");
+         e.printStackTrace();
+         System.exit(-1);
+      }
+    }
+    public void publishModuleSpecificationAdvertisement()
+    {
+        try {
+        ds.publish(myModuleSpecAdvertisement);
+        ds.remotePublish(myModuleSpecAdvertisement);
+      } catch (Exception e) {
+         System.out.println("Error during publish of Module Specification Advertisement");
+         e.printStackTrace();
+         System.exit(-1);
+      }
+
+    }
     public ArrayList<PipeAdvertisement> getAllLocalPipeAdvertisement()
     {
         ArrayList<PipeAdvertisement> localAdvs=new ArrayList<PipeAdvertisement>();
 
         try {
-            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Type", "JxtaPropagate");
+            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+"modulespec");
                 while(advertisements.hasMoreElements())
                 {
-                    Advertisement adv=advertisements.nextElement();
-                    localAdvs.add((PipeAdvertisement)adv);
+                    ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)advertisements.nextElement();
+                    localAdvs.add(myModuleSpecAdv.getPipeAdvertisement());
+          
                         
                     
                 }
@@ -83,9 +154,8 @@ public class MulticastSocketService {
                         {
                             str = (String)enumm.nextElement();
                         try {
-                            Advertisement adv=AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
-                            pipeAdv = (PipeAdvertisement)adv;
-                            localAds.add(pipeAdv);
+                            ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
+                            localAds.add(myModSpecAdv.getPipeAdvertisement());
                             
                       } catch(Exception ee) {
                           ee.printStackTrace();
@@ -97,7 +167,7 @@ public class MulticastSocketService {
                 }
                 ServiceListener myDiscoveryListener=new ServiceListener();
                 localAdvs.addAll(myDiscoveryListener.getAdvertisements());
-                ds.getRemoteAdvertisements(null, DiscoveryService.ADV, "Type", "JxtaPropagate", 10,myDiscoveryListener);
+                ds.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+"modulespec", 10,myDiscoveryListener);
             
         } catch (IOException ex) {
             Logger.getLogger(MulticastSocketService.class.getName()).log(Level.SEVERE, null, ex);
