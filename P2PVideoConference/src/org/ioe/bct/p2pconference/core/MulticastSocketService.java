@@ -131,9 +131,6 @@ public class MulticastSocketService {
                 {
                     ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)advertisements.nextElement();
                     localAdvs.add(myModuleSpecAdv.getPipeAdvertisement());
-          
-                        
-                    
                 }
             
             
@@ -156,6 +153,7 @@ public class MulticastSocketService {
                         try {
                             ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
                             localAds.add(myModSpecAdv.getPipeAdvertisement());
+                            System.out.println(myModSpecAdv.getPipeAdvertisement());
                             
                       } catch(Exception ee) {
                           ee.printStackTrace();

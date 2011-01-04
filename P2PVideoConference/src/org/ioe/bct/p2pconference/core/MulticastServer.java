@@ -57,11 +57,12 @@ public class MulticastServer {
 
         public void receive(String senderAtOtherEnd,byte buffer[])
         {
-            if(pipeAdvertisements.size()!=0)
+            if(multicasts.containsKey(senderAtOtherEnd+"SocketAdvertisement"))
             {
             DatagramPacket packet=new DatagramPacket(buffer, buffer.length);
             try {
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
+                 System.out.println(packet.getData().toString());
             }
             catch (IOException ex) {
                 Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
