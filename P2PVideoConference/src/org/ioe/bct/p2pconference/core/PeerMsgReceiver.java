@@ -1,17 +1,10 @@
 package org.ioe.bct.p2pconference.core;
 
-import java.io.ByteArrayInputStream;
-import java.util.Enumeration;
-import javax.swing.JOptionPane;
-import net.jxta.discovery.DiscoveryEvent;
-import net.jxta.discovery.DiscoveryListener;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeService;
 
 import net.jxta.discovery.DiscoveryService;
-import net.jxta.document.MimeMediaType;
-import net.jxta.document.StructuredTextDocument;
 import net.jxta.endpoint.Message;
 import net.jxta.endpoint.MessageElement;
 import net.jxta.peergroup.PeerGroup;
@@ -19,7 +12,6 @@ import net.jxta.platform.ModuleClassID;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.PipeMsgEvent;
 import net.jxta.pipe.PipeMsgListener;
-import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.ModuleClassAdvertisement;
 import net.jxta.protocol.ModuleSpecAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;

@@ -29,6 +29,8 @@ public class MulticastClient implements Runnable{
         multicastSS=new MulticastSocketService(peerGroup);
         this.peerGroup=peerGroup;
         pipeAdvertisement=multicastSS.getSocketAdvertisement(creator);
+        multicastSS.buildModuleAdvertisement();
+        multicastSS.buildModuleSpecificationAdvertisement(pipeAdvertisement);
       //  System.out.println(pipeAdvertisement);
         discoveryService=peerGroup.getDiscoveryService();
         try {
@@ -40,14 +42,8 @@ public class MulticastClient implements Runnable{
 
     public void publishPipeAdvertisement()
     {
-        System.out.println("Starting publishing");
-        try {
-            discoveryService.publish(pipeAdvertisement);
-            discoveryService.remotePublish(pipeAdvertisement);
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
-        System.out.println("Publishing ended");
+        multicastSS.publishModuleAdvertisement();
+        multicastSS.publishModuleSpecificationAdvertisement();
     }
     public void sendMesssage(String message)
     {
