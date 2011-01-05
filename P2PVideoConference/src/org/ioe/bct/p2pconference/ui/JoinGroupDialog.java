@@ -66,7 +66,7 @@ public class JoinGroupDialog extends javax.swing.JDialog {
         setAlwaysOnTop(true);
         setBackground(new java.awt.Color(94, 161, 100));
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14));
         jLabel1.setText("Requesting to join the group. Please enter the following details......");
 
         authenticationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Authentication Required"));
@@ -74,7 +74,11 @@ public class JoinGroupDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Login :");
 
+        loginTextField.setText("kusu");
+
         jLabel3.setText("Password:");
+
+        passwordTextField.setText("adhikari");
 
         jButton1.setText("Join Now");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -92,14 +96,10 @@ public class JoinGroupDialog extends javax.swing.JDialog {
                 .addGroup(authenticationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(68, 68, 68)
                 .addGroup(authenticationPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(authenticationPanelLayout.createSequentialGroup()
-                        .addGap(68, 68, 68)
-                        .addComponent(passwordTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))
-                    .addGroup(authenticationPanelLayout.createSequentialGroup()
-                        .addGap(68, 68, 68)
-                        .addComponent(loginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(passwordTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                    .addComponent(loginTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, authenticationPanelLayout.createSequentialGroup()
                 .addContainerGap(110, Short.MAX_VALUE)

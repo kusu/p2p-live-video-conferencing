@@ -45,6 +45,7 @@ public class MulticastServer {
             {
                 try {
                     JxtaMulticastSocket temp = new JxtaMulticastSocket(peerGroup, pipeAdvertisements.get(i));
+//                    temp.setSoTimeout(0);
                     multicasts.put(pipeAdvertisements.get(i).getName(),temp);
                     System.out.println(pipeAdvertisements.get(i));
                 }

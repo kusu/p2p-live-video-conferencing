@@ -162,9 +162,13 @@ public class AppMainFrame extends javax.swing.JFrame {
             public void stateChanged(ChangeEvent e) {
                 if(contactListTab.getSelectedComponent().equals(contListPanel)) {
                     contListPanel.sendSelectionChangeMsg();
+                    appConfPanel.setPrivateMode(true);
+                    // JOptionPane.showMessageDialog(null, "sending msg");
                 }
                 else if(contactListTab.getSelectedComponent().equals(contGroupPanel)) {
+                   // JOptionPane.showMessageDialog(null, "cgsending msg");
                     contGroupPanel.sendSelectionChangedMessage();
+                    appConfPanel.setPrivateMode(false);
                 }
             }
         });

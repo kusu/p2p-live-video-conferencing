@@ -83,7 +83,8 @@ public class DBHandler {
         PreparedStatement stm=myDBConnector.getStatement(sql);
         stm.setString(1,user);
         ResultSet result=stm.executeQuery();
-        result.first();
+       
+        if (result.first()) {
         String pw=result.getString("password");
         if(pw.equals(password)) {
             return true;
@@ -92,6 +93,8 @@ public class DBHandler {
          else {
                     return false;
          }
+        }
+        return false;
     }
 
     public void commitTranscation() throws Exception{
