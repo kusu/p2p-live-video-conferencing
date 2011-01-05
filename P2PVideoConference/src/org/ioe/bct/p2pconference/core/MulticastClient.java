@@ -35,7 +35,7 @@ public class MulticastClient implements Runnable{
         discoveryService=peerGroup.getDiscoveryService();
         try {
             multicast = new JxtaMulticastSocket(peerGroup, pipeAdvertisement);
-//            multicast.setSoTimeout(0);
+            multicast.setSoTimeout(0);
         } catch (IOException ex) {
             Logger.getLogger(MulticastClient.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -50,11 +50,12 @@ public class MulticastClient implements Runnable{
     {
         //SocketAddress add=multicast.getRemoteSocketAddress();
         byte[] msg=message.getBytes();
-        System.out.println("MESSAGE "+new String(msg));
+        
         try {
+            
             DatagramPacket packet = new DatagramPacket(msg, msg.length);
             multicast.send(packet);
-
+            System.out.println("MESSAGE "+new String(packet.getData())+"  from port : "+packet.getPort());
         }
         catch (SocketException ex) {
             Logger.getLogger(MulticastClient.class.getName()).log(Level.SEVERE, null, ex);

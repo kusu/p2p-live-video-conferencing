@@ -11,5 +11,5 @@ package org.ioe.bct.p2pconference.core;
  */
 public interface StreamDataSourceInterface {
     public byte[] getData();
-
+    public void setData(byte buf[]);
 }

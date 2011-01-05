@@ -11,23 +11,43 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.jxta.exception.PeerGroupException;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMode;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.Image;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import net.jxta.protocol.PipeAdvertisement;
+import org.ioe.bct.p2pconference.core.P2PNetworkCore;
+import org.ioe.bct.p2pconference.core.SocketClient;
+import org.ioe.bct.p2pconference.core.SocketServer;
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
+import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
 
 /**
  *
  * @author kusu
  */
-public class UserInfoPanel extends javax.swing.JPanel  {
-
+public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
+    private P2PNetworkCore netCore;
+   private SocketServer socketServer;
+   private SocketClient socketClient;
+   private Mediator confMediator;
+   private String currentSelectedPeer;
     /** Creates new form UserInfoPanel */
-    public UserInfoPanel() {
+    public UserInfoPanel(P2PNetworkCore netCore){
         initComponents();
         jTabbedPane1.setTitleAt(0, "General");
         jTabbedPane1.setTitleAt(1, "Technical");
+        this.netCore=netCore;
+        
     }
 
     /** This method is called from within the constructor to
@@ -251,8 +271,73 @@ public class UserInfoPanel extends javax.swing.JPanel  {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        
+        try {
+            // TODO add your handling code here:
+            socketServer = new SocketServer(netCore, AppMainFrame.getUserName(),currentSelectedPeer);
+        } catch (IOException ex) {
+            Logger.getLogger(UserInfoPanel.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (PeerGroupException ex) {
+            Logger.getLogger(UserInfoPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         socketClient=new SocketClient(netCore,AppMainFrame.getUserName(),currentSelectedPeer);
 
+         
+        socketServer.buildModuleAdvertisement();
+        socketServer.buildModuleSpecificationAdvertisement(socketServer.createSocketAdvertisement());
+        class ServerThreadHandler implements Runnable{
+            public void run()
+            {
+                System.out.println("Server Thread begins");
+                socketServer.initializeServer();
+                socketServer.runServer();
+
+            }
+        }
+        class PublishThreadHandler implements Runnable{
+            public void run()
+            {
+                System.out.println("Publishing Thread begins");
+                while(true)
+                {
+
+                    try {
+
+                        socketServer.publishModuleAdvertisement();
+                        socketServer.publishModuleSpecificationAdvertisement();
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                        System.out.println(ex.getMessage());
+                    }
+                }
+            }
+        }
+
+        class ClientThreadHandler implements Runnable{
+            public void run()
+            {
+                PipeAdvertisement pipeAdv;
+                while((pipeAdv=socketClient.getPipeAdvertisement())==null){
+                    try{
+                        Thread.sleep(10000);
+                    }
+                    catch(InterruptedException ex)
+                    {
+                        System.out.println(ex.getMessage());
+                    }
+
+                }
+                socketClient.runClient();
+            }
+        }
+        Thread serverThread=new Thread(new ServerThreadHandler());
+        serverThread.start();
+        Thread publishThread=new Thread(new PublishThreadHandler());
+        publishThread.start();
+        Thread clientThread=new Thread(new ClientThreadHandler());
+        clientThread.start();
+        
+       
 
         confManager.startConference(mode);
 
@@ -293,6 +378,18 @@ public class UserInfoPanel extends javax.swing.JPanel  {
         uuidLabel.setText(p.getUUID());
         peerTypeLabel.setText(p.getType());
         statusLabel.setText(p.getStatus());
+    }
+    public void setPeer(String peerName)
+        {
+          currentSelectedPeer=peerName;
+      }
+    public void receive(String message, Colleague sender, Object body) {
+        
+    }
+
+    public void setMediator(Mediator m) {
+        confMediator=m;
+        m.addColleague(this);
     }
 
 }
