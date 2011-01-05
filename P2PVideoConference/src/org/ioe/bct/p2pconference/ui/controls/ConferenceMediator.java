@@ -18,7 +18,8 @@ public class ConferenceMediator implements Mediator {
     public static final String CONT_SELECTION_CHANGED="contactselectchanged";
     public static final String GROUP_ADDED="group added";
     public static final String JOIN_GROUP="join group request";
-    public static final String SEND_TEXT_MSG="SendTxtMSg";
+    
+    public static final String SEND_TEXT_MSG="Send Group MSg";
     public static final String  RECEIVE_TEXT_MSG="ReceiveTxtMsg";
 
     private ArrayList<Colleague> colleagueList;

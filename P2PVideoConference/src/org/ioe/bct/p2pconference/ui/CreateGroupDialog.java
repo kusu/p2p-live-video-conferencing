@@ -79,9 +79,9 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
             }
         });
 
-        jTextField2.setText("jTextField2");
+        jTextField2.setText("kusu");
 
-        jTextField1.setText("jxtagroup1");
+        jTextField1.setText("MyGroup");
 
         jPasswordField1.setText("adhikari");
 
@@ -93,7 +93,6 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,7 +113,6 @@ public class CreateGroupDialog extends javax.swing.JDialog implements Colleague 
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 145, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

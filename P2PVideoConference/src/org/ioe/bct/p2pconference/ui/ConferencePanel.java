@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PeerAdvertisement;
@@ -56,6 +57,12 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     private ArrayList<MulticastToPeerGroupMapper> mapperArrayList= new ArrayList<MulticastToPeerGroupMapper>();
     private Thread[] serverThreads;
     private Thread clientThread;
+    private boolean privateMode=true;
+    private ProtectedPeerGroup currentGroup;
+    public void setPrivateMode(boolean mode) {
+        privateMode=mode;
+    }
+
     private class MulticastToPeerGroupMapper
     {
         private ProtectedPeerGroup pPeerGroup;
@@ -107,7 +114,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         public void run() {
             while(true)
             {
-                try {
+                
                     Iterator<PeerAdvertisement> it=peerAdvList.iterator();
                     while(it.hasNext())
                     {
@@ -118,15 +125,22 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                         message = new String(buffer);
                         printMessage(peerAdv.getName(), message);
                     }
-                    Thread.sleep(10000);
-                } catch (InterruptedException ex) {
-                   System.out.println(ex.getMessage()); 
-                }
+                   
+                    sleep(10000);
             }
         }
 
         
     }
+    private void sleep (long timeout) {
+        try {
+             Thread.sleep(timeout);
+        }
+        catch (InterruptedException ex) {
+                   System.out.println(ex.getMessage());
+        }
+    }
+
     private class MulticastClientThread implements Runnable{
         Collection<MulticastClient> multicastClients;
         public MulticastClientThread(Collection<MulticastClient> mcastClients)
@@ -137,16 +151,15 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         public void run() {
             while(true)
             {
-                try {
+                
                     Iterator<MulticastClient> it = multicastClients.iterator();
                     while (it.hasNext()) {
                         MulticastClient mcastClient = it.next();
                         mcastClient.publishPipeAdvertisement();
-                    }
-                    Thread.sleep(20000);
-                } catch (InterruptedException ex) {
-                   System.out.println(ex.getMessage());
+                    
+                   
                 }
+                   sleep(10000);
             }
         }
         
@@ -276,6 +289,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                 upperPanel.removeAll();
 
                 ProtectedPeerGroup selectedGroup=(ProtectedPeerGroup)body;
+                currentGroup=selectedGroup;
                 gPanel=new GroupInfoPanel(selectedGroup);
                 upperPanel.add(gPanel,BorderLayout.CENTER);
                 upperPanel.validate();
@@ -308,13 +322,23 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
              
 
         }
-        else if(message.equalsIgnoreCase(ConferenceMediator.SEND_TEXT_MSG))
-            sendTextMesssage(body.toString());
+        else if(message.equalsIgnoreCase(ConferenceMediator.SEND_TEXT_MSG)){
 
-       else if(message.equalsIgnoreCase(ConferenceMediator.RECEIVE_TEXT_MSG))
+           
+            if(privateMode) {
+//                JOptionPane.showMessageDialog(null, "private mode"+body);
+            sendTextMesssage(body.toString());
+           }
+             else {
+//                 JOptionPane.showMessageDialog(null, "sending msg"+body);
+                sendTextMessage(body.toString(), currentGroup.getPeerGroup());
+             }
+       }
+       else if(message.equalsIgnoreCase(ConferenceMediator.RECEIVE_TEXT_MSG)){
+           JOptionPane.showMessageDialog(null, "msg receivedx"+body);
            receiveTextMessage(body.toString());
          } 
-
+    }
     public void sendTextMesssage(String message) {
         printMessage(AppMainFrame.getUserName(),message); //print msg first
        //send to receiver
