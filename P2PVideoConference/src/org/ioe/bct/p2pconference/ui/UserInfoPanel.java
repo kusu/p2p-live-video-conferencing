@@ -302,7 +302,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
                 {
 
                     try {
-
+                         System.out.println("Publishing Thread begins");
                         socketServer.publishModuleAdvertisement();
                         socketServer.publishModuleSpecificationAdvertisement();
                         Thread.sleep(10000);
@@ -339,7 +339,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
         
        
 
-        confManager.startConference(mode);
+//        confManager.startConference(mode);
 
     }//GEN-LAST:event_jButton1ActionPerformed
 
