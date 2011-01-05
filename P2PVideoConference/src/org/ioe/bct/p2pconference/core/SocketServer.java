@@ -51,10 +51,12 @@ public class SocketServer {
     private JxtaServerSocket serverSocket = null;
     private boolean serverConnection=true;
     private String sender;
+    private String receiver;
     
-    public SocketServer(P2PNetworkCore manager,String me) throws IOException, PeerGroupException {
+    public SocketServer(P2PNetworkCore manager,String me,String receiver) throws IOException, PeerGroupException {
         
         sender=me;
+        this.receiver=receiver;
         netPeerGroup = manager.getNetPeerGroup();
         ds=netPeerGroup.getDiscoveryService();
     }
@@ -87,7 +89,7 @@ public class SocketServer {
          System.exit(-1);
        }
      }
-     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement,String receiver) {
+     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
 
 //	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
 //	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));

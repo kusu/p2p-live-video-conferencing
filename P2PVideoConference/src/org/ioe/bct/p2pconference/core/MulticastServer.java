@@ -45,9 +45,9 @@ public class MulticastServer {
             {
                 try {
                     JxtaMulticastSocket temp = new JxtaMulticastSocket(peerGroup, pipeAdvertisements.get(i));
-//                    temp.setSoTimeout(0);
+                    temp.setSoTimeout(0);
                     multicasts.put(pipeAdvertisements.get(i).getName(),temp);
-                    System.out.println(pipeAdvertisements.get(i));
+                    System.out.println("For peer "+pipeAdvertisements.get(i).getName() +" pipe advertisement received.");
                 }
                 catch (IOException ex) {
                     Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -63,7 +63,7 @@ public class MulticastServer {
             DatagramPacket packet=new DatagramPacket(buffer, buffer.length);
             try {
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
-                 System.out.println(packet.getData().toString());
+                 System.out.println("Sent by :"+packet.getPort()+" "+packet.getData().toString());
             }
             catch (IOException ex) {
                 Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);

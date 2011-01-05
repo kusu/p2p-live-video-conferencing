@@ -14,6 +14,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -29,55 +31,12 @@ import javax.swing.JFrame;
  *
  * @author Administrator
  */
-public class Capture extends JFrame implements StreamDataSourceInterface{
+public class Capture implements StreamDataSourceInterface{
     protected boolean running;
-  ByteArrayOutputStream out;
-
+    ByteArrayOutputStream outToNetwork;
+    ByteArrayOutputStream inFromNetwork;
   public Capture() {
-    super("Capture Sound Demo");
-    setDefaultCloseOperation(EXIT_ON_CLOSE);
-    Container content = getContentPane();
-
-    final JButton capture = new JButton("Capture");
-    final JButton stop = new JButton("Stop");
-    final JButton play = new JButton("Play");
-
-    capture.setEnabled(true);
-    stop.setEnabled(false);
-    play.setEnabled(false);
-
-    ActionListener captureListener =
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        capture.setEnabled(false);
-        stop.setEnabled(true);
-        play.setEnabled(false);
-        captureAudio();
-      }
-    };
-    capture.addActionListener(captureListener);
-    content.add(capture, BorderLayout.NORTH);
-
-    ActionListener stopListener =
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        capture.setEnabled(true);
-        stop.setEnabled(false);
-        play.setEnabled(true);
-        running = false;
-      }
-    };
-    stop.addActionListener(stopListener);
-    content.add(stop, BorderLayout.CENTER);
-
-    ActionListener playListener =
-        new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        playAudio();
-      }
-    };
-    play.addActionListener(playListener);
-    content.add(play, BorderLayout.SOUTH);
+      
   }
 
   private void captureAudio() {
@@ -95,23 +54,14 @@ public class Capture extends JFrame implements StreamDataSourceInterface{
         byte buffer[] = new byte[bufferSize];
 
         public void run() {
-          out = new ByteArrayOutputStream();
+          outToNetwork = new ByteArrayOutputStream();
           running = true;
-          try {
-            while (running) {
-              int count =
-                line.read(buffer, 0, buffer.length);
-              if (count > 0) {
-                out.write(buffer, 0, count);
-              }
-            }
-            
-            //AudioSystem.write(new AudioInputStream(new ByteArrayInputStream(out.toByteArray()), format, out.toByteArray().length), Type.WAVE, new File("audio.wav"));
-            out.close();
-          } catch (IOException e) {
-            System.err.println("I/O problems: " + e);
-            System.exit(-1);
+          int count =
+            line.read(buffer, 0, buffer.length);
+          if (count > 0) {
+            outToNetwork.write(buffer, 0, count);
           }
+            
         }
       };
       Thread captureThread = new Thread(runner);
@@ -122,9 +72,9 @@ public class Capture extends JFrame implements StreamDataSourceInterface{
     }
   }
 
-  private void playAudio() {
+  public void playAudio() {
     try {
-      byte audio[] = out.toByteArray();
+      byte audio[] = inFromNetwork.toByteArray();
       InputStream input =
         new ByteArrayInputStream(audio);
       final AudioFormat format = getFormat();
@@ -178,14 +128,14 @@ public class Capture extends JFrame implements StreamDataSourceInterface{
       sampleSizeInBits, channels, signed, bigEndian);
   }
 
-  public static void main(String args[]) {
-    JFrame frame = new Capture();
-    frame.pack();
-    frame.show();
-  }
-
     public byte[] getData() {
-        return null;
+        captureAudio();
+        return outToNetwork.toByteArray();
+    }
+    public void setData(byte buf[])
+    {
+        inFromNetwork.write(buf, 0, buf.length);
+        playAudio();
     }
 }
 

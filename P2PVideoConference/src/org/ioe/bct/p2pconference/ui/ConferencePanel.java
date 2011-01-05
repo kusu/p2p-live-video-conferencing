@@ -59,6 +59,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     private Thread clientThread;
     private boolean privateMode=true;
     private ProtectedPeerGroup currentGroup;
+    private P2PNetworkCore networkManager;
     public void setPrivateMode(boolean mode) {
         privateMode=mode;
     }
@@ -95,6 +96,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     public void initiateChatting(P2PNetworkCore netCore)
     {
+        networkManager=netCore;
         privateMsgManager=new PrivateMsgManager(AppMainFrame.getUserName(),netCore , confMediator);
     }
     public void setMediator(Mediator m) {
@@ -264,7 +266,8 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
            if(sender instanceof ContactListPanel) {
               System.out.println("Loading contact info "+sender.getClass());
                upperPanel.removeAll();
-               UserInfoPanel uinfo=new UserInfoPanel();
+               UserInfoPanel uinfo=new UserInfoPanel(networkManager);
+              
                if(body instanceof PeerResolver) {
                    uinfo.updateInfo((PeerResolver) body);
                }
@@ -276,7 +279,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
                    privateMsgManager.addReceiver(currentSelectedPeer);
                    privateMsgManager.addSender(currentSelectedPeer);
-                   
+                   uinfo.setPeer(currentSelectedPeer);
                   
                }
                upperPanel.add(uinfo,BorderLayout.CENTER);
