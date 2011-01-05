@@ -1,61 +1,8 @@
-/*
- * Copyright (c) 2006-2007 Sun Microsystems, Inc.  All rights reserved.
- *  
- *  The Sun Project JXTA(TM) Software License
- *  
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions are met:
- *  
- *  1. Redistributions of source code must retain the above copyright notice,
- *     this list of conditions and the following disclaimer.
- *  
- *  2. Redistributions in binary form must reproduce the above copyright notice, 
- *     this list of conditions and the following disclaimer in the documentation 
- *     and/or other materials provided with the distribution.
- *  
- *  3. The end-user documentation included with the redistribution, if any, must 
- *     include the following acknowledgment: "This product includes software 
- *     developed by Sun Microsystems, Inc. for JXTA(TM) technology." 
- *     Alternately, this acknowledgment may appear in the software itself, if 
- *     and wherever such third-party acknowledgments normally appear.
- *  
- *  4. The names "Sun", "Sun Microsystems, Inc.", "JXTA" and "Project JXTA" must 
- *     not be used to endorse or promote products derived from this software 
- *     without prior written permission. For written permission, please contact 
- *     Project JXTA at http://www.jxta.org.
- *  
- *  5. Products derived from this software may not be called "JXTA", nor may 
- *     "JXTA" appear in their name, without prior written permission of Sun.
- *  
- *  THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
- *  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
- *  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SUN 
- *  MICROSYSTEMS OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
- *  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
- *  OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF 
- *  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
- *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, 
- *  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *  
- *  JXTA is a registered trademark of Sun Microsystems, Inc. in the United 
- *  States and other countries.
- *  
- *  Please see the license information page at :
- *  <http://www.jxta.org/project/www/license.html> for instructions on use of 
- *  the license in source files.
- *  
- *  ====================================================================
- *  
- *  This software consists of voluntary contributions made by many individuals 
- *  on behalf of Project JXTA. For more information on Project JXTA, please see 
- *  http://www.jxta.org.
- *  
- *  This license is based on the BSD license adopted by the Apache Foundation. 
- */
 package org.ioe.bct.p2pconference.core;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.id.IDFactory;
@@ -76,6 +23,12 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.MessageFormat;
+import net.jxta.discovery.DiscoveryService;
+import net.jxta.peergroup.NetPeerGroupFactory;
+import net.jxta.peergroup.PeerGroupID;
+import net.jxta.platform.ModuleClassID;
+import net.jxta.protocol.ModuleClassAdvertisement;
+import net.jxta.protocol.ModuleSpecAdvertisement;
 
 
 /**
@@ -91,7 +44,13 @@ public class SocketServer {
 
     private transient PeerGroup netPeerGroup = null;
     public final static String SOCKETIDSTR = "urn:jxta:uuid-59616261646162614E5047205032503393B5C2F6CA7A41FBB0F890173088E79404";
-
+    private ModuleClassID myService1ID = null;
+    private ModuleClassAdvertisement myService1ModuleAdvertisement;
+    private ModuleSpecAdvertisement myModuleSpecAdvertisement;
+    private PipeAdvertisement socketAdvertisement;
+    private DiscoveryService ds;
+    private JxtaServerSocket serverSocket = null;
+    private boolean serverConnection=true;
     public SocketServer() throws IOException, PeerGroupException {
         NetworkManager manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, "SocketServer",
                 new File(new File(".cache"), "SocketServer").toURI());
@@ -99,59 +58,138 @@ public class SocketServer {
         netPeerGroup = manager.getNetPeerGroup();
     }
 
-    public static PipeAdvertisement createSocketAdvertisement() {
-        PipeID socketID = null;
+    public void buildModuleAdvertisement() {
+	 myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
 
+	 myService1ModuleAdvertisement.setName("Multicasting");
+	 myService1ModuleAdvertisement.setDescription("receiveing data on");
+
+       myService1ID = IDFactory.newModuleClassID();
+	 myService1ModuleAdvertisement.setModuleClassID(myService1ID);
+
+
+       try {
+  	   ds.publish(myService1ModuleAdvertisement);
+	   ds.remotePublish(myService1ModuleAdvertisement);
+       } catch (Exception e) {
+         System.out.println("Error during publish of Module Advertisement");
+         System.exit(-1);
+       }
+    }
+     public void publishModuleAdvertisement()
+    {
+         try {
+  	   ds.publish(myService1ModuleAdvertisement);
+	   ds.remotePublish(myService1ModuleAdvertisement);
+       } catch (Exception e) {
+         System.out.println("Error during publish of Module Advertisement");
+         System.exit(-1);
+       }
+     }
+     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
+
+//	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
+//	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
+
+
+         myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
+
+	myModuleSpecAdvertisement.setName("modulespec");
+	myModuleSpecAdvertisement.setVersion("Version 1.0");
+	myModuleSpecAdvertisement.setCreator("p2pvideoconference");
+	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
+	myModuleSpecAdvertisement.setSpecURI("www.ioe.edu.np");
+//      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
+      myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
+
+
+      try {
+        ds.publish(myModuleSpecAdvertisement);
+        ds.remotePublish(myModuleSpecAdvertisement);
+      } catch (Exception e) {
+         System.out.println("Error during publish of Module Specification Advertisement");
+         e.printStackTrace();
+         System.exit(-1);
+      }
+    }
+    public void publishModuleSpecificationAdvertisement()
+    {
         try {
-            socketID = (PipeID) IDFactory.fromURI(new URI(SOCKETIDSTR));
-        } catch (URISyntaxException use) {
-            use.printStackTrace();
-        }
-        PipeAdvertisement advertisement = (PipeAdvertisement)
+        ds.publish(myModuleSpecAdvertisement);
+        ds.remotePublish(myModuleSpecAdvertisement);
+      } catch (Exception e) {
+         System.out.println("Error during publish of Module Specification Advertisement");
+         e.printStackTrace();
+         System.exit(-1);
+      }
+
+    }
+    public PipeAdvertisement createSocketAdvertisement() {
+       
+       PipeAdvertisement advertisement = (PipeAdvertisement)
                 AdvertisementFactory.newAdvertisement(PipeAdvertisement.getAdvertisementType());
 
-        advertisement.setPipeID(socketID);
+        advertisement.setPipeID(IDFactory.newPipeID(netPeerGroup.getPeerGroupID()));
         advertisement.setType(PipeService.UnicastType);
         advertisement.setName("Socket tutorial");
+        socketAdvertisement=advertisement;
         return advertisement;
     }
 
     /**
      * Wait for connections
      */
-    public void run() {
+    public void initializeServer() {
 
         System.out.println("Starting ServerSocket");
-        JxtaServerSocket serverSocket = null;
+        
         try {
-            serverSocket = new JxtaServerSocket(netPeerGroup, createSocketAdvertisement(), 10);
+            serverSocket = new JxtaServerSocket(netPeerGroup, socketAdvertisement, 10);
             serverSocket.setSoTimeout(0);
         } catch (IOException e) {
             System.out.println("failed to create a server socket");
             e.printStackTrace();
             System.exit(-1);
         }
-
-        while (true) {
+    }
+    public void runServer()
+    {
+        boolean flag=true;
+        while (flag) {
             try {
                 System.out.println("Waiting for connections");
                 Socket socket = serverSocket.accept();
                 if (socket != null) {
                     System.out.println("New socket connection accepted");
-                    Thread thread = new Thread(new ConnectionHandler(socket), "Connection Handler Thread");
+                    Capture audioCapture=new Capture();
+                    Thread thread = new Thread(new ConnectionHandler(socket,audioCapture), "Connection Handler Thread");
                     thread.start();
+                    flag=false;
                 }
+               publishModuleAdvertisement();
+               publishModuleSpecificationAdvertisement();
+               
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
+    public void stopServerConnection()
+    {
+        serverConnection=false;
+    }
     private class ConnectionHandler implements Runnable {
         Socket socket = null;
-
-        ConnectionHandler(Socket socket) {
+        OutputStream out;
+        StreamDataSourceInterface streamDataSource=null;
+        public ConnectionHandler(Socket socket,StreamDataSourceInterface streamDS) {
             this.socket = socket;
+            this.streamDataSource=streamDS;
+            try {
+                out = socket.getOutputStream();
+            } catch (IOException ex) {
+                System.out.println(ex.getMessage());
+            }
         }
 
         /**
@@ -159,46 +197,27 @@ public class SocketServer {
          *
          * @param socket the socket
          */
-        private void sendAndReceiveData(Socket socket) {
+        public void sendData() {
             try {
-                long start = System.currentTimeMillis();
-
-                // get the socket output stream
-                OutputStream out = socket.getOutputStream();
-                // get the socket input stream
-                InputStream in = socket.getInputStream();
-                DataInput dis = new DataInputStream(in);
-
-                long iterations = dis.readLong();
-                int size = dis.readInt();
-                long total = iterations * size * 2L;
-                long current = 0;
-
-                System.out.println(MessageFormat.format("Sending/Receiving {0} bytes.", total));
-                while (current < iterations) {
-                    byte[] buf = new byte[size];
-                    dis.readFully(buf);
-                    out.write(buf);
-                    out.flush();
-                    current++;
-                }
-
-                out.close();
-                in.close();
-
-                long finish = System.currentTimeMillis();
-                long elapsed = finish - start;
-                System.out.println(MessageFormat.format("EOT. Received {0} bytes in {1} ms. Throughput = {2} KB/sec.", total, elapsed,
-                        (total / elapsed) * 1000 / 1024));
-                socket.close();
-                System.out.println("Connection closed");
+                byte[] buf=streamDataSource.getData();
+                out.write(buf);
+                out.flush();
+                
             } catch (Exception ie) {
                 ie.printStackTrace();
             }
         }
 
         public void run() {
-            sendAndReceiveData(socket);
+            while(serverConnection)
+            {
+                try {
+                    sendData();
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
         }
     }
 
@@ -207,21 +226,5 @@ public class SocketServer {
      *
      * @param args command line args
      */
-    public static void main(String args[]) {
-
-        /*
-         System.setProperty("net.jxta.logging.Logging", "FINEST");
-         System.setProperty("net.jxta.level", "FINEST");
-         System.setProperty("java.util.logging.config.file", "logging.properties");
-         */
-        try {
-            Thread.currentThread().setName(SocketServer.class.getName() + ".main()");
-            SocketServer socEx = new SocketServer();
-            socEx.run();
-        } catch (Throwable e) {
-            System.err.println("Failed : " + e);
-            e.printStackTrace(System.err);
-            System.exit(-1);
-        }
-    }
+    
 }
