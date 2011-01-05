@@ -43,7 +43,6 @@ import net.jxta.protocol.ModuleSpecAdvertisement;
 public class SocketServer {
 
     private transient PeerGroup netPeerGroup = null;
-    public final static String SOCKETIDSTR = "urn:jxta:uuid-59616261646162614E5047205032503393B5C2F6CA7A41FBB0F890173088E79404";
     private ModuleClassID myService1ID = null;
     private ModuleClassAdvertisement myService1ModuleAdvertisement;
     private ModuleSpecAdvertisement myModuleSpecAdvertisement;
@@ -51,11 +50,13 @@ public class SocketServer {
     private DiscoveryService ds;
     private JxtaServerSocket serverSocket = null;
     private boolean serverConnection=true;
-    public SocketServer() throws IOException, PeerGroupException {
-        NetworkManager manager = new NetworkManager(NetworkManager.ConfigMode.ADHOC, "SocketServer",
-                new File(new File(".cache"), "SocketServer").toURI());
-        manager.startNetwork();
+    private String sender;
+    
+    public SocketServer(P2PNetworkCore manager,String me) throws IOException, PeerGroupException {
+        
+        sender=me;
         netPeerGroup = manager.getNetPeerGroup();
+        ds=netPeerGroup.getDiscoveryService();
     }
 
     public void buildModuleAdvertisement() {
@@ -86,7 +87,7 @@ public class SocketServer {
          System.exit(-1);
        }
      }
-     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement) {
+     public void buildModuleSpecificationAdvertisement(PipeAdvertisement myPipeAdvertisement,String receiver) {
 
 //	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
 //	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
@@ -94,7 +95,7 @@ public class SocketServer {
 
          myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
 
-	myModuleSpecAdvertisement.setName("modulespec");
+	myModuleSpecAdvertisement.setName(sender+receiver+"audioModuleSpec");
 	myModuleSpecAdvertisement.setVersion("Version 1.0");
 	myModuleSpecAdvertisement.setCreator("p2pvideoconference");
 	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
@@ -191,13 +192,7 @@ public class SocketServer {
                 System.out.println(ex.getMessage());
             }
         }
-
-        /**
-         * Sends data over socket
-         *
-         * @param socket the socket
-         */
-        public void sendData() {
+   public void sendData() {
             try {
                 byte[] buf=streamDataSource.getData();
                 out.write(buf);
@@ -208,7 +203,7 @@ public class SocketServer {
             }
         }
 
-        public void run() {
+   public void run() {
             while(serverConnection)
             {
                 try {
