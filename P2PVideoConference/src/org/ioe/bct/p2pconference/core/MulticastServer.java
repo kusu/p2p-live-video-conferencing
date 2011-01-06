@@ -30,6 +30,7 @@ public class MulticastServer {
         private MulticastSocketService multicastSS=null;
         private PeerGroup peerGroup=null;
         private Mediator mediator;
+        private int portAddress=9290;  //default value so as not to alter anything in text multicasting already implemented
         public MulticastServer(PeerGroup peerGroup,Mediator med)
         {
             this.mediator=med;
@@ -37,6 +38,15 @@ public class MulticastServer {
             multicastSS=new MulticastSocketService(peerGroup);
             pipeAdvertisements=multicastSS.getAllLocalPipeAdvertisement();
 
+        }
+        public void setMode(String Mode)    //set the mode for either conferenceAudio or conferenceText(default no need to set explicitly)
+        {
+            multicastSS.setMode(Mode);
+        }
+
+        public void setPort(int port)   //set the port for different variation of application(e.g audio and/or text) of this class
+        {
+            portAddress=port;
         }
         public PeerGroup getPeerGroup()
         {
@@ -69,8 +79,7 @@ public class MulticastServer {
             {
             
             try {
-//                  DatagramPacket packet=new DatagramPacket(buffer, buffer.length);
-                DatagramPacket packet=new DatagramPacket(buffer, buffer.length,InetAddress.getLocalHost(),9290);
+                DatagramPacket packet=new DatagramPacket(buffer, buffer.length,InetAddress.getLocalHost(),portAddress);
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
                  System.out.println("Sent by :"+senderAtOtherEnd+" "+packet.getPort()+" "+new String(packet.getData()));
                  TextMessage msg=new TextMessage(senderAtOtherEnd, new String(packet.getData()));
