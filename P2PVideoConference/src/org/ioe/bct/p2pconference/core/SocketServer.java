@@ -134,7 +134,7 @@ public class SocketServer {
 
         advertisement.setPipeID(IDFactory.newPipeID(netPeerGroup.getPeerGroupID()));
         advertisement.setType(PipeService.UnicastType);
-        advertisement.setName("Socket tutorial");
+        advertisement.setName(sender+receiver+"SocketTutorial");
         socketAdvertisement=advertisement;
         return advertisement;
     }

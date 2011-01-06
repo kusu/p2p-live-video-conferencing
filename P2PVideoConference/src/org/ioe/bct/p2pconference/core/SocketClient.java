@@ -63,22 +63,15 @@ public class SocketClient {
      public PipeAdvertisement getPipeAdvertisement()
     {
         advertisement=null;
-        System.out.println("Am i even here too"); 
         try {
             Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Name", sender+me+"audioModuleSpec");
-            if(advertisements!=null)
+            if(advertisements!=null && advertisements.hasMoreElements())
             {
-                while(advertisements.hasMoreElements())
-                {
                     ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)advertisements.nextElement();
                     advertisement=myModuleSpecAdv.getPipeAdvertisement();
-                    JOptionPane.showMessageDialog(null, advertisement);
-                    break;
-                }
             }
             else
             {
-
                 class ServiceListener implements DiscoveryListener{
                     private PipeAdvertisement localAds=null;
                     public PipeAdvertisement getAdvertisement()
@@ -86,7 +79,6 @@ public class SocketClient {
                         return localAds;
                     }
                     public void discoveryEvent(DiscoveryEvent event) {
-                        System.out.println("Am i ever here");
                         Enumeration enumm;
                         PipeAdvertisement pipeAdv = null;
                         String str;
@@ -98,7 +90,6 @@ public class SocketClient {
                         try {
                             ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
                             localAds=myModSpecAdv.getPipeAdvertisement();
-                            JOptionPane.showMessageDialog(null,localAds);
                             break;
 
                       } catch(Exception ee) {
@@ -129,13 +120,13 @@ public class SocketClient {
           
             System.out.println("Connecting to the server");
         try {
-            JOptionPane.showMessageDialog(null,advertisement);
-            socket = new JxtaSocket(netPeerGroup, null, advertisement, 0, true);
+            socket = new JxtaSocket(netPeerGroup, null, advertisement, 50000, true);
             Capture audioDataSource=new Capture();
             Thread clientThread=new Thread(new ConnectionHandler(audioDataSource));
             clientThread.start();
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+            System.out.println(ex.getMessage()+"Client ma problem wow");
         }
     }
     private class ConnectionHandler implements Runnable{
@@ -159,6 +150,10 @@ public class SocketClient {
     {
             
         byte[] in_buf = new byte[PAYLOADSIZE];
+        for(int i=0;i<PAYLOADSIZE;i++)
+        {
+            in_buf[i]=1;
+        }
         try {
             dis.readFully(in_buf);
             streamDataSource.setData(in_buf);
