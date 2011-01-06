@@ -40,10 +40,15 @@ public class MulticastSocketService {
     private ModuleClassID myService1ID = null;
     private ModuleClassAdvertisement myService1ModuleAdvertisement;
     private ModuleSpecAdvertisement myModuleSpecAdvertisement;
+    private String MODE="conferenceTextModuleSpec";   //defaultMode
     public MulticastSocketService(PeerGroup pg)
     {
         peerGroup=pg;
         ds=peerGroup.getDiscoveryService();
+    }
+    public void setMode(String mode)
+    {
+        MODE=mode;  //user defined Mode   possibility : conferenceAudioModuleSpec
     }
     public  PipeAdvertisement getSocketAdvertisement(String creator)
     {
@@ -91,7 +96,7 @@ public class MulticastSocketService {
 
          myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
 
-	myModuleSpecAdvertisement.setName(peerGroup.getPeerGroupName()+"modulespec");
+	myModuleSpecAdvertisement.setName(peerGroup.getPeerGroupName()+MODE);
 	myModuleSpecAdvertisement.setVersion("Version 1.0");
 	myModuleSpecAdvertisement.setCreator("p2pvideoconference");
 	myModuleSpecAdvertisement.setModuleSpecID(IDFactory.newModuleSpecID(myService1ID));
@@ -126,7 +131,7 @@ public class MulticastSocketService {
         ArrayList<PipeAdvertisement> localAdvs=new ArrayList<PipeAdvertisement>();
 
         try {
-            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+"modulespec");
+            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+"textmodulespec");
                 while(advertisements.hasMoreElements())
                 {
                     ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)advertisements.nextElement();
@@ -164,7 +169,7 @@ public class MulticastSocketService {
                 }
                 ServiceListener myDiscoveryListener=new ServiceListener();
                 localAdvs.addAll(myDiscoveryListener.getAdvertisements());
-                ds.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+"modulespec", 10,myDiscoveryListener);
+                ds.getRemoteAdvertisements(null, DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+MODE, 10,myDiscoveryListener);
             
         } catch (IOException ex) {
             Logger.getLogger(MulticastSocketService.class.getName()).log(Level.SEVERE, null, ex);
