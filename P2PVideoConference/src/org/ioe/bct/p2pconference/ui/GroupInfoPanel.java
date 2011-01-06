@@ -17,7 +17,9 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import net.jxta.protocol.PeerAdvertisement;
+import org.ioe.bct.p2pconference.core.AudioConference;
 import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 
 /**
  *
@@ -25,8 +27,8 @@ import org.ioe.bct.p2pconference.dataobject.ProtectedPeerGroup;
  */
 public class GroupInfoPanel extends javax.swing.JPanel {
 
-    ProtectedPeerGroup peerGroup;
-
+    private ProtectedPeerGroup peerGroup;
+    private Mediator confMediator;
     /** Creates new form GroupInfoPanel */
     public GroupInfoPanel(ProtectedPeerGroup peerGroup) {
         initComponents();
@@ -64,7 +66,10 @@ public class GroupInfoPanel extends javax.swing.JPanel {
 
         groupContactsPanel.validate();
     }
-
+    public void setMediator(Mediator med)
+    {
+        confMediator=med;
+    }
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -98,6 +103,11 @@ public class GroupInfoPanel extends javax.swing.JPanel {
         jPanel1.setPreferredSize(new java.awt.Dimension(150, 147));
 
         startButton.setText("Start Conference");
+        startButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -118,6 +128,31 @@ public class GroupInfoPanel extends javax.swing.JPanel {
 
         add(jPanel1, java.awt.BorderLayout.EAST);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
+        // TODO add your handling code here:
+        AudioConference audioConference=new AudioConference(peerGroup.getPeerGroup(),AppMainFrame.getUserName(),confMediator);
+        final Thread publishThread=new Thread(audioConference.new PublishModuleSpecHandler());
+        final Thread discoveryThread=new Thread(audioConference.new DiscoveryAdvertisementHandler());
+        final Thread receiveThread=new Thread(audioConference.new ReceiveMessageHandler(peerGroup));
+        final Thread sendThread=new Thread (audioConference.new SendMessageHandler());
+
+        class AudioConferenceHandler implements Runnable{
+            public void run()
+            {
+                publishThread.start();
+                discoveryThread.start();
+                receiveThread.start();
+                sendThread.start();
+            }
+        }
+
+        Thread audioConferenceThread=new Thread(new AudioConferenceHandler());
+        audioConferenceThread.start();
+
+
+    }//GEN-LAST:event_startButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel groupContactsPanel;
     private javax.swing.JPanel jPanel1;
