@@ -36,7 +36,7 @@ public class Capture implements StreamDataSourceInterface{
     ByteArrayOutputStream outToNetwork;
     ByteArrayOutputStream inFromNetwork;
   public Capture() {
-      
+       inFromNetwork=new ByteArrayOutputStream();
   }
 
   private void captureAudio() {
@@ -54,14 +54,21 @@ public class Capture implements StreamDataSourceInterface{
         byte buffer[] = new byte[bufferSize];
 
         public void run() {
-          outToNetwork = new ByteArrayOutputStream();
+          while(true)
+          {
+            outToNetwork = new ByteArrayOutputStream();
           running = true;
           int count =
             line.read(buffer, 0, buffer.length);
           if (count > 0) {
-            outToNetwork.write(buffer, 0, count);
+                try {
+                    outToNetwork.write(buffer, 0, count);
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Capture.class.getName()).log(Level.SEVERE, null, ex);
+                }
           }
-            
+         }
         }
       };
       Thread captureThread = new Thread(runner);
@@ -75,7 +82,7 @@ public class Capture implements StreamDataSourceInterface{
   public void playAudio() {
     try {
       byte audio[] = inFromNetwork.toByteArray();
-      InputStream input =
+      InputStream input =      
         new ByteArrayInputStream(audio);
       final AudioFormat format = getFormat();
       final AudioInputStream ais =
