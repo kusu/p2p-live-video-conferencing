@@ -11,8 +11,6 @@
 
 package org.ioe.bct.p2pconference.ui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.BorderLayout;
@@ -20,16 +18,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PeerAdvertisement;
+import org.ioe.bct.p2pconference.AppLoader;
+import org.ioe.bct.p2pconference.core.JXTAPeerGroupOrganizer;
 import org.ioe.bct.p2pconference.core.MulticastClient;
 import org.ioe.bct.p2pconference.core.MulticastServer;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
@@ -107,12 +105,29 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
         private MulticastServer server;
         private ArrayList<PeerAdvertisement> peerAdvList;
-        private String message;
+//        private String message;
+        private long sleepTimer=500;
         public MulticastServerThread(MulticastServer multicastServer,ArrayList<PeerAdvertisement> peerAdvs)
         {
             this.server=multicastServer;
             this.peerAdvList=peerAdvs;
         }
+
+         synchronized public void maximizePriority() {
+             for(Thread current:serverThreads) {
+                    current.setPriority(Thread.MAX_PRIORITY);
+             }
+            sleepTimer=1000;
+
+        }
+        synchronized public void minimizePriority() {
+            for(Thread current:serverThreads) {
+                 current.setPriority(Thread.NORM_PRIORITY);
+            }
+            sleepTimer=10000;
+        }
+
+
         public void run() {
             while(true)
             {
@@ -124,11 +139,11 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                         byte[] buffer = new byte[50];
                         server.getAllMulticastSocketFromPipeAdvertisements();
                         server.receive(peerAdv.getName(), buffer);
-                        message = new String(buffer);
-                        printMessage(peerAdv.getName(), message);
+//                        message = new String(buffer);
+//                        printMessage(peerAdv.getName(), message);
                     }
                    
-                    sleep(10000);
+                    sleep(sleepTimer);
             }
         }
 
@@ -145,9 +160,21 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     private class MulticastClientThread implements Runnable{
         Collection<MulticastClient> multicastClients;
+        private long sleepTimer=500;
+
         public MulticastClientThread(Collection<MulticastClient> mcastClients)
         {
             this.multicastClients=mcastClients;
+        }
+
+        synchronized public void maximizePriority() {
+            clientThread.setPriority(Thread.MAX_PRIORITY);
+            sleepTimer=1000;
+            
+        }
+        synchronized public void minimizePriority() {
+            clientThread.setPriority(Thread.NORM_PRIORITY);
+            sleepTimer=10000;
         }
 
         public void run() {
@@ -161,16 +188,18 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                     
                    
                 }
-                   sleep(10000);
+                   sleep(sleepTimer);
             }
         }
         
     }
     public void startAllMulticastClientThread()
     {
-        clientThread=new Thread(new MulticastClientThread(multicastClients.values()));
+        MulticastClientThread threadObj=new MulticastClientThread(multicastClients.values());
+        clientThread=new Thread(threadObj);
         System.out.println("Execution Client Thread :");
         clientThread.start();
+        threadObj.maximizePriority();
      }
     public void startAllMulticastServerThread()
     {
@@ -182,9 +211,10 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
             MulticastToPeerGroupMapper current=itr.next();
             ProtectedPeerGroup peerGroup=current.getProtectedPeerGroup();
             ArrayList<PeerAdvertisement> peerAdvList=peerGroup.getConnectedUsers();
-            Iterator<PeerAdvertisement> it=peerAdvList.iterator();
-            serverThreads[i]=new Thread(new MulticastServerThread(current.getMulticastServer(),peerAdvList));
-            
+//            Iterator<PeerAdvertisement> it=peerAdvList.iterator();
+            MulticastServerThread threadInst=new MulticastServerThread(current.getMulticastServer(),peerAdvList);
+            serverThreads[i]=new Thread(threadInst);
+            threadInst.maximizePriority();
             i++;
         }
             i=0;
@@ -194,16 +224,6 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                 currentThread.start();
                 
             }
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException ex) {
-//                System.out.println(ex.getMessage());
-            
-            
-
-
-      //  }
-        
     }
 
 
@@ -319,10 +339,10 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                     new MulticastClient(peerGroup.getPeerGroup(), AppMainFrame.getUserName()));
             mapperArrayList.add(new MulticastToPeerGroupMapper(peerGroup,
                     new MulticastServer(peerGroup.getPeerGroup(),confMediator)));
-
+            AppLoader.mainFrame.getJXTAPeerGroupOrganizer().slowPublishAndDiscovery();
             startAllMulticastClientThread();
             startAllMulticastServerThread();
-             
+           
 
         }
         else if(message.equalsIgnoreCase(ConferenceMediator.SEND_TEXT_MSG)){

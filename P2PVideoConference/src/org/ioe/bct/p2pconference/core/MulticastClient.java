@@ -57,7 +57,7 @@ public class MulticastClient implements Runnable{
         byte[] msg=message.getBytes();
         
         try {
-            
+//            DatagramPacket packet = new DatagramPacket(msg, msg.length);
             DatagramPacket packet = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(),9291);
             multicast.send(packet);
             System.out.println("MESSAGE "+new String(packet.getData())+"  from port : "+packet.getPort());

@@ -52,7 +52,7 @@ public class PrivateMsgManager {
             public void run() {
                 OutputPipe oppipe= peerMsgSender.findAdvertisement(receiver, "Name", receiver+me+"modulespecadd");
                 hashingMapOutputPipe.put(receiver,oppipe);
-                JOptionPane.showMessageDialog(null, "Successfully added an entry to hashMap\nThe size now is"+hashingMapOutputPipe.size()+"\n"+hashingMapOutputPipe.toString());
+//                JOptionPane.showMessageDialog(null, "Successfully added an entry to hashMap\nThe size now is"+hashingMapOutputPipe.size()+"\n"+hashingMapOutputPipe.toString());
             }
         };
         new Thread(runing).start();
