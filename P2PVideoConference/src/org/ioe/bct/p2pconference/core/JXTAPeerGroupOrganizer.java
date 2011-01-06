@@ -31,6 +31,14 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
       
     }
 
+    public GroupDiscoveryThread getGroupDiscoveryThread() {
+        return discoverer;
+    }
+
+   public GroupPublishThread getGroupPublishThread() {
+       return publisher;
+   }
+
     public ProtectedPeerGroup createPeerGroup(String name, String password,String loginName) throws Exception{
       
         PeerGroup newPeerGroup=service.createPeerGroup(AppMainFrame.netCOre.getNetPeerGroup(), name, loginName, password);
@@ -67,6 +75,18 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
         return this;
     }
 
+   synchronized  public void slowPublishAndDiscovery() {
+        publisher.setSleepTimer(25000);
+        discoverer.setSleepTimer(45000);
+        publisher.lowerPriority();
+        discoverer.lowerPriority();
+    }
 
+   synchronized  public void rapidPublishAndDiscovery() {
+          publisher.setSleepTimer(1000);
+          discoverer.setSleepTimer(1000);
+          publisher.raisePriority();
+          discoverer.raisePriority();
+    }
 
 }

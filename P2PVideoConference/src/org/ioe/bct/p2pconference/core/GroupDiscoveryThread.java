@@ -20,10 +20,15 @@ public class GroupDiscoveryThread implements Runnable {
     PeerGroupOrganizer organizer;
     PeerGroupService peerGroupDiscoveryService;
     Thread currentThread;
+    private long sleepTimer=1000;
 
     public GroupDiscoveryThread(PeerGroupOrganizer org){
         organizer=org;
         peerGroupDiscoveryService=org.getPeerGroupService();
+    }
+
+    public void setSleepTimer(long timer) {
+        sleepTimer=timer;
     }
 
     @Override
@@ -63,7 +68,7 @@ public class GroupDiscoveryThread implements Runnable {
 
     private void sleep() {
         try {
-             Thread.sleep(20000);
+             Thread.sleep(sleepTimer);
          }
          catch (InterruptedException e){
              e.printStackTrace();
@@ -85,6 +90,13 @@ public class GroupDiscoveryThread implements Runnable {
             }
         }
         return false;
+    }
+
+    public void lowerPriority() {
+        currentThread.setPriority(Thread.MIN_PRIORITY);
+    }
+    public void raisePriority() {
+        currentThread.setPriority(Thread.NORM_PRIORITY);
     }
 
 }

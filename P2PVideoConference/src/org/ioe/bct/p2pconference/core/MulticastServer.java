@@ -69,6 +69,7 @@ public class MulticastServer {
             {
             
             try {
+//                  DatagramPacket packet=new DatagramPacket(buffer, buffer.length);
                 DatagramPacket packet=new DatagramPacket(buffer, buffer.length,InetAddress.getLocalHost(),9290);
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
                  System.out.println("Sent by :"+senderAtOtherEnd+" "+packet.getPort()+" "+new String(packet.getData()));

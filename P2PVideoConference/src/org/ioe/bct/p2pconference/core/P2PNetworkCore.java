@@ -34,12 +34,14 @@ public class P2PNetworkCore {
     {
         try{
             NManager=new NetworkManager(modeConfig, nodeName);
+            Thread.sleep(2000);
             NManager.startNetwork();
-            System.out.println("Starting Network...");
+//            System.out.println("Starting Network...");
         }
-        catch(Exception exception)
-        {
-            exception.printStackTrace();
+
+      
+        catch (Exception ge){
+            System.out.println("Error "+ge.getMessage());
         }
     }
     public NetworkManager getNetworkManager()

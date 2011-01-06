@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeListener;
 import net.jxta.platform.NetworkManager.ConfigMode;
+import org.ioe.bct.p2pconference.core.GroupDiscoveryThread;
 import org.ioe.bct.p2pconference.core.JXTAPeerGroupOrganizer;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.PeerGroupOrganizer;
@@ -163,12 +164,16 @@ public class AppMainFrame extends javax.swing.JFrame {
                 if(contactListTab.getSelectedComponent().equals(contListPanel)) {
                     contListPanel.sendSelectionChangeMsg();
                     appConfPanel.setPrivateMode(true);
+                    JXTAPeerGroupOrganizer orga=(JXTAPeerGroupOrganizer)groupOrganizer;
+                    orga.slowPublishAndDiscovery();
                     // JOptionPane.showMessageDialog(null, "sending msg");
                 }
                 else if(contactListTab.getSelectedComponent().equals(contGroupPanel)) {
                    // JOptionPane.showMessageDialog(null, "cgsending msg");
                     contGroupPanel.sendSelectionChangedMessage();
                     appConfPanel.setPrivateMode(false);
+                     JXTAPeerGroupOrganizer orga=(JXTAPeerGroupOrganizer)groupOrganizer;
+                     orga.rapidPublishAndDiscovery();
                 }
             }
         });
@@ -179,15 +184,23 @@ public class AppMainFrame extends javax.swing.JFrame {
 
     public void createNetworkCore(String name) {
        
-        netCOre=new P2PNetworkCore(name);
-        netCOre.startNetwork(ConfigMode.ADHOC);
-        System.out.println("creating network core");
-        GroupListener myGroupListener=contGroupPanel;
-        groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();
-        appConfPanel.initiateChatting(netCOre);
-        
+            netCOre=new P2PNetworkCore(name);
+            netCOre.startNetwork(ConfigMode.ADHOC);
+            System.out.println("creating network core");
+            GroupListener myGroupListener=contGroupPanel;
+            groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();
+            appConfPanel.initiateChatting(netCOre);        
+ 
     }
 
+    public JXTAPeerGroupOrganizer getJXTAPeerGroupOrganizer() {
+        if(groupOrganizer instanceof JXTAPeerGroupOrganizer) {
+            return (JXTAPeerGroupOrganizer)groupOrganizer;
+        }
+         else {
+                    return null;
+         }
+    }
     
 
     private void loadConferencePanel() {
@@ -197,7 +210,7 @@ public class AppMainFrame extends javax.swing.JFrame {
         contactDetialsPanel.add(appConfPanel,BorderLayout.CENTER);
         contactDetialsPanel.revalidate();
         jSplitPane1.revalidate();
-        validateTree();
+       
     }
 
     /** This method is called from within the constructor to

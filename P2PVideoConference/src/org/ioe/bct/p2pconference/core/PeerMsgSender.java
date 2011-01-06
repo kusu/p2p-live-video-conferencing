@@ -106,7 +106,10 @@ public class PeerMsgSender {
           System.out.println("Error during advertisement search");
           System.exit(-1);
       }
-      if(outputPipe==null) JOptionPane.showMessageDialog(null, "Why am i null");
+      if(outputPipe==null){
+          System.out.println( "Why am i null");
+
+      }
       return outputPipe;
     }
     public OutputPipe createOutputPipe(PipeAdvertisement myPipeAdvertisement) {
