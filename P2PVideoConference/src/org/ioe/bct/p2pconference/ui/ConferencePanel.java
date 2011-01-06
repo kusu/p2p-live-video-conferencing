@@ -318,7 +318,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
             multicastClients.put(peerGroup.getPeerGroup(),
                     new MulticastClient(peerGroup.getPeerGroup(), AppMainFrame.getUserName()));
             mapperArrayList.add(new MulticastToPeerGroupMapper(peerGroup,
-                    new MulticastServer(peerGroup.getPeerGroup())));
+                    new MulticastServer(peerGroup.getPeerGroup(),confMediator)));
 
             startAllMulticastClientThread();
             startAllMulticastServerThread();
@@ -338,9 +338,19 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
              }
        }
        else if(message.equalsIgnoreCase(ConferenceMediator.RECEIVE_TEXT_MSG)){
-           JOptionPane.showMessageDialog(null, "msg receivedx"+body);
+           if(privateMode) {
+//           JOptionPane.showMessageDialog(null, "msg receivedx"+body);
            receiveTextMessage(body.toString());
+           }
+             else {
+               TextMessage rMsg=(TextMessage)body;
+                receiveTextMessage(rMsg.getForm(),rMsg.getMessage());
+             }
          } 
+    }
+
+    public void receiveTextMessage(String peerName,String msg) {
+        printMessage(peerName, msg);
     }
     public void sendTextMesssage(String message) {
         printMessage(AppMainFrame.getUserName(),message); //print msg first

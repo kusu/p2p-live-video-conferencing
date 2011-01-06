@@ -7,6 +7,7 @@ package org.ioe.bct.p2pconference.core;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -14,6 +15,10 @@ import java.util.logging.Logger;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PipeAdvertisement;
 import net.jxta.socket.JxtaMulticastSocket;
+import org.ioe.bct.p2pconference.dataobject.TextMessage;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
+import org.ioe.bct.p2pconference.ui.AppMainFrame;
+import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
 /**
  *
@@ -24,9 +29,10 @@ public class MulticastServer {
         private ArrayList<PipeAdvertisement> pipeAdvertisements=new ArrayList<PipeAdvertisement>();
         private MulticastSocketService multicastSS=null;
         private PeerGroup peerGroup=null;
-
-        public MulticastServer(PeerGroup peerGroup)
+        private Mediator mediator;
+        public MulticastServer(PeerGroup peerGroup,Mediator med)
         {
+            this.mediator=med;
             this.peerGroup=peerGroup;
             multicastSS=new MulticastSocketService(peerGroup);
             pipeAdvertisements=multicastSS.getAllLocalPipeAdvertisement();
@@ -58,15 +64,20 @@ public class MulticastServer {
 
         public void receive(String senderAtOtherEnd,byte buffer[])
         {
+            if(!senderAtOtherEnd.equalsIgnoreCase(AppMainFrame.getUserName())) {
             if(multicasts.containsKey(senderAtOtherEnd+"SocketAdvertisement"))
             {
-            DatagramPacket packet=new DatagramPacket(buffer, buffer.length);
+            
             try {
+                DatagramPacket packet=new DatagramPacket(buffer, buffer.length,InetAddress.getLocalHost(),9290);
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
-                 System.out.println("Sent by :"+packet.getPort()+" "+packet.getData().toString());
+                 System.out.println("Sent by :"+senderAtOtherEnd+" "+packet.getPort()+" "+new String(packet.getData()));
+                 TextMessage msg=new TextMessage(senderAtOtherEnd, new String(packet.getData()));
+                 mediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msg);
             }
             catch (IOException ex) {
                 Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
             }
             }
         }

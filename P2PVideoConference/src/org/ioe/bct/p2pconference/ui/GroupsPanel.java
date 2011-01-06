@@ -77,6 +77,7 @@ public class GroupsPanel extends javax.swing.JPanel implements Colleague, GroupL
             System.out.println(groupName);
         }
         groupsListUI.setListData(peerListUIPanelList.toArray());
+        groupsListUI.setSelectedIndex(0);
     }
 
     public void setMediator(Mediator m) {
