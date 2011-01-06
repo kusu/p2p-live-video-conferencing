@@ -61,6 +61,7 @@ public class PeerGroupService{
     
     
     private ArrayList<PeerGroup> discoveredGroups=new ArrayList<PeerGroup>();
+    private ArrayList<PeerGroupID> discoveredGroupsIds=new ArrayList<PeerGroupID>();
     private ArrayList<PeerGroupAdvertisement> myCreatedGroups=new ArrayList<PeerGroupAdvertisement>();
     private String message="";
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
@@ -341,7 +342,11 @@ public class PeerGroupService{
                         try {
                             str = (String) enumm.nextElement();
                             PeerGroupAdvertisement remotePeerGroupAdv = (PeerGroupAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, new ByteArrayInputStream(str.getBytes()));
-                            peerGroupList.add(netPeerGroup.newGroup(remotePeerGroupAdv));
+                            if(!discoveredGroupsIds.contains(remotePeerGroupAdv.getPeerGroupID()))
+                            {
+                                discoveredGroups.add(netPeerGroup.newGroup(remotePeerGroupAdv));
+                                discoveredGroupsIds.add(remotePeerGroupAdv.getPeerGroupID());
+                            }
 
                         } catch (IOException ex) {
                             Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
@@ -355,13 +360,6 @@ public class PeerGroupService{
             }
 
             RemoteListener remoteListener=new RemoteListener(netPeerGroup);
-           ArrayList<PeerGroup> tempGroupList=remoteListener.getPeerGroupList();
-           Iterator<PeerGroup> itr=tempGroupList.iterator();
-           while(itr.hasNext())
-           {
-                peerGroupArrayList.add(itr.next());
-           }
-           
             peerGroupsDiscoveryService.getRemoteAdvertisements(null, DiscoveryService.GROUP, null, null, 10,remoteListener);
             localPeerGroupAdvertisementEnumeration =
                         peerGroupsDiscoveryService.getLocalAdvertisements(DiscoveryService.GROUP, null, null);
@@ -376,7 +374,11 @@ public class PeerGroupService{
                  
 
                 try {
-                   peerGroupArrayList.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID()));
+                   if(!discoveredGroupsIds.contains(pgAdv.getPeerGroupID()))
+                   {
+                       discoveredGroups.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID()));
+                       discoveredGroupsIds.add(pgAdv.getPeerGroupID()); 
+                   }
                 }
                 catch (PeerGroupException ex) {
                     ex.printStackTrace();
@@ -384,7 +386,7 @@ public class PeerGroupService{
                 }
         }
         System.out.println("Total Groups Discovered" +peerGroupArrayList.size());
-        return peerGroupArrayList;
+        return discoveredGroups;
        }
 
 //----------------------------------------------------------------------------------------------------//
