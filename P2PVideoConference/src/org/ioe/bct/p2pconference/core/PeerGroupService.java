@@ -63,6 +63,7 @@ public class PeerGroupService{
     private ArrayList<PeerGroup> discoveredGroups=new ArrayList<PeerGroup>();
     private ArrayList<PeerGroupID> discoveredGroupsIds=new ArrayList<PeerGroupID>();
     private ArrayList<PeerGroupAdvertisement> myCreatedGroups=new ArrayList<PeerGroupAdvertisement>();
+    private ArrayList<PeerAdvertisement> discoveredPeers=new ArrayList<PeerAdvertisement>();
     private String message="";
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
     {
@@ -531,7 +532,8 @@ public String getMessage()
                         try {
                             str = (String) enumm.nextElement();
                             PeerAdvertisement remotePeerAdv = (PeerAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, new ByteArrayInputStream(str.getBytes()));
-                            peerAdvList.add(remotePeerAdv);
+                            if(!discoveredPeers.contains(remotePeerAdv))
+                                discoveredPeers.add(remotePeerAdv);
                         } catch (IOException ex) {
                             Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -542,7 +544,7 @@ public String getMessage()
                  
                  RemoteListener remoteListener=new RemoteListener();
                  disS.getRemoteAdvertisements(null,DiscoveryService.PEER, null, null, 10,remoteListener);
-                 peerAdvArrayList=remoteListener.getPeerAdvList();
+                 
             } catch (IOException ex) {
                 Logger.getLogger(PeerGroupService.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -550,10 +552,11 @@ public String getMessage()
             {
                 PeerAdvertisement pAdv=null;
                 pAdv=(PeerAdvertisement)localAds.nextElement();
-                peerAdvArrayList.add(pAdv);
+                if(!discoveredPeers.contains(pAdv))
+                    discoveredPeers.add(pAdv);
                 System.out.println("At Peer Group Service :" +pAdv.getName());
             }
-          return peerAdvArrayList;
+          return discoveredPeers;
     }
 
     
