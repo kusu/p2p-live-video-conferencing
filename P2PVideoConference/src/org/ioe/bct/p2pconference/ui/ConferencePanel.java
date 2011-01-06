@@ -314,6 +314,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                 ProtectedPeerGroup selectedGroup=(ProtectedPeerGroup)body;
                 currentGroup=selectedGroup;
                 gPanel=new GroupInfoPanel(selectedGroup);
+                gPanel.setMediator(confMediator);
                 upperPanel.add(gPanel,BorderLayout.CENTER);
                 upperPanel.validate();
                 upperPanel.setVisible(true);
