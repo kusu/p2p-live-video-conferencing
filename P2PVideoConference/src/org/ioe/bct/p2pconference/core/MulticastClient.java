@@ -7,6 +7,7 @@ package org.ioe.bct.p2pconference.core;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,8 +30,10 @@ public class MulticastClient implements Runnable{
         multicastSS=new MulticastSocketService(peerGroup);
         this.peerGroup=peerGroup;
         pipeAdvertisement=multicastSS.getSocketAdvertisement(creator);
+        
+      
         multicastSS.buildModuleAdvertisement();
-        multicastSS.buildModuleSpecificationAdvertisement(pipeAdvertisement);
+          multicastSS.buildModuleSpecificationAdvertisement(pipeAdvertisement);
       //  System.out.println(pipeAdvertisement);
         discoveryService=peerGroup.getDiscoveryService();
         try {
@@ -43,8 +46,10 @@ public class MulticastClient implements Runnable{
 
     public void publishPipeAdvertisement()
     {
+        
         multicastSS.publishModuleAdvertisement();
         multicastSS.publishModuleSpecificationAdvertisement();
+      
     }
     public void sendMesssage(String message)
     {
@@ -53,7 +58,7 @@ public class MulticastClient implements Runnable{
         
         try {
             
-            DatagramPacket packet = new DatagramPacket(msg, msg.length);
+            DatagramPacket packet = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(),9291);
             multicast.send(packet);
             System.out.println("MESSAGE "+new String(packet.getData())+"  from port : "+packet.getPort());
         }

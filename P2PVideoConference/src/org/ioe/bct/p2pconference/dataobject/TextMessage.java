@@ -26,6 +26,11 @@ public class TextMessage implements Serializable {
         this.message=msg;
     }
 
+    public TextMessage(String sender, String msg) {
+       this.from=sender;
+       this.message=msg;
+    }
+
     public void setFrom(String frm) {
         this.from=frm;
     }

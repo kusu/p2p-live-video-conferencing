@@ -178,6 +178,7 @@ public class AppMainFrame extends javax.swing.JFrame {
     }
 
     public void createNetworkCore(String name) {
+       
         netCOre=new P2PNetworkCore(name);
         netCOre.startNetwork(ConfigMode.ADHOC);
         System.out.println("creating network core");
