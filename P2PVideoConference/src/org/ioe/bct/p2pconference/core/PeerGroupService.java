@@ -64,6 +64,7 @@ public class PeerGroupService{
     private ArrayList<PeerGroupID> discoveredGroupsIds=new ArrayList<PeerGroupID>();
     private ArrayList<PeerGroupAdvertisement> myCreatedGroups=new ArrayList<PeerGroupAdvertisement>();
     private ArrayList<PeerAdvertisement> discoveredPeers=new ArrayList<PeerAdvertisement>();
+    private ModuleImplAdvertisement passwdMembershipModuleImplAdv=null;
     private String message="";
     public PeerGroup createPeerGroup(PeerGroup rootPeerGroup,String groupName,String login,String passwd) throws MalformedURLException, UnknownServiceException
     {
@@ -74,7 +75,6 @@ public class PeerGroupService{
         PeerGroup newPeerGroup=null;
         PeerGroupAdvertisement newPeerGroupAdvertisement;
         // Create the PeerGroup Module Implementation Adv
-        ModuleImplAdvertisement passwdMembershipModuleImplAdv;
         passwdMembershipModuleImplAdv = this.createPasswdMembershipPeerGroupModuleImplAdv(rootPeerGroup);
         // Publish it in the parent peer group
         DiscoveryService rootPeerGroupDiscoveryService =
@@ -117,7 +117,7 @@ public class PeerGroupService{
                 System.err.println("satellaPeerGroupAdvertisement is null");
         }
         try {
-            newPeerGroup = rootPeerGroup.newGroup(newPeerGroupAdvertisement);
+            newPeerGroup = rootPeerGroup.newGroup(newPeerGroupAdvertisement.getPeerGroupID());
         }
         catch (net.jxta.exception.PeerGroupException e) {
             System.err.println("Can't create Satella Peer Group from Advertisement");
@@ -132,6 +132,23 @@ public class PeerGroupService{
     {
         DiscoveryService rootPeerGroupDiscoveryService =
                 netPeerGroup.getDiscoveryService();
+        if(passwdMembershipModuleImplAdv!=null)
+        {
+            try {
+                rootPeerGroupDiscoveryService.publish(
+                            passwdMembershipModuleImplAdv,
+                            PeerGroup.DEFAULT_LIFETIME,
+                            PeerGroup.DEFAULT_EXPIRATION);
+                rootPeerGroupDiscoveryService.remotePublish(
+                            passwdMembershipModuleImplAdv,
+                            PeerGroup.DEFAULT_EXPIRATION);
+
+            }
+            catch (java.io.IOException e) {
+                System.err.println("Can't Publish satellaPeerGroupAdvertisement");
+                System.exit(1);
+            }
+        }
         if(!myCreatedGroups.isEmpty())
         {
            Iterator<PeerGroupAdvertisement> itr=myCreatedGroups.iterator();
