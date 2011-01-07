@@ -28,8 +28,7 @@ public class AudioConference {
     private Capture audioCapture;
     public AudioConference(PeerGroup peerGroup,String Creator,Mediator mediator)
     {
-        multicastClient=new MulticastClient(peerGroup, Creator);
-        multicastClient.setMode(MODE);
+        multicastClient=new MulticastClient(peerGroup, Creator,MODE);
         multicastClient.setPort(C_PORT);
         multicastServer=new MulticastServer(peerGroup, mediator);
         multicastServer.setMode(MODE);

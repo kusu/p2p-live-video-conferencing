@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import net.jxta.discovery.DiscoveryEvent;
 import net.jxta.discovery.DiscoveryListener;
 import net.jxta.discovery.DiscoveryService;
@@ -104,7 +105,7 @@ public class MulticastSocketService {
 //      myModuleSpecAdvertisement.setParam((StructuredDocument) paramDoc);
       myModuleSpecAdvertisement.setPipeAdvertisement(myPipeAdvertisement);
 
-
+      JOptionPane.showMessageDialog(null, myModuleSpecAdvertisement);
       try {
         ds.publish(myModuleSpecAdvertisement);
         ds.remotePublish(myModuleSpecAdvertisement);

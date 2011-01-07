@@ -345,7 +345,7 @@ public class PeerGroupService{
                             PeerGroupAdvertisement remotePeerGroupAdv = (PeerGroupAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, new ByteArrayInputStream(str.getBytes()));
                             if(!discoveredGroupsIds.contains(remotePeerGroupAdv.getPeerGroupID()))
                             {
-                                discoveredGroups.add(netPeerGroup.newGroup(remotePeerGroupAdv));
+                                discoveredGroups.add(netPeerGroup.newGroup(remotePeerGroupAdv.getPeerGroupID()));
                                 discoveredGroupsIds.add(remotePeerGroupAdv.getPeerGroupID());
                             }
 

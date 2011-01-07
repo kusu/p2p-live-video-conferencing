@@ -44,6 +44,27 @@ public class MulticastClient implements Runnable{
             Logger.getLogger(MulticastClient.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    public MulticastClient(PeerGroup peerGroup,String creator,String Mode)
+    {
+
+        multicastSS=new MulticastSocketService(peerGroup);
+        multicastSS.setMode(Mode);
+        this.peerGroup=peerGroup;
+        pipeAdvertisement=multicastSS.getSocketAdvertisement(creator);
+
+
+        multicastSS.buildModuleAdvertisement();
+          multicastSS.buildModuleSpecificationAdvertisement(pipeAdvertisement);
+      //  System.out.println(pipeAdvertisement);
+        discoveryService=peerGroup.getDiscoveryService();
+        try {
+            multicast = new JxtaMulticastSocket(peerGroup, pipeAdvertisement);
+            multicast.setSoTimeout(0);
+        } catch (IOException ex) {
+            Logger.getLogger(MulticastClient.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
     public void setMode(String Mode)    //set the mode for either conferenceAudio or conferenceText(default no need to set explicitly)
         {
             multicastSS.setMode(Mode);
