@@ -117,7 +117,7 @@ public class PeerGroupService{
                 System.err.println("satellaPeerGroupAdvertisement is null");
         }
         try {
-            newPeerGroup = rootPeerGroup.newGroup(newPeerGroupAdvertisement.getPeerGroupID());
+            newPeerGroup = rootPeerGroup.newGroup(newPeerGroupAdvertisement.getPeerGroupID(),passwdMembershipModuleImplAdv,groupName,"Password Authenticated blah blah");
         }
         catch (net.jxta.exception.PeerGroupException e) {
             System.err.println("Can't create Satella Peer Group from Advertisement");
