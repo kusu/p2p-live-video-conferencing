@@ -36,8 +36,6 @@ public class MulticastServer {
             this.mediator=med;
             this.peerGroup=peerGroup;
             multicastSS=new MulticastSocketService(peerGroup);
-            pipeAdvertisements=multicastSS.getAllLocalPipeAdvertisement();
-
         }
         public void setMode(String Mode)    //set the mode for either conferenceAudio or conferenceText(default no need to set explicitly)
         {
