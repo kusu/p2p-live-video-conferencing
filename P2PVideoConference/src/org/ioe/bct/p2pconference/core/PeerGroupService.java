@@ -96,7 +96,7 @@ public class PeerGroupService{
         newPeerGroupAdvertisement =
                 this.createPeerGroupAdvertisement(passwdMembershipModuleImplAdv,groupName,login,passwd);
         // Publish it in the parent peer group
-        System.out.println(newPeerGroupAdvertisement.toString());
+        
         myCreatedGroups.add(newPeerGroupAdvertisement);
         try {
             rootPeerGroupDiscoveryService.publish(
@@ -118,6 +118,7 @@ public class PeerGroupService{
         }
         try {
             newPeerGroup = rootPeerGroup.newGroup(newPeerGroupAdvertisement.getPeerGroupID(),passwdMembershipModuleImplAdv,groupName,"Password Authenticated blah blah");
+            System.out.println("HUHAHAHA"+newPeerGroup.getPeerGroupAdvertisement());
         }
         catch (net.jxta.exception.PeerGroupException e) {
             System.err.println("Can't create Satella Peer Group from Advertisement");

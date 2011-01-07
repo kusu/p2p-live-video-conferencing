@@ -132,7 +132,7 @@ public class MulticastSocketService {
         ArrayList<PipeAdvertisement> localAdvs=new ArrayList<PipeAdvertisement>();
 
         try {
-            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+"textmodulespec");
+            Enumeration<Advertisement> advertisements = ds.getLocalAdvertisements(DiscoveryService.ADV, "Name", peerGroup.getPeerGroupName()+MODE);
                 while(advertisements.hasMoreElements())
                 {
                     ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)advertisements.nextElement();
