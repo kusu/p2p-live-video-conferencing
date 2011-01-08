@@ -24,7 +24,10 @@ public class ConferenceMediator implements Mediator {
     public static final String  RECEIVE_TEXT_MSG="ReceiveTxtMsg";
     public static final String PRIVATE_CALL_ACCPTED="ACAC-125801-47862-307-SGpAcA";
     public static final String PRIVATE_CALL_REJECTED="AC-125801-47862-307-SGpACr";
-
+    public static final String PRIVATE_CALL_ACCEPT_MSGQ="Accept the call";
+    public static final String PRIVATE_CALL_REJECT_MSGQ="REject the call";
+    public static final String PRIVATE_CALL_REJECT_CODE="pcamACAC-125801-47862-307-SGpAcAReject";
+     public static final String PRIVATE_CALL_ACCEPT_CODE="pcamACAC-125801-47862-307-SGpAcARejectA";
     private ArrayList<Colleague> colleagueList;
 
 

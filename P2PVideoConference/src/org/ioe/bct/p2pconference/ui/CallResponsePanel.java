@@ -98,12 +98,12 @@ public class CallResponsePanel extends javax.swing.JPanel implements Runnable {
 
     private void acceptCallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acceptCallButtonActionPerformed
         // TODO add your handling code here:
-        confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_ACCPTED, null, "Call Accepted");
+        confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_ACCEPT_MSGQ, null, ConferenceMediator.PRIVATE_CALL_ACCEPT_CODE+"\n"+sender);
     }//GEN-LAST:event_acceptCallButtonActionPerformed
 
     private void declineCallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_declineCallButtonActionPerformed
         // TODO add your handling code here:
-        confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_REJECTED, null, "Call Accepted");
+        confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_REJECT_MSGQ, null, ConferenceMediator.PRIVATE_CALL_REJECT_CODE+"\n"+sender);
     }//GEN-LAST:event_declineCallButtonActionPerformed
 
 
