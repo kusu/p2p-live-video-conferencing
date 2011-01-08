@@ -42,7 +42,7 @@ public class AudioConference {
             while(true){
                 multicastClient.publishPipeAdvertisement();
                 //Publishing Audio Module Speculation  at interval of 20 secs??????
-                sleep(20000);
+                sleep(2000);
             }
         }
 
@@ -54,7 +54,7 @@ public class AudioConference {
             {
                 multicastServer.getAllMulticastSocketFromPipeAdvertisements();
                 //Get all the Audio Module Speculation Published at interval of 20 secs???
-                sleep(20000);
+                sleep(2000);
             }
         }
     }
@@ -78,7 +78,7 @@ public class AudioConference {
                 multicastServer.receive(peerName, buffer);
                 audioCapture.setData(buffer);
             }
-                sleep(1000);
+                sleep(500);
             }
         }
     }
@@ -90,7 +90,7 @@ public class AudioConference {
             {
                 byte msg[]=audioCapture.getData();
                 multicastClient.sendMesssage(new String(msg));
-                sleep(1000);
+                sleep(500);
             }
         }
     }

@@ -48,15 +48,16 @@ public class Capture implements StreamDataSourceInterface{
         AudioSystem.getLine(info);
       line.open(format);
       line.start();
-      Runnable runner = new Runnable() {
+      outToNetwork = new ByteArrayOutputStream();
+   //   Runnable runner = new Runnable() {
         int bufferSize = (int)format.getSampleRate()
           * format.getFrameSize();
         byte buffer[] = new byte[bufferSize];
 
-        public void run() {
-          while(true)
-          {
-            outToNetwork = new ByteArrayOutputStream();
+     //   public void run() {
+       //   while(true)
+      //    {
+            
           running = true;
           int count =
             line.read(buffer, 0, buffer.length);
@@ -68,11 +69,11 @@ public class Capture implements StreamDataSourceInterface{
                     Logger.getLogger(Capture.class.getName()).log(Level.SEVERE, null, ex);
                 }
           }
-         }
-        }
-      };
-      Thread captureThread = new Thread(runner);
-      captureThread.start();
+        // }
+        //}
+     // };
+   //   Thread captureThread = new Thread(runner);
+    //  captureThread.start();
     } catch (LineUnavailableException e) {
       System.err.println("Line unavailable: " + e);
       System.exit(-2);
@@ -95,30 +96,32 @@ public class Capture implements StreamDataSourceInterface{
       line.open(format);
       line.start();
 
-      Runnable runner = new Runnable() {
+     // Runnable runner = new Runnable() {
         int bufferSize = (int) format.getSampleRate()
           * format.getFrameSize();
-        byte buffer[] = new byte[bufferSize];
-
-        public void run() {
+        
+           byte buffer[] = new byte[bufferSize];
+      //  public void run() {
           try {
             int count;
+           
             while ((count = ais.read(
                 buffer, 0, buffer.length)) != -1) {
               if (count > 0) {
                 line.write(buffer, 0, count);
               }
             }
+            setData(buffer);
             line.drain();
             line.close();
           } catch (IOException e) {
             System.err.println("I/O problems: " + e);
             System.exit(-3);
           }
-        }
-      };
-      Thread playThread = new Thread(runner);
-      playThread.start();
+       // }
+     // };
+     // Thread playThread = new Thread(runner);
+     // playThread.start();
     } catch (LineUnavailableException e) {
       System.err.println("Line unavailable: " + e);
       System.exit(-4);
