@@ -69,6 +69,7 @@ public class Capture implements StreamDataSourceInterface{
                     Logger.getLogger(Capture.class.getName()).log(Level.SEVERE, null, ex);
                 }
           }
+        //  setData(buffer);
         // }
         //}
      // };
@@ -111,9 +112,10 @@ public class Capture implements StreamDataSourceInterface{
                 line.write(buffer, 0, count);
               }
             }
-            setData(buffer);
+            
             line.drain();
             line.close();
+            inFromNetwork.reset();
           } catch (IOException e) {
             System.err.println("I/O problems: " + e);
             System.exit(-3);
