@@ -102,7 +102,7 @@ public class PeerMsgReceiver {
                 msg=pme.getMessage();
 //                JOptionPane.showMessageDialog(null, msg.toString());
                MessageElement msgElement=msg.getMessageElement(null,"DataMsg");
-
+                System.out.println(msgElement.toString());
 //                JOptionPane.showMessageDialog(null, msgElement.toString());
                 confMediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msgElement.toString());
                 

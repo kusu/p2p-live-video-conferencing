@@ -22,8 +22,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JWindow;
 import net.jxta.peergroup.PeerGroup;
 import net.jxta.protocol.PeerAdvertisement;
 import org.ioe.bct.p2pconference.AppLoader;
@@ -106,7 +108,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         private MulticastServer server;
         private ArrayList<PeerAdvertisement> peerAdvList;
 //        private String message;
-        private long sleepTimer=500;
+        private long sleepTimer=1000;
         public MulticastServerThread(MulticastServer multicastServer,ArrayList<PeerAdvertisement> peerAdvs)
         {
             this.server=multicastServer;
@@ -160,7 +162,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     private class MulticastClientThread implements Runnable{
         Collection<MulticastClient> multicastClients;
-        private long sleepTimer=500;
+        private long sleepTimer=1000;
 
         public MulticastClientThread(Collection<MulticastClient> mcastClients)
         {
@@ -286,7 +288,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
            if(sender instanceof ContactListPanel) {
               System.out.println("Loading contact info "+sender.getClass());
                upperPanel.removeAll();
-               UserInfoPanel uinfo=new UserInfoPanel(networkManager);
+               UserInfoPanel uinfo=new UserInfoPanel(networkManager,confMediator);
               
                if(body instanceof PeerResolver) {
                    uinfo.updateInfo((PeerResolver) body);
@@ -341,6 +343,8 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
             mapperArrayList.add(new MulticastToPeerGroupMapper(peerGroup,
                     new MulticastServer(peerGroup.getPeerGroup(),confMediator)));
             AppLoader.mainFrame.getJXTAPeerGroupOrganizer().slowPublishAndDiscovery();
+
+            
             startAllMulticastClientThread();
             startAllMulticastServerThread();
            
@@ -361,17 +365,21 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
        else if(message.equalsIgnoreCase(ConferenceMediator.RECEIVE_TEXT_MSG)){
            if(privateMode) {
 //           JOptionPane.showMessageDialog(null, "msg receivedx"+body);
-           receiveTextMessage(body.toString());
+           System.out.println("Message received: "+body.toString());
+               receiveTextMessage(body.toString());
+
            }
              else {
                TextMessage rMsg=(TextMessage)body;
                 receiveTextMessage(rMsg.getForm(),rMsg.getMessage());
              }
-         } 
+         } else if(message.equals(ConferenceMediator.PRIVATE_VOICE_CALL_SYNC)) {
+             privateMsgManager.sendDataToReceiver(body.toString(), currentSelectedPeer);
+         }
     }
 
     public void receiveTextMessage(String peerName,String msg) {
-        printMessage(peerName, msg);
+        printMessage(msg,peerName);
     }
     public void sendTextMesssage(String message) {
         printMessage(AppMainFrame.getUserName(),message); //print msg first
@@ -439,6 +447,13 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     public void receiveTextMessage(String message) {
        //to be called once the message is received. just print the received msg in the textarea
+        if(message.equals(ConferenceMediator.AUDIO_REQUEST_CODE)){
+            JDialog window=new JDialog(AppLoader.mainFrame,true);
+            window.setBounds(400, 300, 200, 100);
+            window.getContentPane().add(new CallResponsePanel(confMediator));
+            window.setVisible(true);
+            return;
+        }
         printMessage(message,currentSelectedPeer);
     }
 

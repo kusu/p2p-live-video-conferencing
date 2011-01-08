@@ -20,7 +20,7 @@ public class GroupDiscoveryThread implements Runnable {
     PeerGroupOrganizer organizer;
     PeerGroupService peerGroupDiscoveryService;
     Thread currentThread;
-    private long sleepTimer=1000;
+    private long sleepTimer=10000;
 
     public GroupDiscoveryThread(PeerGroupOrganizer org){
         organizer=org;
@@ -99,4 +99,5 @@ public class GroupDiscoveryThread implements Runnable {
         currentThread.setPriority(Thread.NORM_PRIORITY);
     }
 
+    
 }
