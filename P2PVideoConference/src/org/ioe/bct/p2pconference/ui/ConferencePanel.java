@@ -375,7 +375,13 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
              }
          } else if(message.equals(ConferenceMediator.PRIVATE_VOICE_CALL_SYNC)) {
              privateMsgManager.sendDataToReceiver(body.toString()+"\n"+AppMainFrame.getUserName(), currentSelectedPeer);
+         }else if(message.equals(ConferenceMediator.PRIVATE_CALL_ACCEPT_MSGQ)||
+         message.equals(ConferenceMediator.PRIVATE_CALL_REJECT_MSGQ)) {
+             String code=body.toString().split("\n")[0];
+             String to=body.toString().split("\n")[1];
+             privateMsgManager.sendDataToReceiver(code+"\n"+AppMainFrame.getUserName(),to);
          }
+
     }
 
     public void receiveTextMessage(String peerName,String msg) {
@@ -450,22 +456,27 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         String[] parts=message.split("\n");
         String messageText=parts[0];
         System.out.println(message);
-        String sender=parts[1];
+        String audioCallRequester=parts[1];
         if(messageText.equals(ConferenceMediator.AUDIO_REQUEST_CODE)){
             JWindow window=new JWindow(AppLoader.mainFrame);
             window.setBounds(400, 300, 200, 100);
-            window.getContentPane().add(new CallResponsePanel(sender,confMediator));
+            window.getContentPane().add(new CallResponsePanel(audioCallRequester,confMediator));
             window.pack();
             window.setVisible(true);
             return;
+        }else if(messageText.equals(ConferenceMediator.PRIVATE_CALL_ACCEPT_CODE)) {
+            confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_ACCPTED, this, null);
+        }else if(messageText.equals(ConferenceMediator.PRIVATE_CALL_REJECT_CODE)) {
+            confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_REJECTED, this, null);
         }
-        printMessage(message,currentSelectedPeer);
+
+        printMessage(messageText,currentSelectedPeer);
     }
 
     
     
     private HashMap<String,TextMessage> textData=new HashMap<String,TextMessage>();
-    
+   
     private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();
     private GroupInfoPanel gPanel;
     private String currentSelectedPeer="";
