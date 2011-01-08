@@ -53,15 +53,18 @@ public class MulticastServer {
         public void getAllMulticastSocketFromPipeAdvertisements()
         {
 
-            multicasts.clear();
+            //multicasts.clear();
             pipeAdvertisements=multicastSS.getAllLocalPipeAdvertisement();
             for(int i=0;i<pipeAdvertisements.size();i++)
             {
                 try {
+                    if(!multicasts.containsKey(pipeAdvertisements.get(i).getName()))
+                    {
                     JxtaMulticastSocket temp = new JxtaMulticastSocket(peerGroup, pipeAdvertisements.get(i));
                     temp.setSoTimeout(0);
                     multicasts.put(pipeAdvertisements.get(i).getName(),temp);
                     System.out.println("For peer "+pipeAdvertisements.get(i).getName() +" pipe advertisement received.");
+                    }
                 }
                 catch (IOException ex) {
                     Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);

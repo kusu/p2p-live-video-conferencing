@@ -373,7 +373,9 @@ public class PeerGroupService{
                             PeerGroupAdvertisement remotePeerGroupAdv = (PeerGroupAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8, new ByteArrayInputStream(str.getBytes()));
                             if(!discoveredGroupsIds.contains(remotePeerGroupAdv.getPeerGroupID()))
                             {
-                                discoveredGroups.add(netPeerGroup.newGroup(remotePeerGroupAdv.getPeerGroupID(),passwdMembershipModuleImplAdv,remotePeerGroupAdv.getName(),remotePeerGroupAdv.getDescription()));
+                                PeerGroup newPeerGRP=netPeerGroup.newGroup(remotePeerGroupAdv.getPeerGroupID(),passwdMembershipModuleImplAdv,remotePeerGroupAdv.getName(),remotePeerGroupAdv.getDescription());
+                                discoveredGroups.add(newPeerGRP);
+                                System.out.println(newPeerGRP);
                                 discoveredGroupsIds.add(remotePeerGroupAdv.getPeerGroupID());
                             }
 
@@ -405,7 +407,9 @@ public class PeerGroupService{
                 try {
                    if(!discoveredGroupsIds.contains(pgAdv.getPeerGroupID()))
                    {
-                       discoveredGroups.add(netPeerGroup.newGroup(pgAdv.getPeerGroupID(),passwdMembershipModuleImplAdv,pgAdv.getName(),pgAdv.getDescription()));
+                       PeerGroup newPeerGrp=netPeerGroup.newGroup(pgAdv.getPeerGroupID(),passwdMembershipModuleImplAdv,pgAdv.getName(),pgAdv.getDescription());
+                       discoveredGroups.add(newPeerGrp);
+                       System.out.println(newPeerGrp.getPeerGroupAdvertisement());
                        discoveredGroupsIds.add(pgAdv.getPeerGroupID()); 
                    }
                 }
