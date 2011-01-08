@@ -62,7 +62,7 @@ public class PeerMsgSender {
 
           ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)myLocalEnum.nextElement();
           outputPipe=createOutputPipe(myModuleSpecAdv.getPipeAdvertisement());
-//          JOptionPane.showMessageDialog(null,"FROM LOCAL" + myModuleSpecAdv.getPipeAdvertisement().toString());
+          System.out.println("FROM LOCAL" + myModuleSpecAdv.getPipeAdvertisement().toString());
 
         }
         else {
@@ -89,7 +89,7 @@ public class PeerMsgSender {
               try {
                 ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
                 outputPipe=createOutputPipe(myModSpecAdv.getPipeAdvertisement());
-//                JOptionPane.showMessageDialog(null, "FROM REMOTE\n"+myModSpecAdv.getPipeAdvertisement().toString());
+                System.out.println( "FROM REMOTE\n"+myModSpecAdv.getPipeAdvertisement().toString());
 
               } catch(Exception ee) {
                   ee.printStackTrace();

@@ -18,14 +18,17 @@ import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
  *
  * @author kusu
  */
-public class CallResponsePanel extends javax.swing.JPanel {
+public class CallResponsePanel extends javax.swing.JPanel implements Runnable {
 
     private Mediator confMediator;
+    private String sender;
 
     /** Creates new form CallResponsePanel */
-    public CallResponsePanel(Mediator m) {
+    public CallResponsePanel(String send,Mediator m) {
         this.confMediator=m;
+        this.sender=send;
         initComponents();
+        callLabel.setText(sender);
     }
 
     /** This method is called from within the constructor to
@@ -39,8 +42,8 @@ public class CallResponsePanel extends javax.swing.JPanel {
 
         acceptCallButton = new javax.swing.JButton();
         declineCallButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        callerLabel = new javax.swing.JLabel();
+        callLabel = new javax.swing.JLabel();
 
         acceptCallButton.setText("Accept Call");
         acceptCallButton.addActionListener(new java.awt.event.ActionListener() {
@@ -56,9 +59,9 @@ public class CallResponsePanel extends javax.swing.JPanel {
             }
         });
 
-        jLabel1.setText(" ");
+        callerLabel.setText(" ");
 
-        jLabel2.setText("Calling...");
+        callLabel.setText("Calling...");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -67,24 +70,24 @@ public class CallResponsePanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(27, 27, 27)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(callerLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(callLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(140, 140, 140))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(acceptCallButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 85, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 111, Short.MAX_VALUE)
                         .addComponent(declineCallButton)
-                        .addGap(52, 52, 52))))
+                        .addGap(24, 24, 24))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel1))
+                    .addComponent(callLabel)
+                    .addComponent(callerLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(acceptCallButton)
@@ -106,9 +109,37 @@ public class CallResponsePanel extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton acceptCallButton;
+    private javax.swing.JLabel callLabel;
+    private javax.swing.JLabel callerLabel;
     private javax.swing.JButton declineCallButton;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     // End of variables declaration//GEN-END:variables
+
+    public void appendDots(int n) {
+        String appString="";
+        for(int i=0;i<n;i++) {
+            appString+=".";
+        }
+        callLabel.setText("Calling"+appString);
+    }
+
+    public void run() {
+        int count=1;
+        while (true) {
+            appendDots(count);
+            count++;
+            if(count>3){
+                count=0;
+            }
+            pause(1000);
+        }
+    }
+   public void pause(long time) {
+        try {
+            Thread.sleep(time);
+        }
+        catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
 }
