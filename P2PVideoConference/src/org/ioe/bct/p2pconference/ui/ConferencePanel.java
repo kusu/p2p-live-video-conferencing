@@ -374,7 +374,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
                 receiveTextMessage(rMsg.getForm(),rMsg.getMessage());
              }
          } else if(message.equals(ConferenceMediator.PRIVATE_VOICE_CALL_SYNC)) {
-             privateMsgManager.sendDataToReceiver(body.toString(), currentSelectedPeer);
+             privateMsgManager.sendDataToReceiver(body.toString()+"\n"+AppMainFrame.getUserName(), currentSelectedPeer);
          }
     }
 
@@ -447,10 +447,15 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
     public void receiveTextMessage(String message) {
        //to be called once the message is received. just print the received msg in the textarea
-        if(message.equals(ConferenceMediator.AUDIO_REQUEST_CODE)){
-            JDialog window=new JDialog(AppLoader.mainFrame,true);
+        String[] parts=message.split("\n");
+        String messageText=parts[0];
+        System.out.println(message);
+        String sender=parts[1];
+        if(messageText.equals(ConferenceMediator.AUDIO_REQUEST_CODE)){
+            JWindow window=new JWindow(AppLoader.mainFrame);
             window.setBounds(400, 300, 200, 100);
-            window.getContentPane().add(new CallResponsePanel(confMediator));
+            window.getContentPane().add(new CallResponsePanel(sender,confMediator));
+            window.pack();
             window.setVisible(true);
             return;
         }

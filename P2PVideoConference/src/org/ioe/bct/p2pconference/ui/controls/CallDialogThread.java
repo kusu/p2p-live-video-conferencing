@@ -43,9 +43,9 @@ public class CallDialogThread extends  Thread {
     public void run() {
     int count=1;
         while (looper) {
-            panel.setVisible(false);
+//            panel.setVisible(false);
             panel.appendDots(count);
-            panel.setVisible(true);
+//            panel.setVisible(true);
             count++;
             if(count>3) {
                 count=0;
