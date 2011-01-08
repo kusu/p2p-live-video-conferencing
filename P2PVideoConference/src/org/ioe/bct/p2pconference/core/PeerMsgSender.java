@@ -62,7 +62,7 @@ public class PeerMsgSender {
 
           ModuleSpecAdvertisement myModuleSpecAdv = (ModuleSpecAdvertisement)myLocalEnum.nextElement();
           outputPipe=createOutputPipe(myModuleSpecAdv.getPipeAdvertisement());
-          JOptionPane.showMessageDialog(null,"FROM LOCAL" + myModuleSpecAdv.getPipeAdvertisement().toString());
+//          JOptionPane.showMessageDialog(null,"FROM LOCAL" + myModuleSpecAdv.getPipeAdvertisement().toString());
 
         }
         else {
@@ -89,7 +89,7 @@ public class PeerMsgSender {
               try {
                 ModuleSpecAdvertisement myModSpecAdv = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
                 outputPipe=createOutputPipe(myModSpecAdv.getPipeAdvertisement());
-                JOptionPane.showMessageDialog(null, "FROM REMOTE\n"+myModSpecAdv.getPipeAdvertisement().toString());
+//                JOptionPane.showMessageDialog(null, "FROM REMOTE\n"+myModSpecAdv.getPipeAdvertisement().toString());
 
               } catch(Exception ee) {
                   ee.printStackTrace();
@@ -124,7 +124,7 @@ public class PeerMsgSender {
           myOutputPipe = myPipeService.createOutputPipe(myPipeAdvertisement, 60000);
           noPipe = false;
           System.out.println("Output Pipe successfully created");
-          Thread.sleep(20000);
+          Thread.sleep(1000);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Unable to create output pipe");

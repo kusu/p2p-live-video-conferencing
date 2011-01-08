@@ -39,7 +39,8 @@ import net.jxta.exception.PeerGroupException;
 import net.jxta.exception.ProtocolNotSupportedException;
 import net.jxta.id.ID;
 import net.jxta.id.IDFactory;
-import net.jxta.impl.membership.PasswdMembershipService;
+
+import net.jxta.impl.membership.passwd.PasswdMembershipService;
 import net.jxta.impl.peergroup.StdPeerGroupParamAdv;
 import net.jxta.membership.Authenticator;
 import net.jxta.membership.MembershipService;
@@ -245,9 +246,15 @@ public class PeerGroupService{
         passwdMembershipPeerGroupModuleImplAdv.setModuleSpecID(IDFactory.newModuleSpecID(
         passwdMembershipPeerGroupModuleImplAdv.getModuleSpecID().getBaseClass()));
         } else {
-           ID  passwdGrpModSpecID =
+            ID  passwdGrpModSpecID=null;
+            try {
+           passwdGrpModSpecID =
                 IDFactory.fromURL(new URL("urn","","jxta:uuid-"+
                             "DeadBeefDeafBabaFeedBabe00000001" +"04" +"06"));
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         passwdMembershipPeerGroupModuleImplAdv.
         setModuleSpecID((ModuleSpecID) passwdGrpModSpecID);
        

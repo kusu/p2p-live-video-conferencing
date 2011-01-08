@@ -15,15 +15,20 @@ import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
  */
 public class ConferenceMediator implements Mediator {
 
+    public static final String AUDIO_REQUEST_CODE="AC-125801-47862-307-SG";
     public static final String CONT_SELECTION_CHANGED="contactselectchanged";
     public static final String GROUP_ADDED="group added";
     public static final String JOIN_GROUP="join group request";
-    
+    public static final String PRIVATE_VOICE_CALL_SYNC="Audio call sync";
     public static final String SEND_TEXT_MSG="Send Group MSg";
     public static final String  RECEIVE_TEXT_MSG="ReceiveTxtMsg";
+    public static final String PRIVATE_CALL_ACCPTED="ACAC-125801-47862-307-SGpAcA";
+    public static final String PRIVATE_CALL_REJECTED="AC-125801-47862-307-SGpACr";
 
     private ArrayList<Colleague> colleagueList;
-    
+
+
+
     public ConferenceMediator(){
         colleagueList=new ArrayList<Colleague>();
     }

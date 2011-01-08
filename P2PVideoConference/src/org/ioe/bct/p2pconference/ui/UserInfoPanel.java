@@ -19,15 +19,13 @@ import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMode;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceManager;
 import java.awt.Image;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import net.jxta.protocol.PipeAdvertisement;
 import org.ioe.bct.p2pconference.core.P2PNetworkCore;
 import org.ioe.bct.p2pconference.core.SocketClient;
 import org.ioe.bct.p2pconference.core.SocketServer;
 import org.ioe.bct.p2pconference.dataobject.PeerResolver;
 import org.ioe.bct.p2pconference.patterns.mediator.Colleague;
+import org.ioe.bct.p2pconference.ui.controls.CallDialogThread;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
 
@@ -41,13 +39,15 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
    private SocketClient socketClient;
    private Mediator confMediator;
    private String currentSelectedPeer;
+   private CallDialogThread callingDialogThread;
     /** Creates new form UserInfoPanel */
-    public UserInfoPanel(P2PNetworkCore netCore){
+    public UserInfoPanel(P2PNetworkCore netCore,Mediator me){
         initComponents();
         jTabbedPane1.setTitleAt(0, "General");
         jTabbedPane1.setTitleAt(1, "Technical");
         this.netCore=netCore;
-        
+        this.confMediator=me;
+
     }
 
     /** This method is called from within the constructor to
@@ -272,7 +272,17 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        try {
+        callingDialogThread=new CallDialogThread();
+        callingDialogThread.start();
+       confMediator.sendMessage(ConferenceMediator.PRIVATE_VOICE_CALL_SYNC, this, ConferenceMediator.AUDIO_REQUEST_CODE);
+
+//        confManager.startConference(mode);
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    public void startCall() {
+        callingDialogThread.stopThread("Call Accepted...");
+          try {
             // TODO add your handling code here:
             socketServer = new SocketServer(netCore, AppMainFrame.getUserName(),currentSelectedPeer);
         } catch (IOException ex) {
@@ -282,7 +292,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
         }
          socketClient=new SocketClient(netCore,AppMainFrame.getUserName(),currentSelectedPeer);
 
-         
+
         socketServer.buildModuleAdvertisement();
         socketServer.buildModuleSpecificationAdvertisement(socketServer.createSocketAdvertisement());
         class ServerThreadHandler implements Runnable{
@@ -305,7 +315,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
                          System.out.println("Publishing Thread begins");
                         socketServer.publishModuleAdvertisement();
                         socketServer.publishModuleSpecificationAdvertisement();
-                        Thread.sleep(10000);
+                        Thread.sleep(5000);
                     } catch (InterruptedException ex) {
                         System.out.println(ex.getMessage());
                     }
@@ -319,7 +329,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
                 PipeAdvertisement pipeAdv;
                 while((pipeAdv=socketClient.getPipeAdvertisement())==null){
                     try{
-                        Thread.sleep(10000);
+                        Thread.sleep(5000);
                     }
                     catch(InterruptedException ex)
                     {
@@ -337,11 +347,34 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
         Thread clientThread=new Thread(new ClientThreadHandler());
         clientThread.start();
         
-       
+    }
+public void updateInfo(PeerResolver p) {
+        //throw new UnsupportedOperationException("Not supported yet.");
 
-//        confManager.startConference(mode);
+        nameLabel.setText(p.getName());
+        ipLabel.setText(p.getIP());
+        emailLabel.setText(p.getEmail());
+        uuidLabel.setText(p.getUUID());
+        peerTypeLabel.setText(p.getType());
+        statusLabel.setText(p.getStatus());
+    }
+    public void setPeer(String peerName)
+        {
+          currentSelectedPeer=peerName;
+      }
+    public void receive(String message, Colleague sender, Object body) {
+        if(message.equals(ConferenceMediator.PRIVATE_CALL_ACCPTED)) {
+            startCall();
+        }else if(message.equals(ConferenceMediator.PRIVATE_CALL_REJECTED)) {
+            callingDialogThread.stopThread("Call Rejected...");
+        }
 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }
+
+    public void setMediator(Mediator m) {
+        confMediator=m;
+        m.addColleague(this);
+    }
 
     ConferenceMode mode=new ConferenceMode(ConferenceMode.SINGLE,true);
     private ConferenceManager confManager;
@@ -369,27 +402,6 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
     // End of variables declaration//GEN-END:variables
 
 
-    public void updateInfo(PeerResolver p) {
-        //throw new UnsupportedOperationException("Not supported yet.");
-        
-        nameLabel.setText(p.getName());
-        ipLabel.setText(p.getIP());
-        emailLabel.setText(p.getEmail());
-        uuidLabel.setText(p.getUUID());
-        peerTypeLabel.setText(p.getType());
-        statusLabel.setText(p.getStatus());
-    }
-    public void setPeer(String peerName)
-        {
-          currentSelectedPeer=peerName;
-      }
-    public void receive(String message, Colleague sender, Object body) {
-        
-    }
-
-    public void setMediator(Mediator m) {
-        confMediator=m;
-        m.addColleague(this);
-    }
+    
 
 }

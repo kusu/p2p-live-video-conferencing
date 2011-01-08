@@ -14,7 +14,7 @@ import org.ioe.bct.p2pconference.ui.AppMainFrame;
 public class GroupPublishThread implements Runnable {
     PeerGroupService peerGroupService=null;
     Thread currentThread;
-    private long sleepTimer=1000;
+    private long sleepTimer=10000;
 
     public void setSleepTimer(long timer) {
         sleepTimer=timer;

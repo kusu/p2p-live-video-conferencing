@@ -76,10 +76,11 @@ public class JXTAPeerGroupOrganizer implements PeerGroupOrganizer {
     }
 
    synchronized  public void slowPublishAndDiscovery() {
-        publisher.setSleepTimer(25000);
-        discoverer.setSleepTimer(45000);
+        publisher.setSleepTimer(55000);
+        discoverer.setSleepTimer(55000);
         publisher.lowerPriority();
         discoverer.lowerPriority();
+      
     }
 
    synchronized  public void rapidPublishAndDiscovery() {
