@@ -301,6 +301,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
 
                    privateMsgManager.addReceiver(currentSelectedPeer);
                    privateMsgManager.addSender(currentSelectedPeer);
+                   privateMsgManager.publishAdvertisement(currentSelectedPeer);
                    uinfo.setPeer(currentSelectedPeer);
                   
                }
@@ -385,7 +386,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     }
 
     public void receiveTextMessage(String peerName,String msg) {
-        printMessage(msg,peerName);
+        printMessage(peerName,msg);
     }
     public void sendTextMesssage(String message) {
         printMessage(AppMainFrame.getUserName(),message); //print msg first
@@ -456,7 +457,9 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         String[] parts=message.split("\n");
         String messageText=parts[0];
         System.out.println(message);
-        String audioCallRequester=parts[1];
+        String audioCallRequester="";
+        if(parts.length==2)
+            audioCallRequester=parts[1];
         if(messageText.equals(ConferenceMediator.AUDIO_REQUEST_CODE)){
             JWindow window=new JWindow(AppLoader.mainFrame);
             window.setBounds(400, 300, 200, 100);
@@ -470,7 +473,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
             confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_REJECTED, this, null);
         }
 
-        printMessage(messageText,currentSelectedPeer);
+        printMessage(currentSelectedPeer,messageText);
     }
 
     

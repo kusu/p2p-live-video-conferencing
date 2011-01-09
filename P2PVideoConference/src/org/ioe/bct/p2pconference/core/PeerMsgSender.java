@@ -21,6 +21,8 @@ import net.jxta.pipe.PipeService;
 import net.jxta.protocol.PipeAdvertisement;
 
 import net.jxta.pipe.OutputPipe;
+import net.jxta.pipe.OutputPipeEvent;
+import net.jxta.pipe.OutputPipeListener;
 import net.jxta.protocol.DiscoveryResponseMsg;
 import net.jxta.protocol.ModuleSpecAdvertisement;
 
@@ -114,7 +116,21 @@ public class PeerMsgSender {
     }
     public OutputPipe createOutputPipe(PipeAdvertisement myPipeAdvertisement) {
      // myPipeAdvertisement=createPipeAdvertisement(sender, receiver);
-      boolean noPipe = true;
+      class OutputPipeClass implements OutputPipeListener{
+          public void outputPipeEvent(OutputPipeEvent event){
+                try {
+                    OutputPipe opipe = event.getOutputPipe();
+                    StringMessageElement sme = new StringMessageElement("DataMsg", "!1!@2@#3#", null);
+                    Message msg = new Message();
+                    msg.addMessageElement(sme);
+                    opipe.send(msg);
+                } catch (IOException ex) {
+                    Logger.getLogger(PeerMsgSender.class.getName()).log(Level.SEVERE, null, ex);
+                }
+          }
+      }
+
+        boolean noPipe = true;
       int count = 0;
       System.out.println(myPipeAdvertisement);
       myOutputPipe = null;
