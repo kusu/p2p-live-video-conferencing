@@ -44,7 +44,8 @@ public class Capture implements StreamDataSourceInterface{
    //   Runnable runner = new Runnable() {
         int bufferSize = (int)format.getSampleRate()
           * format.getFrameSize();
-        byte buffer[] = new byte[bufferSize];
+       // byte buffer[] = new byte[bufferSize];
+        byte buffer[]=new byte[16000];
 
      //   public void run() {
        //   while(true)
@@ -61,7 +62,7 @@ public class Capture implements StreamDataSourceInterface{
                     Logger.getLogger(Capture.class.getName()).log(Level.SEVERE, null, ex);
                 }
           }
-        //  setData(buffer);
+          setData(buffer);
         // }
         //}
      // };

@@ -74,7 +74,7 @@ public class AudioConference {
             while(itr.hasNext())
             {
                 String peerName=itr.next().getName();
-                byte buffer[]=new byte[16784];  //arbitray ho ..calculation garnu parcha
+                byte buffer[]=new byte[16000];  //arbitray ho ..calculation garnu parcha
                 multicastServer.receive(peerName, buffer);
                 audioCapture.setData(buffer);
             }

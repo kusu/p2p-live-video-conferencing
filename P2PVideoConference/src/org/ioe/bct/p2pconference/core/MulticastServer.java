@@ -82,9 +82,8 @@ public class MulticastServer {
             try {
                 DatagramPacket packet=new DatagramPacket(buffer, buffer.length,InetAddress.getLocalHost(),portAddress);
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
-                 System.out.println("Sent by :"+senderAtOtherEnd+" "+packet.getPort()+" "+new String(packet.getData()));
                  TextMessage msg=new TextMessage(senderAtOtherEnd, new String(packet.getData()));
-                 mediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msg);
+             //    mediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msg);
             }
             catch (IOException ex) {
                 Logger.getLogger(MulticastServer.class.getName()).log(Level.SEVERE, null, ex);

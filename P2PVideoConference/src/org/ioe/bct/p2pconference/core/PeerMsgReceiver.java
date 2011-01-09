@@ -1,5 +1,8 @@
 package org.ioe.bct.p2pconference.core;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.id.IDFactory;
 import net.jxta.pipe.PipeService;
@@ -12,6 +15,7 @@ import net.jxta.platform.ModuleClassID;
 import net.jxta.pipe.InputPipe;
 import net.jxta.pipe.PipeMsgEvent;
 import net.jxta.pipe.PipeMsgListener;
+import net.jxta.platform.Module;
 import net.jxta.protocol.ModuleClassAdvertisement;
 import net.jxta.protocol.ModuleSpecAdvertisement;
 import net.jxta.protocol.PipeAdvertisement;
@@ -26,7 +30,9 @@ public class PeerMsgReceiver {
     private ModuleClassID myService1ID = null;
     private InputPipe myPipe = null;
     private Mediator confMediator;
-
+    private ModuleClassAdvertisement myService1ModuleAdvertisement;
+    private ModuleSpecAdvertisement myModuleSpecAdvertisement;
+    public boolean needPulishing=true;
     public PeerMsgReceiver(P2PNetworkCore netcore,Mediator m) {
         netPeerGroup=netcore.getNetPeerGroup();
         getServices();
@@ -40,7 +46,7 @@ public class PeerMsgReceiver {
     }
      
  public void buildModuleAdvertisement() {
-	 ModuleClassAdvertisement myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
+	 myService1ModuleAdvertisement = (ModuleClassAdvertisement) AdvertisementFactory.newAdvertisement(ModuleClassAdvertisement.getAdvertisementType());
 
 	 myService1ModuleAdvertisement.setName("P2P");
 	 myService1ModuleAdvertisement.setDescription("receiveing data on");
@@ -70,7 +76,7 @@ public class PeerMsgReceiver {
 //	StructuredTextDocument paramDoc = (StructuredTextDocument)StructuredDocumentFactory.newStructuredDocument(new MimeMediaType("text/xml"),"Parm");
 //	StructuredDocumentUtils.copyElements(paramDoc, paramDoc, (Element)myPipeAdvertisement.getDocument(new MimeMediaType("text/xml")));
 
-	ModuleSpecAdvertisement myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
+	 myModuleSpecAdvertisement = (ModuleSpecAdvertisement) AdvertisementFactory.newAdvertisement(ModuleSpecAdvertisement.getAdvertisementType());
 
 	myModuleSpecAdvertisement.setName(name);
 	myModuleSpecAdvertisement.setVersion("Version 1.0");
@@ -92,6 +98,21 @@ public class PeerMsgReceiver {
 
       createInputPipe(myPipeAdvertisement);
     }
+
+    public void publishAdvertisments()
+    {
+        try {
+            myDiscoveryService.publish(myService1ModuleAdvertisement);
+             myDiscoveryService.remotePublish(myService1ModuleAdvertisement);
+            myDiscoveryService.publish(myModuleSpecAdvertisement);
+            myDiscoveryService.remotePublish(myModuleSpecAdvertisement);
+
+           
+        } catch (IOException ex) {
+            Logger.getLogger(PeerMsgReceiver.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+       }
     public void createInputPipe(PipeAdvertisement myPipeAdvertisement) {
       
 
@@ -104,7 +125,10 @@ public class PeerMsgReceiver {
                MessageElement msgElement=msg.getMessageElement(null,"DataMsg");
                 System.out.println(msgElement.toString());
 //                JOptionPane.showMessageDialog(null, msgElement.toString());
-                confMediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msgElement.toString());
+                if(msgElement.toString().equals("!1!@2@#3#"))
+                    needPulishing=false;
+                else
+                    confMediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msgElement.toString());
                 
             }
 

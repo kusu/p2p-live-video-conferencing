@@ -90,7 +90,7 @@ public class MulticastClient implements Runnable{
 //            DatagramPacket packet = new DatagramPacket(msg, msg.length);
             DatagramPacket packet = new DatagramPacket(msg, msg.length,InetAddress.getLocalHost(),portAddress);
             multicast.send(packet);
-            System.out.println("MESSAGE "+new String(packet.getData())+"  from port : "+packet.getPort());
+
         }
         catch (SocketException ex) {
             Logger.getLogger(MulticastClient.class.getName()).log(Level.SEVERE, null, ex);
