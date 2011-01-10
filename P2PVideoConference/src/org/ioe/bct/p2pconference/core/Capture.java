@@ -45,7 +45,7 @@ public class Capture implements StreamDataSourceInterface{
         int bufferSize = (int)format.getSampleRate()
           * format.getFrameSize();
        // byte buffer[] = new byte[bufferSize];
-        byte buffer[]=new byte[16000];
+        byte buffer[]=new byte[8192];
 
      //   public void run() {
        //   while(true)
@@ -62,7 +62,7 @@ public class Capture implements StreamDataSourceInterface{
                     Logger.getLogger(Capture.class.getName()).log(Level.SEVERE, null, ex);
                 }
           }
-          setData(buffer);
+         // setData(buffer);
         // }
         //}
      // };
@@ -94,7 +94,7 @@ public class Capture implements StreamDataSourceInterface{
         int bufferSize = (int) format.getSampleRate()
           * format.getFrameSize();
         
-           byte buffer[] = new byte[bufferSize];
+           byte buffer[] = new byte[8192];
       //  public void run() {
           try {
             int count;
@@ -135,7 +135,9 @@ public class Capture implements StreamDataSourceInterface{
 
     public byte[] getData() {
         captureAudio();
-        return outToNetwork.toByteArray();
+        byte[] dataTobesend=outToNetwork.toByteArray();
+        outToNetwork.reset();
+        return dataTobesend;
     }
     public void setData(byte buf[])
     {

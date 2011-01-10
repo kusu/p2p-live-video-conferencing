@@ -81,10 +81,10 @@ public class MulticastClient implements Runnable{
         multicastSS.publishModuleSpecificationAdvertisement();
       
     }
-    public void sendMesssage(String message)
+    public void sendMesssage(byte[] msg)
     {
         //SocketAddress add=multicast.getRemoteSocketAddress();
-        byte[] msg=message.getBytes();
+       // byte[] msg=message.getBytes();
         
         try {
 //            DatagramPacket packet = new DatagramPacket(msg, msg.length);

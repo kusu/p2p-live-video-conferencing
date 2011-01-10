@@ -59,7 +59,7 @@ public class PrivateMsgManager {
                     try {
                         System.out.println("Discovering the advertisment of inputPipe to create outputPipe");
                         oppipe = peerMsgSender.findAdvertisement(receiver, "Name", receiver + me + "modulespecadd");
-                        Thread.sleep(1000);
+                        Thread.sleep(10000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(PrivateMsgManager.class.getName()).log(Level.SEVERE, null, ex);
                     }
