@@ -185,7 +185,7 @@ public class AppMainFrame extends javax.swing.JFrame {
     public void createNetworkCore(String name) {
        
             netCOre=new P2PNetworkCore(name);
-            netCOre.startNetwork(ConfigMode.ADHOC);
+            netCOre.startNetwork(ConfigMode.EDGE);
             System.out.println("creating network core");
             GroupListener myGroupListener=contGroupPanel;
             groupOrganizer=new JXTAPeerGroupOrganizer(myGroupListener).startThread();

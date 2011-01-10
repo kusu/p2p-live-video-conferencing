@@ -74,11 +74,11 @@ public class AudioConference {
             while(itr.hasNext())
             {
                 String peerName=itr.next().getName();
-                byte buffer[]=new byte[16000];  //arbitray ho ..calculation garnu parcha
+                byte buffer[]=new byte[8192];  //arbitray ho ..calculation garnu parcha
                 multicastServer.receive(peerName, buffer);
                 audioCapture.setData(buffer);
             }
-                sleep(500);
+                sleep(100);
             }
         }
     }
@@ -89,8 +89,8 @@ public class AudioConference {
             while(true)
             {
                 byte msg[]=audioCapture.getData();
-                multicastClient.sendMesssage(new String(msg));
-                sleep(500);
+                multicastClient.sendMesssage(msg);
+                sleep(100);
             }
         }
     }

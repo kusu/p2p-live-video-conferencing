@@ -116,28 +116,28 @@ public class PeerMsgSender {
     }
     public OutputPipe createOutputPipe(PipeAdvertisement myPipeAdvertisement) {
      // myPipeAdvertisement=createPipeAdvertisement(sender, receiver);
-      class OutputPipeClass implements OutputPipeListener{
-          public void outputPipeEvent(OutputPipeEvent event){
-                try {
-                    OutputPipe opipe = event.getOutputPipe();
-                    StringMessageElement sme = new StringMessageElement("DataMsg", "!1!@2@#3#", null);
-                    Message msg = new Message();
-                    msg.addMessageElement(sme);
-                    opipe.send(msg);
-                } catch (IOException ex) {
-                    Logger.getLogger(PeerMsgSender.class.getName()).log(Level.SEVERE, null, ex);
-                }
-          }
-      }
-
+//      class OutputPipeClass implements OutputPipeListener{
+//          public void outputPipeEvent(OutputPipeEvent event){
+//                try {
+//                    myOutputPipe = event.getOutputPipe();
+//                    StringMessageElement sme = new StringMessageElement("DataMsg", "!1!@2@#3#", null);
+//                    Message msg = new Message();
+//                    msg.addMessageElement(sme);
+//                    myOutputPipe.send(msg);
+//                } catch (IOException ex) {
+//                    Logger.getLogger(PeerMsgSender.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//          }
+//      }
+//      OutputPipeClass outputPipeListener=new OutputPipeClass();
         boolean noPipe = true;
       int count = 0;
       System.out.println(myPipeAdvertisement);
-      myOutputPipe = null;
+     myOutputPipe=null;
       while (noPipe && count < 10) {
         count++;
         try {
-          myOutputPipe = myPipeService.createOutputPipe(myPipeAdvertisement, 60000);
+         myOutputPipe=myPipeService.createOutputPipe(myPipeAdvertisement, 60000);
           noPipe = false;
           System.out.println("Output Pipe successfully created");
           Thread.sleep(1000);

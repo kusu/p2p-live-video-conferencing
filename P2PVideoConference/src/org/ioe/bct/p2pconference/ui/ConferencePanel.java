@@ -399,7 +399,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     {
         printMessage(AppMainFrame.getUserName(),message);
         MulticastClient currentClient=multicastClients.get(peerGroup);
-        currentClient.sendMesssage(message);
+        currentClient.sendMesssage(message.getBytes());
         
     }
 
