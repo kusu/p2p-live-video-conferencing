@@ -45,7 +45,7 @@ public class Capture implements StreamDataSourceInterface{
         int bufferSize = (int)format.getSampleRate()
           * format.getFrameSize();
        // byte buffer[] = new byte[bufferSize];
-        byte buffer[]=new byte[8192];
+        byte buffer[]=new byte[bufferSize];
 
      //   public void run() {
        //   while(true)

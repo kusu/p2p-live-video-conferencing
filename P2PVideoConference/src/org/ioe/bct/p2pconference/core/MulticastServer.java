@@ -18,7 +18,6 @@ import net.jxta.socket.JxtaMulticastSocket;
 import org.ioe.bct.p2pconference.dataobject.TextMessage;
 import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.AppMainFrame;
-import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
 /**
  *
@@ -84,8 +83,8 @@ public class MulticastServer {
                 multicasts.get(senderAtOtherEnd+"SocketAdvertisement").receive(packet);
                  TextMessage msg=new TextMessage(senderAtOtherEnd, new String(packet.getData()));
                 // mediator.sendMessage(ConferenceMediator.RECEIVE_TEXT_MSG, null, msg);
-//                 Capture audioCapture=new Capture();
-//                 audioCapture.setData(packet.getData());
+                Capture audioCapture=new Capture();
+                 audioCapture.setData(packet.getData());
                 buffer=packet.getData();
             }
             catch (IOException ex) {

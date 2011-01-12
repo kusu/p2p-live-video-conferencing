@@ -47,7 +47,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
         jTabbedPane1.setTitleAt(1, "Technical");
         this.netCore=netCore;
         this.confMediator=me;
-       
+   
         videocallButtton.setVisible(false);
     }
     public void setNetCore(P2PNetworkCore core) {

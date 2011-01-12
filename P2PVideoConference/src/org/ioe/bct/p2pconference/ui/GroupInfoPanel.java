@@ -135,6 +135,8 @@ public class GroupInfoPanel extends javax.swing.JPanel {
         final Thread publishThread=new Thread(audioConference.new PublishModuleSpecHandler());
         final Thread discoveryThread=new Thread(audioConference.new DiscoveryAdvertisementHandler());
         final Thread receiveThread=new Thread(audioConference.new ReceiveMessageHandler(peerGroup));
+        receiveThread.setPriority(Thread.MAX_PRIORITY);
+        final Thread captureThread=new Thread(audioConference.new AudioCaptureBeginThread());
         final Thread sendThread=new Thread (audioConference.new SendMessageHandler());
 
         class AudioConferenceHandler implements Runnable{
@@ -143,7 +145,9 @@ public class GroupInfoPanel extends javax.swing.JPanel {
                 publishThread.start();
                 discoveryThread.start();
                 receiveThread.start();
+                captureThread.start();
                 sendThread.start();
+
             }
         }
 
