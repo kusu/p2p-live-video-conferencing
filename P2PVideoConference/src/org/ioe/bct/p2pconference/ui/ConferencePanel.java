@@ -99,6 +99,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     {
         networkManager=netCore;
         privateMsgManager=new PrivateMsgManager(AppMainFrame.getUserName(),netCore , confMediator);
+        uinfo.setNetCore(netCore);
     }
     public void setMediator(Mediator m) {
         this.confMediator=m;
