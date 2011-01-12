@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
@@ -91,7 +92,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
         upperPanel.setVisible(false);
         jScrollPane1.setVisible(false);
         multicastClients=new HashMap<PeerGroup, MulticastClient>();
-       
+        uinfo=new UserInfoPanel(networkManager,confMediator);
     }
 
     public void initiateChatting(P2PNetworkCore netCore)
@@ -102,6 +103,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     public void setMediator(Mediator m) {
         this.confMediator=m;
         confMediator.addColleague(this);
+        uinfo.setMediator(m);
     }
     private class MulticastServerThread implements Runnable{
 
@@ -288,7 +290,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
            if(sender instanceof ContactListPanel) {
               System.out.println("Loading contact info "+sender.getClass());
                upperPanel.removeAll();
-               UserInfoPanel uinfo=new UserInfoPanel(networkManager,confMediator);
+               
               
                if(body instanceof PeerResolver) {
                    uinfo.updateInfo((PeerResolver) body);
@@ -381,7 +383,10 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
              String code=body.toString().split("\n")[0];
              String to=body.toString().split("\n")[1];
              privateMsgManager.sendDataToReceiver(code+"\n"+AppMainFrame.getUserName(),to);
+         }else if(message.equals(ConferenceMediator.PRIVATE_CALL_END_SYNC)) {
+             privateMsgManager.sendDataToReceiver(body.toString()+"\n"+AppMainFrame.getUserName(),currentSelectedPeer);
          }
+
 
     }
 
@@ -456,30 +461,39 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
        //to be called once the message is received. just print the received msg in the textarea
         String[] parts=message.split("\n");
         String messageText=parts[0];
-        System.out.println(message);
+        System.out.println(messageText);
         String audioCallRequester="";
         if(parts.length==2)
             audioCallRequester=parts[1];
         if(messageText.equals(ConferenceMediator.AUDIO_REQUEST_CODE)){
-            JWindow window=new JWindow(AppLoader.mainFrame);
-            window.setBounds(400, 300, 200, 100);
-            window.getContentPane().add(new CallResponsePanel(audioCallRequester,confMediator));
-            window.pack();
-            window.setVisible(true);
+            callResponseDialog=new JDialog(AppLoader.mainFrame);
+            callResponseDialog.setTitle("Calling...");
+            callResponseDialog.setBounds(400, 300, 200, 100);
+            callResponseDialog.getContentPane().add(new CallResponsePanel(callResponseDialog,audioCallRequester,confMediator));
+            callResponseDialog.pack();
+//            callResponseDialog.setUndecorated(true);
+           
+         
+            callResponseDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+             callResponseDialog.setVisible(true);
             return;
         }else if(messageText.equals(ConferenceMediator.PRIVATE_CALL_ACCEPT_CODE)) {
+            System.out.println("Call accepted");
             confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_ACCPTED, this, null);
         }else if(messageText.equals(ConferenceMediator.PRIVATE_CALL_REJECT_CODE)) {
+            System.out.println("Call rejected");
             confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_REJECTED, this, null);
+        }else if (messageText.equals(ConferenceMediator.PRIVATE_CALL_END_SYNC_CODE)) {
+            callResponseDialog.dispose();
         }
 
         printMessage(currentSelectedPeer,messageText);
     }
 
     
-    
+    private JDialog callResponseDialog;
     private HashMap<String,TextMessage> textData=new HashMap<String,TextMessage>();
-   
+    UserInfoPanel uinfo;
     private SendTextMessagePanel sendTextMsgPanel=new SendTextMessagePanel();
     private GroupInfoPanel gPanel;
     private String currentSelectedPeer="";

@@ -11,6 +11,7 @@
 
 package org.ioe.bct.p2pconference.ui;
 
+import javax.swing.JDialog;
 import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.controls.ConferenceMediator;
 
@@ -23,10 +24,12 @@ public class CallResponsePanel extends javax.swing.JPanel implements Runnable {
     private Mediator confMediator;
     private String sender;
 
+    private JDialog parent;
     /** Creates new form CallResponsePanel */
-    public CallResponsePanel(String send,Mediator m) {
+    public CallResponsePanel(JDialog parent,String send,Mediator m) {
         this.confMediator=m;
         this.sender=send;
+        this.parent=parent;
         initComponents();
         callLabel.setText(sender);
     }
@@ -98,12 +101,15 @@ public class CallResponsePanel extends javax.swing.JPanel implements Runnable {
 
     private void acceptCallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_acceptCallButtonActionPerformed
         // TODO add your handling code here:
+        parent.setVisible(false);
         confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_ACCEPT_MSGQ, null, ConferenceMediator.PRIVATE_CALL_ACCEPT_CODE+"\n"+sender);
     }//GEN-LAST:event_acceptCallButtonActionPerformed
 
     private void declineCallButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_declineCallButtonActionPerformed
         // TODO add your handling code here:
+        parent.setVisible(false);
         confMediator.sendMessage(ConferenceMediator.PRIVATE_CALL_REJECT_MSGQ, null, ConferenceMediator.PRIVATE_CALL_REJECT_CODE+"\n"+sender);
+        
     }//GEN-LAST:event_declineCallButtonActionPerformed
 
 

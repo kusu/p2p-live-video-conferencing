@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JDialog;
 import javax.swing.JWindow;
 import org.ioe.bct.p2pconference.AppLoader;
+import org.ioe.bct.p2pconference.patterns.mediator.Mediator;
 import org.ioe.bct.p2pconference.ui.CallPanel;
 
 /**
@@ -21,7 +22,8 @@ public class CallDialogThread extends  Thread {
     boolean looper=true;
     JWindow callWindow;
     CallPanel panel;
-    public CallDialogThread() {
+    Mediator mediator;
+    public CallDialogThread(Mediator m) {
         callWindow=new JWindow(AppLoader.mainFrame);
 //        callWindow.setTitle("Voice Call..");
         panel=new CallPanel();
@@ -36,7 +38,7 @@ public class CallDialogThread extends  Thread {
         callWindow.pack();
        
         callWindow.setVisible(true);
-
+        this.mediator=m;
     }
 
     @Override
@@ -66,12 +68,13 @@ public class CallDialogThread extends  Thread {
         looper=false;
         panel.showMessage(message);
        // pause(3000);
+        mediator.sendMessage(ConferenceMediator.PRIVATE_CALL_END_SYNC, null, ConferenceMediator.PRIVATE_CALL_END_SYNC_CODE);
         callWindow.dispose();
     }
     
 
 
 public static void main(String[] args){
-    new CallDialogThread().start();
+  
 }
 }
