@@ -45,7 +45,7 @@ public class AppMainFrame extends javax.swing.JFrame {
    
     /** Creates new form AppMainFrame */
     public AppMainFrame() {
-        super("P2P Video Conferencing...");
+        super("P2P Conferencing...");
         initComponents();
         loadConferencePanel();
     }

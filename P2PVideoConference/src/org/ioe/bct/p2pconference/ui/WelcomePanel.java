@@ -55,7 +55,7 @@ public class WelcomePanel extends javax.swing.JPanel {
         jLabel2.setFont(new java.awt.Font("Kristen ITC", 1, 20)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(152, 152, 109));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("P2P Video Conference");
+        jLabel2.setText("P2P Conferencing");
         jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

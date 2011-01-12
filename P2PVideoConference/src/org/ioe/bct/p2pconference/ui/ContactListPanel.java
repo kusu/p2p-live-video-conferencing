@@ -50,7 +50,7 @@ public class ContactListPanel extends javax.swing.JPanel implements Observer, Co
     public ContactListPanel(Mediator confMediator) {
 
         this.conferenceMediator = confMediator;
-        //  conferenceMediator.addColleague(this);
+     conferenceMediator.addColleague(this);
 //       jList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 //       jList1.setModel(new MyListModel());
 

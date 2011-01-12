@@ -78,7 +78,7 @@
               <Color blue="6d" green="98" red="98" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="P2P Video Conference"/>
+            <Property name="text" type="java.lang.String" value="P2P Conferencing"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
           </Properties>
         </Component>

@@ -47,7 +47,8 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
         jTabbedPane1.setTitleAt(1, "Technical");
         this.netCore=netCore;
         this.confMediator=me;
-
+       
+        videocallButtton.setVisible(false);
     }
 
     /** This method is called from within the constructor to
@@ -77,7 +78,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
         peerTypeLabel = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        videocallButtton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 204, 255));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -215,7 +216,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
             }
         });
 
-        jButton2.setText("Video Call");
+        videocallButtton.setText("Video Call");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -228,7 +229,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jButton2)))
+                        .addComponent(videocallButtton)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -237,7 +238,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
                 .addContainerGap()
                 .addComponent(jButton1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton2)
+                .addComponent(videocallButtton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -272,7 +273,7 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
-        callingDialogThread=new CallDialogThread();
+        callingDialogThread=new CallDialogThread(confMediator);
         callingDialogThread.start();
        confMediator.sendMessage(ConferenceMediator.PRIVATE_VOICE_CALL_SYNC, this, ConferenceMediator.AUDIO_REQUEST_CODE);
 
@@ -364,8 +365,12 @@ public void updateInfo(PeerResolver p) {
       }
     public void receive(String message, Colleague sender, Object body) {
         if(message.equals(ConferenceMediator.PRIVATE_CALL_ACCPTED)) {
+            System.out.println("Call Accepted...");
+           
             startCall();
+
         }else if(message.equals(ConferenceMediator.PRIVATE_CALL_REJECTED)) {
+            System.out.println("Call Rejected...");
             callingDialogThread.stopThread("Call Rejected...");
         }
 
@@ -383,7 +388,6 @@ public void updateInfo(PeerResolver p) {
     private javax.swing.JLabel emailLabel;
     private javax.swing.JLabel ipLabel;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -399,6 +403,7 @@ public void updateInfo(PeerResolver p) {
     private javax.swing.JLabel peerTypeLabel;
     private javax.swing.JLabel statusLabel;
     private javax.swing.JLabel uuidLabel;
+    private javax.swing.JButton videocallButtton;
     // End of variables declaration//GEN-END:variables
 
 
