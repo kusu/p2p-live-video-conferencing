@@ -50,6 +50,9 @@ public class UserInfoPanel extends javax.swing.JPanel  implements Colleague{
        
         videocallButtton.setVisible(false);
     }
+    public void setNetCore(P2PNetworkCore core) {
+        this.netCore=core;
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
