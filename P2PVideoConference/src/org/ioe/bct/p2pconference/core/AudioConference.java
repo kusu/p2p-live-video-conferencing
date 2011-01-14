@@ -46,7 +46,7 @@ public class AudioConference {
                 System.out.println("Publishing Pipe Advertisement for the multicast audio conferecing");
                 multicastClient.publishPipeAdvertisement();
                 //Publishing Audio Module Speculation  at interval of 20 secs??????
-                sleep(2000);
+                sleep(20000);
             }
         }
 
@@ -59,7 +59,7 @@ public class AudioConference {
                 System.out.println("Discovering Pipe Advertisement for the multicast audio conferecing");
                 multicastServer.getAllMulticastSocketFromPipeAdvertisements();
                 //Get all the Audio Module Speculation Published at interval of 20 secs???
-                sleep(2000);
+                sleep(20000);
             }
         }
     }
@@ -84,9 +84,11 @@ public class AudioConference {
                 if(!peerName.equalsIgnoreCase(AppMainFrame.getUserName()))
                 {
                 System.out.println(peerName+ " Receiving audio buffer");
-                byte buffer[]=new byte[8192];  //arbitray ho ..calculation garnu parcha
+                byte buffer[]=new byte[8176];  //arbitray ho ..calculation garnu parcha
                 multicastServer.receive(peerName, buffer);
-                audioCapture.setData(buffer);
+                System.out.println();
+                if(buffer==null) System.out.println("Hey i am null");
+                captureNew.setReceivedData(buffer);
                 }
             }
                 sleep(100);
@@ -99,6 +101,16 @@ public class AudioCaptureBeginThread implements Runnable{
         captureNew.captureAudio();
     }
 }
+public class AudioPlayBeginThread implements Runnable{
+    public void run()
+    {
+        while(true)
+        {
+            captureNew.playAudio();
+            sleep(100);
+        }
+    }
+}
     public class SendMessageHandler implements Runnable{
         public void run()
         {
@@ -106,8 +118,20 @@ public class AudioCaptureBeginThread implements Runnable{
             while(true)
             {
                 System.out.println("Sending audio streams to remote peers in conferencing");
-                byte msg[]=captureNew.getCapturedData();
-                multicastClient.sendMesssage(msg);
+                if(captureNew.getDifference()>5)
+                {
+                    for(int i=0;i<5;i++)
+                    {
+                    byte msg[]=captureNew.getCapturedData();
+                    System.out.println("Captured data to be sent" + msg.length);
+                    multicastClient.sendMesssage(msg);
+                    }
+                }
+                 else
+                 {
+                    byte msg[]=captureNew.getCapturedData();
+                    multicastClient.sendMesssage(msg);
+                 }
                 sleep(100);
             }
         }

@@ -27,21 +27,32 @@ public class CaptureNew {
 protected boolean running;
     public ByteArrayOutputStream[] outToNetwork;
     public ByteArrayOutputStream[] outToNetworkNext;
-    public ByteArrayOutputStream inFromNetwork;
+    public ByteArrayOutputStream[] inFromNetwork;
+    public ByteArrayOutputStream[] inFromNetworkNext;
     private ByteArrayOutputStream[] tempBufferStream;
     private ByteArrayOutputStream[] tempBufferStreamOut;
-
+    private ByteArrayOutputStream[] tempInBufferStream;
+    private ByteArrayOutputStream[] tempInBufferStreamNext;
+    private Codec codecClass;
     private int writerDuringCapturePointer = 0;
     private int readerDuringSendingPointer = 0;
+    private int writerDuringReceivingPointer = 0;
+    private int readerDuringPlayingPointer=0;
     private int cycle=0;
     private int readerInCycle=0;
+    private int cycleNext=0;
+    private int readerInCycleNext=0;
     private boolean startTransmission=false;
   public CaptureNew() {
-       inFromNetwork=new ByteArrayOutputStream();
+       inFromNetwork=new ByteArrayOutputStream[10];
+       inFromNetworkNext=new ByteArrayOutputStream[10];
        outToNetwork = new ByteArrayOutputStream[10];
        outToNetworkNext = new ByteArrayOutputStream[10];
        tempBufferStream=outToNetwork;
        tempBufferStreamOut=outToNetwork;
+       tempInBufferStream=inFromNetwork;
+       tempInBufferStreamNext=inFromNetwork;
+       codecClass=new Codec();
   }
 
   public void captureAudio() {
@@ -54,17 +65,33 @@ protected boolean running;
       line.start();
       
       int bufferSize = (int)format.getSampleRate()* format.getFrameSize();
-      byte buffer[]=new byte[8192];
+      byte buffer[]=new byte[93440];
+      byte compressedBuffer[]=null;
       running = true;
+      
+      ByteArrayOutputStream out=new ByteArrayOutputStream();
       while(true)
       {
       int count = line.read(buffer, 0, buffer.length);
+      for(int i=0;i<(count/320);i++)
+      {
+        byte tempBuffer[]=new byte[320];
+        for(int j=0;j<320;j++)
+        {
+            tempBuffer[j]=buffer[i*320+j];
+        }
+          compressedBuffer=codecClass.encode(tempBuffer);
+          out.write(compressedBuffer,0,compressedBuffer.length);
+      }
+      System.out.println(out.size());
+      byte compressedFullBuffer[]=out.toByteArray();
+      out.reset();
       if (count > 0) {
        System.out.println("Capturing Sound......");
             if(writerDuringCapturePointer<9)
             {
                 tempBufferStream[writerDuringCapturePointer]=new ByteArrayOutputStream();
-                tempBufferStream[writerDuringCapturePointer].write(buffer, 0, count);
+                tempBufferStream[writerDuringCapturePointer].write(compressedFullBuffer, 0, compressedFullBuffer.length);
                 writerDuringCapturePointer++;
                 startTransmission=true;
             }
@@ -85,7 +112,7 @@ protected boolean running;
             
        }
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(CaptureNew.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -95,10 +122,20 @@ protected boolean running;
           System.exit(-2);
     }
   }
+  public int getDifference()
+    {
+      if(readerInCycle==cycle)
+      {
+          return Math.abs(writerDuringCapturePointer-readerDuringSendingPointer);
+      }
+     else {
+            return 10+(writerDuringCapturePointer-readerDuringSendingPointer);
+     }
+  }
 public byte[] getCapturedData()
 {
     byte msg[]=null;
-    byte msg1[]=new byte[8192];
+    byte msg1[]=new byte[320];
     if(startTransmission)
     {
     if(readerDuringSendingPointer<9)
@@ -126,9 +163,68 @@ public byte[] getCapturedData()
     if(msg==null) return msg1;
     return msg;
 }
+public void setReceivedData(byte msg[])
+{
+   int length=msg.length;
+   byte decompressedBuffer[]=null;
+   ByteArrayOutputStream decompressedStream=new ByteArrayOutputStream();
+   for(int i=0;i<length/28;i++)
+   {
+       byte[] temp=new byte[28];
+       for(int j=0;j<28;j++)
+       {
+           temp[j]=msg[i*28 + j];
+       }
+       decompressedBuffer=codecClass.decode(temp);
+       decompressedStream.write(decompressedBuffer,0,decompressedBuffer.length);
+  }
+   byte decompressedFullBuffer[]=decompressedStream.toByteArray();
+   if(writerDuringReceivingPointer<9)
+   {
+       tempInBufferStream[writerDuringReceivingPointer]=new ByteArrayOutputStream();
+       tempInBufferStream[writerDuringReceivingPointer].write(decompressedFullBuffer,0,decompressedFullBuffer.length);
+       writerDuringReceivingPointer++;
+   }
+   else
+   {
+        cycleNext=(cycleNext+1)%2;
+        writerDuringReceivingPointer=0;
+        if(cycleNext==1)
+        {
+            tempInBufferStream=inFromNetworkNext;
+        }
+        else
+        {
+            tempInBufferStream=inFromNetwork;
+        }
+   }
+
+}
   public void playAudio() {
     try {
-      byte audio[] = inFromNetwork.toByteArray();
+      byte audio[]=null;
+      if(readerDuringPlayingPointer >= writerDuringReceivingPointer && readerInCycleNext==cycleNext)
+      {
+          return;
+      }
+      if(readerDuringPlayingPointer<9)
+      {
+            audio = tempInBufferStreamNext[readerDuringPlayingPointer].toByteArray();
+            System.out.println("Playing audio");
+      }
+      else
+        {
+           readerInCycleNext=(readerInCycleNext+1)%2;
+           readerDuringPlayingPointer=0;
+           if(readerInCycleNext==1)
+           {
+               tempInBufferStreamNext=inFromNetworkNext;
+           }
+           else
+           {
+                tempInBufferStreamNext=inFromNetwork;
+           }
+        }
       InputStream input = new ByteArrayInputStream(audio);
       final AudioFormat format = getFormat();
       final AudioInputStream ais = new AudioInputStream(input, format,audio.length / format.getFrameSize());
@@ -137,7 +233,7 @@ public byte[] getCapturedData()
       line.open(format);
       line.start();
       int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
-      byte buffer[] = new byte[8192];
+      byte buffer[] = new byte[8176];
       try {
         int count;
         while ((count = ais.read(buffer, 0, buffer.length)) != -1) {
@@ -148,7 +244,7 @@ public byte[] getCapturedData()
 
         line.drain();
         line.close();
-        inFromNetwork.reset();
+       
       } catch (IOException e) {
             System.err.println("I/O problems: " + e);
             System.exit(-3);
@@ -161,7 +257,7 @@ public byte[] getCapturedData()
   }
 
   private AudioFormat getFormat() {
-    float sampleRate = 48000;
+    float sampleRate = 8000;
     int sampleSizeInBits = 16;
     int channels = 2;
     boolean signed = true;
@@ -169,8 +265,4 @@ public byte[] getCapturedData()
     return new AudioFormat(sampleRate,sampleSizeInBits, channels, signed, bigEndian);
     }
 
-  public static void main(String args[])
-  {
-      
-  }
 }
