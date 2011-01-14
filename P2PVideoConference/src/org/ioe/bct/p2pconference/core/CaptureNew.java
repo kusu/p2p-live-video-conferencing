@@ -65,7 +65,7 @@ protected boolean running;
       line.start();
       
       int bufferSize = (int)format.getSampleRate()* format.getFrameSize();
-      byte buffer[]=new byte[93440];
+      byte buffer[]=new byte[8192];
       byte compressedBuffer[]=null;
       running = true;
       
@@ -73,25 +73,25 @@ protected boolean running;
       while(true)
       {
       int count = line.read(buffer, 0, buffer.length);
-      for(int i=0;i<(count/320);i++)
-      {
-        byte tempBuffer[]=new byte[320];
-        for(int j=0;j<320;j++)
-        {
-            tempBuffer[j]=buffer[i*320+j];
-        }
-          compressedBuffer=codecClass.encode(tempBuffer);
-          out.write(compressedBuffer,0,compressedBuffer.length);
-      }
-      System.out.println(out.size());
-      byte compressedFullBuffer[]=out.toByteArray();
-      out.reset();
+//      for(int i=0;i<(count/320);i++)
+//      {
+//        byte tempBuffer[]=new byte[320];
+//        for(int j=0;j<320;j++)
+//        {
+//            tempBuffer[j]=buffer[i*320+j];
+//        }
+//          compressedBuffer=codecClass.encode(tempBuffer);
+//          out.write(compressedBuffer,0,compressedBuffer.length);
+//      }
+//      System.out.println(out.size());
+//      byte compressedFullBuffer[]=out.toByteArray();
+//      out.reset();
       if (count > 0) {
        System.out.println("Capturing Sound......");
             if(writerDuringCapturePointer<9)
             {
                 tempBufferStream[writerDuringCapturePointer]=new ByteArrayOutputStream();
-                tempBufferStream[writerDuringCapturePointer].write(compressedFullBuffer, 0, compressedFullBuffer.length);
+                tempBufferStream[writerDuringCapturePointer].write(buffer, 0, buffer.length);
                 writerDuringCapturePointer++;
                 startTransmission=true;
             }
@@ -135,7 +135,7 @@ protected boolean running;
 public byte[] getCapturedData()
 {
     byte msg[]=null;
-    byte msg1[]=new byte[320];
+    byte msg1[]=new byte[8192];
     if(startTransmission)
     {
     if(readerDuringSendingPointer<9)
@@ -153,10 +153,14 @@ public byte[] getCapturedData()
         if(readerInCycle==1)
         {
             tempBufferStreamOut=outToNetworkNext;
+            msg=tempBufferStreamOut[readerDuringSendingPointer].toByteArray();
+        readerDuringSendingPointer++;
 
         }
         else{
             tempBufferStreamOut=outToNetwork;
+            msg=tempBufferStreamOut[readerDuringSendingPointer].toByteArray();
+        readerDuringSendingPointer++;
         }
     }
     }
@@ -165,24 +169,24 @@ public byte[] getCapturedData()
 }
 public void setReceivedData(byte msg[])
 {
-   int length=msg.length;
-   byte decompressedBuffer[]=null;
-   ByteArrayOutputStream decompressedStream=new ByteArrayOutputStream();
-   for(int i=0;i<length/28;i++)
-   {
-       byte[] temp=new byte[28];
-       for(int j=0;j<28;j++)
-       {
-           temp[j]=msg[i*28 + j];
-       }
-       decompressedBuffer=codecClass.decode(temp);
-       decompressedStream.write(decompressedBuffer,0,decompressedBuffer.length);
-  }
-   byte decompressedFullBuffer[]=decompressedStream.toByteArray();
+//   int length=msg.length;
+//   byte decompressedBuffer[]=null;
+//   ByteArrayOutputStream decompressedStream=new ByteArrayOutputStream();
+//   for(int i=0;i<length/28;i++)
+//   {
+//       byte[] temp=new byte[28];
+//       for(int j=0;j<28;j++)
+//       {
+//           temp[j]=msg[i*28 + j];
+//       }
+//       decompressedBuffer=codecClass.decode(temp);
+//       decompressedStream.write(decompressedBuffer,0,decompressedBuffer.length);
+//  }
+//   byte decompressedFullBuffer[]=decompressedStream.toByteArray();
    if(writerDuringReceivingPointer<9)
    {
        tempInBufferStream[writerDuringReceivingPointer]=new ByteArrayOutputStream();
-       tempInBufferStream[writerDuringReceivingPointer].write(decompressedFullBuffer,0,decompressedFullBuffer.length);
+       tempInBufferStream[writerDuringReceivingPointer].write(msg,0,msg.length);
        writerDuringReceivingPointer++;
    }
    else
@@ -192,10 +196,16 @@ public void setReceivedData(byte msg[])
         if(cycleNext==1)
         {
             tempInBufferStream=inFromNetworkNext;
+            tempInBufferStream[writerDuringReceivingPointer]=new ByteArrayOutputStream();
+            tempInBufferStream[writerDuringReceivingPointer].write(msg,0,msg.length);
+            writerDuringReceivingPointer++;
         }
         else
         {
             tempInBufferStream=inFromNetwork;
+            tempInBufferStream[writerDuringReceivingPointer]=new ByteArrayOutputStream();
+            tempInBufferStream[writerDuringReceivingPointer].write(msg,0,msg.length);
+            writerDuringReceivingPointer++;
         }
    }
 
@@ -210,6 +220,7 @@ public void setReceivedData(byte msg[])
       if(readerDuringPlayingPointer<9)
       {
             audio = tempInBufferStreamNext[readerDuringPlayingPointer].toByteArray();
+            readerDuringPlayingPointer++;
             System.out.println("Playing audio");
       }
       else
@@ -219,10 +230,14 @@ public void setReceivedData(byte msg[])
            if(readerInCycleNext==1)
            {
                tempInBufferStreamNext=inFromNetworkNext;
+               audio = tempInBufferStreamNext[readerDuringPlayingPointer].toByteArray();
+               readerDuringPlayingPointer++;
            }
            else
            {
                 tempInBufferStreamNext=inFromNetwork;
+                audio = tempInBufferStreamNext[readerDuringPlayingPointer].toByteArray();
+                readerDuringPlayingPointer++;
            }
         }
       InputStream input = new ByteArrayInputStream(audio);
