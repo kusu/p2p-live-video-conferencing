@@ -84,33 +84,34 @@ public class AudioConference {
                 if(!peerName.equalsIgnoreCase(AppMainFrame.getUserName()))
                 {
                 System.out.println(peerName+ " Receiving audio buffer");
-                byte buffer[]=new byte[8176];  //arbitray ho ..calculation garnu parcha
-                multicastServer.receive(peerName, buffer);
-                System.out.println();
-                if(buffer==null) System.out.println("Hey i am null");
-                captureNew.setReceivedData(buffer);
+                for(int i=0;i<5;i++)
+                {
+                    byte buffer[]=new byte[8192];  //arbitray ho ..calculation garnu parcha
+                    multicastServer.receive(peerName, buffer);
+                    captureNew.setReceivedData(buffer);
+                }
                 }
             }
                 sleep(100);
             }
         }
     }
-public class AudioCaptureBeginThread implements Runnable{
-    public void run()
-    {
-        captureNew.captureAudio();
-    }
-}
-public class AudioPlayBeginThread implements Runnable{
-    public void run()
-    {
-        while(true)
+    public class AudioCaptureBeginThread implements Runnable{
+        public void run()
         {
-            captureNew.playAudio();
-            sleep(100);
+            captureNew.captureAudio();
         }
     }
-}
+    public class AudioPlayBeginThread implements Runnable{
+        public void run()
+        {
+            while(true)
+            {
+                captureNew.playAudio();
+                sleep(100);
+            }
+        }
+    }
     public class SendMessageHandler implements Runnable{
         public void run()
         {
