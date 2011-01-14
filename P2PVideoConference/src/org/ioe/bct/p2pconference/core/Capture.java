@@ -27,6 +27,7 @@ public class Capture implements StreamDataSourceInterface{
     protected boolean running;
     ByteArrayOutputStream outToNetwork;
     ByteArrayOutputStream inFromNetwork;
+    Codec codecNew=new Codec();
   public Capture() {
        inFromNetwork=new ByteArrayOutputStream();
   }
@@ -124,7 +125,7 @@ public class Capture implements StreamDataSourceInterface{
   }
 
   private AudioFormat getFormat() {
-    float sampleRate = 48000;
+    float sampleRate = 8000;
     int sampleSizeInBits = 16;
     int channels = 2;
     boolean signed = true;
@@ -141,7 +142,11 @@ public class Capture implements StreamDataSourceInterface{
     }
     public void setData(byte buf[])
     {
-        inFromNetwork.write(buf, 0, buf.length);
+        System.out.println(buf.length);
+
+        byte buffer[]=codecNew.decode(buf);
+        System.out.println(buffer.length);
+        inFromNetwork.write(buffer, 0, buffer.length);
         playAudio();
     }
 }
