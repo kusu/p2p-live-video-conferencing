@@ -104,7 +104,7 @@ public class ConferencePanel extends javax.swing.JPanel implements  Colleague {
     public void setMediator(Mediator m) {
         this.confMediator=m;
         confMediator.addColleague(this);
-        uinfo.setMediator(m);
+        uinfo.setMediator(confMediator);
     }
     private class MulticastServerThread implements Runnable{
 

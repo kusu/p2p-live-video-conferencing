@@ -35,6 +35,65 @@ public class PeerDiscoveryThread {
             
        }
 
+      private   class ServiceListener implements DiscoveryListener
+                {
+                    boolean flag=false;
+                    PeerAdvertisement discoveredAdv=null;
+                    public boolean getflag()
+                    {
+                        return flag;
+                    }
+
+                    public PeerAdvertisement getPeerAdvertisement() {
+                        return discoveredAdv;
+                    }
+                    public void discoveryEvent(DiscoveryEvent event) {
+                    Enumeration enumm;
+                 
+                    String str;
+                    DiscoveryResponseMsg myMessage = event.getResponse();
+                    enumm = myMessage.getResponses();
+                    str = (String)enumm.nextElement();
+                    try {
+                        discoveredAdv = (PeerAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
+                        if(discoveredAdv!=null)
+                            flag=true;
+
+
+                      } catch(Exception ee) {
+          
+                      }
+                    }
+
+                }
+
+       public PeerAdvertisement getPeerDescription(String peerName) {
+           
+           PeerAdvertisement returnValue=null;
+           Enumeration peerAds=null;
+        try {
+            peerAds = discoveryService.getLocalAdvertisements(DiscoveryService.PEER, "Name", peerName);
+            if(peerAds!=null)
+            {
+              returnValue= (PeerAdvertisement)peerAds.nextElement();
+            }
+            else
+            {
+               
+                ServiceListener myDiscoveryListener=new ServiceListener();
+               
+                discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, "Name", peerName, 1,myDiscoveryListener);
+                return myDiscoveryListener.getPeerAdvertisement();
+            }
+            return returnValue;
+
+        }
+        catch (IOException ex) {
+         return null;
+         }
+       }
+
+
        public boolean isAvailable(String searchKey,String searchValue)
        {
            boolean flag=false;
@@ -47,39 +106,12 @@ public class PeerDiscoveryThread {
             }
             else
             {
-                class ServiceListener implements DiscoveryListener
-                {
-                    boolean flag=false;
-
-                    public boolean getflag()
-                    {
-                        return flag;
-                    }
-
-                    public void discoveryEvent(DiscoveryEvent event) {
-                    Enumeration enumm;
-                    PeerAdvertisement peerAdv = null;
-                    String str;
-                    DiscoveryResponseMsg myMessage = event.getResponse();
-                    enumm = myMessage.getResponses();
-                    str = (String)enumm.nextElement();
-                    try {
-                        PeerAdvertisement myPeerAdv = (PeerAdvertisement) AdvertisementFactory.newAdvertisement(MimeMediaType.XMLUTF8,new ByteArrayInputStream(str.getBytes()));
-                        if(myPeerAdv!=null)
-                            flag=true;
-
-
-                      } catch(Exception ee) {
-                          ee.printStackTrace();
-             //             System.exit(-1);
-                      }
-                    }
-
-                }
+               
 
                 ServiceListener myDiscoveryListener=new ServiceListener();
-                flag=myDiscoveryListener.getflag();
+               
                 discoveryService.getRemoteAdvertisements(null, DiscoveryService.PEER, searchKey, searchValue, 1,myDiscoveryListener);
+                 flag=myDiscoveryListener.getflag();
             }
         }
         catch (IOException ex) {
