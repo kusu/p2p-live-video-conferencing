@@ -6,10 +6,13 @@
 package org.ioe.bct.p2pconference.core;
 
 
+import javax.swing.JOptionPane;
+import org.ioe.bct.p2pconference.core.db.DBHandler;
 import org.ioe.bct.p2pconference.dataobject.Request;
 import org.ioe.bct.p2pconference.patterns.observer.DisplayElement;
 import org.ioe.bct.p2pconference.patterns.observer.Observer;
 import org.ioe.bct.p2pconference.patterns.observer.Subject;
+import org.ioe.bct.p2pconference.ui.AppMainFrame;
 import org.ioe.bct.p2pconference.utils.Notification;
 
 /**
@@ -44,15 +47,37 @@ public class ContactRequestManager implements Observer, DisplayElement {
        }
     }
 
-    public void deleteContactRequest(Object contact) {
+    public void deleteContactRequest(Object body) {
         //break the connection to the peer.
-           System.out.println("Contact deleted");
+         Request request=(Request) body;
+        try {
+              DBHandler handler=new DBHandler();
+            handler.initConnection();
+            String userName=AppMainFrame.getUserName();
+            String contact=request.getTo();
+            handler.deleteContact(userName, contact);
+            JOptionPane.showMessageDialog(null,"Contact has been deleted.");
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null,"Error on deleting the contact. "+e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void sendAddRequestMessage(Object body) {
         Request request=(Request) body;
-        //to be implemenatated after peer searching is implementated
+       
         System.out.println("Sending request message... to the peer "+request.getTo()+"..."+request.getMessage());
+        try {
+              DBHandler handler=new DBHandler();
+            handler.initConnection();
+            String userName=AppMainFrame.getUserName();
+            String contact=request.getTo();
+            handler.addContact(userName, contact);
+             JOptionPane.showMessageDialog(null,"Contact request has been sent.");
+        }
+        catch (Exception e) {
+          JOptionPane.showMessageDialog(null,"Error on adding the contact. "+e.getMessage(),"Error",JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void display() {
