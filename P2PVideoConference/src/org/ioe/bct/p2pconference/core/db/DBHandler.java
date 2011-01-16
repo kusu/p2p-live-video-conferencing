@@ -122,4 +122,26 @@ public class DBHandler {
         }
         return userList;
     }
+
+    public void addContact(String userName,String contactName) throws SQLException, ClassNotFoundException{
+        myDBConnector.connect();
+        String sql="insert into usercontact values (?,?)";
+        PreparedStatement stm=myDBConnector.getStatement(sql);
+        stm.setString(1,userName);
+        stm.setString(2, contactName);
+        stm.executeUpdate();
+        myDBConnector.commit();
+        myDBConnector.close();
+    }
+
+    public void deleteContact(String userName,String contactName) throws SQLException,ClassNotFoundException {
+         myDBConnector.connect();
+        String sql="delete from usercontact where username=? and contacts=?";
+        PreparedStatement stm=myDBConnector.getStatement(sql);
+        stm.setString(1,userName);
+        stm.setString(2, contactName);
+        stm.executeUpdate();
+        myDBConnector.commit();
+        myDBConnector.close();
+    }
 }
