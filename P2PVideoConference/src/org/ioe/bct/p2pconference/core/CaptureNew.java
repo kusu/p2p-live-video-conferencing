@@ -87,7 +87,7 @@ protected boolean running;
 //      byte compressedFullBuffer[]=out.toByteArray();
 //      out.reset();
       if (count > 0) {
-       System.out.println("Capturing Sound......");
+       System.out.println("Capturing Sound......" + writerDuringCapturePointer);
             if(writerDuringCapturePointer<9)
             {
                 tempBufferStream[writerDuringCapturePointer]=new ByteArrayOutputStream();
@@ -213,6 +213,7 @@ public void setReceivedData(byte msg[])
   public void playAudio() {
     try {
       byte audio[]=null;
+      System.out.println("Audio playing procedure" + writerDuringReceivingPointer);
       if(readerDuringPlayingPointer >= writerDuringReceivingPointer && readerInCycleNext==cycleNext)
       {
           return;
@@ -248,7 +249,7 @@ public void setReceivedData(byte msg[])
       line.open(format);
       line.start();
       int bufferSize = (int) format.getSampleRate() * format.getFrameSize();
-      byte buffer[] = new byte[8176];
+      byte buffer[] = new byte[8192];
       try {
         int count;
         while ((count = ais.read(buffer, 0, buffer.length)) != -1) {

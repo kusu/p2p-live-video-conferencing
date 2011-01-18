@@ -51,6 +51,7 @@ public class SocketClient {
     private boolean isConnected=true;
     private String me;
     private String sender;
+    private CaptureNew audioCapture=new CaptureNew();
 
     public SocketClient(P2PNetworkCore manager,String me,String sender) {
         this.me=me;
@@ -121,12 +122,27 @@ public class SocketClient {
             System.out.println("Connecting to the server");
         try {
             socket = new JxtaSocket(netPeerGroup, null, advertisement, 50000, true);
-            Capture audioDataSource=new Capture();
-            Thread clientThread=new Thread(new ConnectionHandler(audioDataSource));
+            Thread audioPlayThread=new Thread(new PlayAudio());
+            audioPlayThread.start();
+            Thread clientThread=new Thread(new ConnectionHandler());
             clientThread.start();
         } catch (IOException ex) {
             ex.printStackTrace();
             System.out.println(ex.getMessage()+"Client ma problem wow");
+        }
+    }
+    private class PlayAudio implements Runnable{
+        public void run()
+        {
+           while(true)
+           {
+            audioCapture.playAudio();
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                System.out.println(ex.getMessage());
+            }
+            }
         }
     }
     private class ConnectionHandler implements Runnable{
@@ -134,9 +150,9 @@ public class SocketClient {
         StreamDataSourceInterface streamDataSource=null;
         InputStream in;
         DataInput dis ;
-        public ConnectionHandler(StreamDataSourceInterface streamDS)
+        public ConnectionHandler()
         {
-            streamDataSource=streamDS;
+            
             try {
                 in = socket.getInputStream();
                 dis = new DataInputStream(in);
@@ -149,14 +165,15 @@ public class SocketClient {
         public void receiveData()
     {
             
-        byte[] in_buf = new byte[PAYLOADSIZE];
-        for(int i=0;i<PAYLOADSIZE;i++)
+        byte[] in_buf = new byte[8192];
+        for(int i=0;i<8192;i++)
         {
             in_buf[i]=1;
         }
         try {
             dis.readFully(in_buf);
-            streamDataSource.setData(in_buf);
+            System.out.println("Receiving Data");
+           audioCapture.setReceivedData(in_buf);
             
         } catch (IOException ex) {
             Logger.getLogger(SocketClient.class.getName()).log(Level.SEVERE, null, ex);

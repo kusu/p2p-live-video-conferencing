@@ -1,6 +1,8 @@
 package org.ioe.bct.p2pconference.core;
 
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.jxta.document.AdvertisementFactory;
 import net.jxta.exception.PeerGroupException;
 import net.jxta.id.IDFactory;
@@ -39,6 +41,7 @@ public class SocketServer {
     private boolean serverConnection=true;
     private String sender;
     private String receiver;
+    private CaptureNew audioCaptureNew=new CaptureNew();
     
     public SocketServer(P2PNetworkCore manager,String me,String receiver) throws IOException, PeerGroupException {
         
@@ -151,8 +154,9 @@ public class SocketServer {
                 Socket socket = serverSocket.accept();
                 if (socket != null) {
                     System.out.println("New socket connection accepted");
-                    Capture audioCapture=new Capture();
-                    Thread thread = new Thread(new ConnectionHandler(socket,audioCapture), "Connection Handler Thread");
+                    Thread threadAudio =new Thread(new CaptureAudio());
+                    threadAudio.start();
+                    Thread thread = new Thread(new ConnectionHandler(socket), "Connection Handler Thread");
                     thread.start();
                     flag=false;
                 }
@@ -168,13 +172,27 @@ public class SocketServer {
     {
         serverConnection=false;
     }
+    private class CaptureAudio implements Runnable{
+        public void run()
+        {
+            while(true)
+            {
+                audioCaptureNew.captureAudio();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    System.out.println(ex.getMessage());
+                }
+            }
+        }
+    }
     private class ConnectionHandler implements Runnable {
         Socket socket = null;
         OutputStream out;
-        StreamDataSourceInterface streamDataSource=null;
-        public ConnectionHandler(Socket socket,StreamDataSourceInterface streamDS) {
+     
+        public ConnectionHandler(Socket socket) {
             this.socket = socket;
-            this.streamDataSource=streamDS;
+           
             try {
                 out = socket.getOutputStream();
             } catch (IOException ex) {
@@ -183,7 +201,7 @@ public class SocketServer {
         }
    public void sendData() {
             try {
-                byte[] buf=streamDataSource.getData();
+                byte[] buf=audioCaptureNew.getCapturedData();
                 out.write(buf);
                 out.flush();
                 
