@@ -530,10 +530,10 @@ public String getMessage()
         for (int eachAuthMethod = 0; eachAuthMethod < authMethods.size(); eachAuthMethod++) {
             Method doingMethod = (Method) authMethods.elementAt(eachAuthMethod);
             String authStepName = doingMethod.getName().substring(7);
-            if (doingMethod.getName().equals("setAuth1Identity")) {
+            if ("setAuth1Identity".equals(doingMethod.getName())) {
             // Found identity Method, providing identity
                 doingMethod.invoke(auth, AuthId);
-            } else if (doingMethod.getName().equals("setAuth2_Password")) {
+            } else if ("setAuth2_Password".equals(doingMethod.getName())) {
 
             // Found Passwd Method, providing passwd
             doingMethod.invoke(auth, AuthPasswd);
