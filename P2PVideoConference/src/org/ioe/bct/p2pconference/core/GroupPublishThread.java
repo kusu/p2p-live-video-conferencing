@@ -29,7 +29,9 @@ public class GroupPublishThread implements Runnable {
     {
         while (true) {
         if(peerGroupService!=null)
-        peerGroupService.publishAdvertisement(AppMainFrame.netCOre.getNetPeerGroup());
+        {
+            peerGroupService.publishAdvertisement(AppMainFrame.netCOre.getNetPeerGroup());
+        }
        
         try {
             Thread.sleep(sleepTimer);
