@@ -172,7 +172,7 @@ public class SearchContactDialog extends javax.swing.JDialog {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
         // TODO add your handling code here:
         try {
-            if(searchField.getText().equals("")) {
+            if("".equals(searchField.getText())) {
                 JOptionPane.showMessageDialog(null, "Please enter search criteria.","Missing Field",JOptionPane.ERROR_MESSAGE);
                 return;
             }
